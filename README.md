@@ -1,3 +1,6 @@
+[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter-dart?style=for-the-badge)](https://github.com/buijs-dev/klutter-dart/blob/main/LICENSE)
+[![Codecov](https://img.shields.io/codecov/c/github/buijs-dev/klutter-dart?style=for-the-badge)](https://app.codecov.io/gh/buijs-dev/klutter-dart)
+
 # Klutter Pub Plugin
 <!-- 
 This README describes the package. If you publish this package to pub.dev,
