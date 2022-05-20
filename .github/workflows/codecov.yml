@@ -28,8 +28,7 @@ jobs:
       # Upload coverage data
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
+        env:
+          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
         with:
           file: coverage.lcov
-
-       env:
-        CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
