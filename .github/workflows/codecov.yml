@@ -16,17 +16,14 @@ jobs:
       # Get dependencies
       - name: Install dependencies
         run: flutter pub get
-        working-directory: ./packages/plugin-flutter
 
       # Run all tests with coverage
       - name: Run tests with coverage
         run: flutter pub run test --coverage="coverage"
-        working-directory: ./packages/plugin-flutter
 
       # Convert to LCOV
       - name: Convert coverage to LCOV
         run: flutter pub run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --packages=.dart_tool/package_config.json --report-on=lib
-        working-directory: ./packages/plugin-flutter
 
       # Upload coverage data
       - name: Upload coverage to Codecov
