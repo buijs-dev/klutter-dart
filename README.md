@@ -22,8 +22,8 @@ flutter pub get
 ```
 
 ## Usage
-- [Use plugin](#Use%20plugins)
-- [Create plugin](#Create%20plugins)
+- [Use plugins](#Use%20plugins)
+- [Create plugins](#Create%20plugins)
 
 
 #### Use plugins

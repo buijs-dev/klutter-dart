@@ -26,7 +26,7 @@ import 'package:klutter/src/plugins_gradle_generator.dart';
 import 'package:klutter/src/registry_writer.dart';
 import 'package:klutter/src/settings_gradle_visitor.dart';
 
-/// Generate a new apple_keys.json template in the working directory.
+/// Enable the usage of Klutter made plugins in a Flutter project.
 ///
 ///[Author] Gillian Buijs.
 Future<void> main(List<String> args) async {
