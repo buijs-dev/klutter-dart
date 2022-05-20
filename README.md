@@ -1,43 +1,46 @@
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter-dart?style=for-the-badge)](https://github.com/buijs-dev/klutter-dart/blob/main/LICENSE)
 [![Codecov](https://img.shields.io/codecov/c/github/buijs-dev/klutter-dart?style=for-the-badge)](https://app.codecov.io/gh/buijs-dev/klutter-dart)
 
-# Klutter Pub Plugin
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+The Klutter Framework makes it possible to write a Flutter plugin for both Android and iOS using [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
+Instead of writing platform specific code twice in 2 languages (Swift + Kotlin), it can be written
+once in Kotlin and used as a Flutter plugin.
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-The Klutter Pub Plugin makes it possible to write a Flutter plugin for both Android and iOS using Kotlin only.
+<B>Important</B>: Klutter is in alpha.
 
 ## Getting started
+Add klutter to your pubspec.yaml:
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
-```dart
-const like = 'sample';
+```yaml
+dev_dependencies:
+  klutter: ^0.1.0
 ```
 
-## Additional information
+Run:
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+``` shell
+flutter pub get
+```
+
+## Usage
+- [Use plugin](#Use plugins)
+- [Create plugin](#Create plugins)
+
+
+#### Use plugins
+
+Run:
+``` shell
+flutter pub klutter:android
+```
+
+This task will do 3 things for your Flutter project:
+- Create a .klutter-plugins file in the root folder.
+- Create a new Gradle file in the flutter/packages/flutter_tools/gradle.
+- Update the android/settings.gradle file to apply the newly generated Gradle file.
+
+The .klutter-plugins file will register all Klutter made plugins used in your project.
+The created Gradle file in the flutter_tools manages the plugins and enables them to
+be found by the Flutter project.
+
+#### Create plugins
+TODO not yet implemented
