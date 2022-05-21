@@ -24,7 +24,7 @@ dev_dependencies:
 
 Run:
 
-``` shell
+```shell
 flutter pub get
 ```
 
@@ -34,8 +34,8 @@ Next run the android command to setup Gradle. This task will do 3 things for you
 - Update the android/settings.gradle file to apply the newly generated Gradle file.
 
 Run:
-``` shell
-flutter pub klutter:android
+```shell
+flutter pub run klutter:android
 ```
 
 The .klutter-plugins file will register all Klutter made plugins used in your project.
@@ -48,7 +48,7 @@ by running klutter ADD. For example adding the library 'awesome_plugin' to your 
 run:
 
 ```shell
-flutter pub klutter:add awesome_plugin
+flutter pub run klutter:add awesome_plugin  
 ```
 
 This will add the awesome_plugin to the .klutter-plugins file.

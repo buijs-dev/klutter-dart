@@ -55,10 +55,9 @@ void applyPluginLoader(String pathToAndroid) =>
 extension on String {
   /// Create a path to the root-project/android/local.properties file.
   /// If the file does not exist throw a [KlutterException].
-  File get toPropertiesFile =>
-      File("${this}${_s}local.properties")
-        ..ifNotExists((_) => throw KlutterException(
-            "Missing local.properties file in folder: ${this}"));
+  File get toPropertiesFile => File("${this}${_s}local.properties")
+    ..ifNotExists((_) => throw KlutterException(
+        "Missing local.properties file in folder: ${this}"));
 
   /// Create a path to the flutter/tools/gradle/klutter_plugin_loader.gradle.kts file.
   /// If the file does not exist create it.
@@ -74,10 +73,9 @@ extension on String {
 
   /// Create a path to the root-project/android/settings.gradle file.
   /// If the file does not exist throw a [KlutterException].
-  File get toSettingsGradleFile =>
-      File("${this}${_s}settings.gradle")
-        ..ifNotExists((_) => throw KlutterException(
-            "Missing settings.gradle file in folder: ${this}"));
+  File get toSettingsGradleFile => File("${this}${_s}settings.gradle")
+    ..ifNotExists((_) => throw KlutterException(
+        "Missing settings.gradle file in folder: ${this}"));
 }
 
 extension on File {
@@ -208,6 +206,6 @@ extension on Map<String, String> {
   String property(String key) => containsKey(key)
       ? this[key]!
       : throw KlutterException(
-    "Missing property '$key' in local.properties file.",
-  );
+          "Missing property '$key' in local.properties file.",
+        );
 }
