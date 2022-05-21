@@ -20,8 +20,8 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:klutter/src/klutter_exception.dart';
-import 'package:klutter/src/registry_writer.dart';
+import 'package:klutter/src/exception.dart';
+import 'package:klutter/src/registry.dart';
 
 /// [Author] Gillian Buijs.
 void main() {
@@ -32,7 +32,7 @@ void main() {
 
   setUpAll(() {
 
-    root = Directory("${Directory.current.absolute.path}${s}regtest")
+    root = Directory("${Directory.systemTemp.path}${s}regtest")
       ..createSync();
 
     //Will be created during test!

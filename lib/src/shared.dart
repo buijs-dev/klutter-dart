@@ -20,7 +20,7 @@
 
 import 'dart:io';
 
-import 'klutter_exception.dart';
+import 'exception.dart';
 
 /// File management utilities.
 ///

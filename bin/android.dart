@@ -19,12 +19,10 @@
 
 import 'dart:io';
 
-import 'package:klutter/src/extensions.dart';
-import 'package:klutter/src/klutter_exception.dart';
-import 'package:klutter/src/local_properties_locator.dart';
-import 'package:klutter/src/plugins_gradle_generator.dart';
-import 'package:klutter/src/registry_writer.dart';
-import 'package:klutter/src/settings_gradle_visitor.dart';
+import 'package:klutter/src/android.dart';
+import 'package:klutter/src/shared.dart';
+import 'package:klutter/src/exception.dart';
+import 'package:klutter/src/registry.dart';
 
 /// Enable the usage of Klutter made plugins in a Flutter project.
 ///
@@ -39,7 +37,7 @@ Future<void> main(List<String> args) async {
 
   final root = Directory.current.absolutePath;
   final android = "$root${Platform.pathSeparator}android";
-  final sdk = flutterSDK(android);
+  final sdk = findFlutterSDK(android);
 
   try {
     writePluginLoaderGradleFile(sdk);

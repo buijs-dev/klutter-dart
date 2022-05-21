@@ -18,7 +18,7 @@
 // SOFTWARE.
 
 import 'package:test/test.dart';
-import 'package:klutter/src/klutter_exception.dart';
+import 'package:klutter/src/exception.dart';
 
 /// [Author] Gillian Buijs.
 void main() {

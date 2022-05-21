@@ -19,7 +19,7 @@
 
 import 'dart:io';
 
-import 'extensions.dart';
+import 'shared.dart';
 
 /// Create and/or append the .klutter-plugins file to register a Klutter plugin.
 ///
