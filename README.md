@@ -5,7 +5,7 @@ The Klutter Framework makes it possible to write a Flutter plugin for both Andro
 Instead of writing platform specific code twice in 2 languages (Swift + Kotlin), it can be written
 once in Kotlin and used as a Flutter plugin.
 
-<B>Important</B>: Klutter is in alpha.
+<B>Important</B>: Klutter is in alpha and not yet published to PUB.
 
 ## Getting started
 Add klutter to your pubspec.yaml:
