@@ -22,6 +22,7 @@ import "dart:io";
 
 import "package:klutter/src/common/exception.dart";
 import "package:klutter/src/common/project.dart";
+import "package:klutter/src/common/shared.dart";
 import "package:test/test.dart";
 
 void main() {
@@ -87,6 +88,64 @@ void main() {
     final content = registry.readAsStringSync();
     expect(content.contains("some_plugin=foo/bar/cache/new_location"), true, reason: "contains updated location");
     expect(content.contains("some_plugin=foo/bar/cache/some_plugin"), false, reason: "does not contains old location");
+
+  });
+
+  test("Verify exception is thrown if pubspec.yaml is not found", () {
+
+    expect(() => findPackageName(root.path), throwsA(predicate((e) =>
+        e is KlutterException &&
+        e.cause.startsWith("Missing pubspec.yaml file in folder:"))));
+
+  });
+
+  test("Verify exception is thrown if pubspec.yaml does not contain the requested tag", () {
+
+    File("${root.path}/pubspec.yaml".normalize).createSync();
+
+    expect(() => findPackageName(root.path), throwsA(predicate((e) =>
+    e is KlutterException &&
+        e.cause.startsWith("Failed to find tag plugin:platforms:android:package in pubspec.yaml"))));
+
+  });
+
+  test("Verify exception is thrown if pubspec.yaml does not contain the requested tag", () {
+
+    File("${root.path}/pubspec.yaml".normalize).createSync();
+
+    expect(() => findPluginName(root.path), throwsA(predicate((e) =>
+    e is KlutterException &&
+        e.cause.startsWith("Failed to find tag 'name' in pubspec.yaml."))));
+
+  });
+
+  test("Verify correct tag values are returned from pubspec.yaml", () {
+
+    File("${root.path}/pubspec.yaml".normalize)
+      ..createSync()
+      ..writeAsStringSync("""
+            |name: super_awesome
+            |description: A new flutter plugin project.
+            |version: 0.0.1
+            |homepage:
+            |
+            |environment:
+            |  sdk: ">=2.16.1 <3.0.0"
+            |  flutter: ">=2.5.0"
+            | 
+            |flutter:
+            |  plugin:
+            |    platforms:
+            |      android:
+            |        package: com.example.super_awesome
+            |        pluginClass: SuperAwesomePlugin
+            |      ios:
+            |        pluginClass: SuperAwesomePlugin
+      """.format);
+
+    expect(findPluginName(root.path), "super_awesome");
+    expect(findPluginVersion(root.path), "0.0.1");
+    expect(findPackageName(root.path), "com.example.super_awesome");
 
   });
 

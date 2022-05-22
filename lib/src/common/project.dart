@@ -96,30 +96,36 @@ extension on File {
     writeAsStringSync(lines.join("\n"));
   }
 
-  String get pluginName {
-    return readAsLinesSync()
-        .map((line) => line.split(":"))
-        .where((line) => line.length == 2)
-        .firstWhere((line) => line[0] == "name",
-            orElse: () => throw KlutterException(
-                "Failed to find plugin name in pubspec.yaml."))[1]
-        .trim();
-  }
-
-  String get pluginVersion {
-    return readAsLinesSync()
-        .map((line) => line.split(":"))
-        .where((line) => line.length == 2)
-        .firstWhere((line) => line[0] == "version",
-            orElse: () => throw KlutterException(
-                "Failed to find plugin name in pubspec.yaml."))[1]
-        .trim();
-  }
-
+  /// Get value of tag 'flutter:plugin:platforms:android:package' from pubspec.yaml.
   String get packageName {
-    final content = readAsStringSync().replaceAll(" ", "");
+    final content = readAsStringSync().replaceAll(" ", "").replaceAll("\n", "");
     final startIndex = content.indexOf("android:package:");
     final endIndex = content.indexOf("pluginClass:");
-    return content.substring(startIndex, endIndex).trim();
+
+    if (startIndex == -1 || endIndex == -1) {
+      throw KlutterException(
+        "Failed to find tag plugin:platforms:android:package in pubspec.yaml",
+      );
+    }
+
+    return content.substring(startIndex + 16, endIndex).trim();
+  }
+
+  /// Get value of tag 'name' from pubspec.yaml.
+  String get pluginName => _pub("name");
+
+  /// Get value of tag 'version' from pubspec.yaml.
+  String get pluginVersion => _pub("version");
+
+  /// Read the pubspec.yaml and return value for [tag].
+  String _pub(String tag) {
+    return readAsLinesSync()
+        .map((line) => line.split(":"))
+        .where((line) => line.length == 2)
+        .firstWhere((line) => line[0] == tag,
+            orElse: () => throw KlutterException(
+                  "Failed to find tag '$tag' in pubspec.yaml.",
+                ))[1]
+        .trim();
   }
 }
