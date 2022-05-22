@@ -73,7 +73,10 @@ void create() {
     ..writeAsBytesSync(filecontent));
 
   try {
-    platform.writeSettingsGradleFile(pathToRoot, pluginName);
+    platform.writeSettingsGradleFile(
+      pathToRoot: pathToRoot,
+      pluginName: pluginName,
+    );
     platform.writeBuildGradleFile(pathToRoot);
     platform.writeGradleProperties(pathToRoot);
     android.writeBuildGradleFile(

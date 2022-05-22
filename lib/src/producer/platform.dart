@@ -30,7 +30,10 @@ import "../common/shared.dart";
 ///
 /// The root/klutter/<plugin-name> module contains the platform module
 /// with the plugin implementation code.
-void writeSettingsGradleFile(String pathToRoot, String pluginName) =>
+void writeSettingsGradleFile({
+  required String pathToRoot,
+  required String pluginName,
+}) =>
     pathToRoot.verifyExists.createSettingsGradleFile
         .writeSettingsGradleContent(pluginName);
 
@@ -66,7 +69,7 @@ extension on File {
   /// Write the content of the the settings.gradle.kts of a Klutter plugin.
   void writeSettingsGradleContent(String pluginName) {
     writeAsStringSync('''
-            |// Copyright (c) 2021 - 2022 Buijs Software
+            // Copyright (c) 2021 - 2022 Buijs Software
             |//
             |// Permission is hereby granted, free of charge, to any person obtaining a copy
             |// of this software and associated documentation files (the "Software"), to deal
@@ -93,7 +96,7 @@ extension on File {
   /// Write the content of the the settings.gradle.kts of a Klutter plugin.
   void get writeBuildGradleContent {
     writeAsStringSync('''
-          |buildscript {
+          buildscript {
           |    repositories {
           |        gradlePluginPortal()
           |        google()
