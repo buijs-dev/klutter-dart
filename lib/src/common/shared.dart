@@ -85,7 +85,7 @@ extension StringUtil on String {
       // Find all '|' char including preceding whitespaces.
       RegExp(r"(\s+?\|)"),
       // Replace them with a single linebreak.
-      (_) => "\n").replaceAll("|", "");
+      (_) => "\n").replaceAll("|", "").trimLeft();
 
   /// Return current String value as being a path to a File or Directory
   /// with forward slashes ('/') replaced for the platform specific separator.

@@ -89,7 +89,7 @@ void create() {
       packageName: packageName,
     );
   } on KlutterException catch (e) {
-    return "KLUTTER: $e.cause".format.nok;
+    return "KLUTTER: ${e.cause}".format.nok;
   }
 
   "KLUTTER: Plugin setup complete!".ok;

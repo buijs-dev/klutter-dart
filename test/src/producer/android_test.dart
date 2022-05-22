@@ -236,7 +236,7 @@ void main() {
       ..createSync(recursive: true);
 
     final pluginClass = File(
-      "${android.path}/src/main/kotlin/dev/buijs/klutter/example_plugin/ExamplePluginPlugin"
+      "${android.path}/src/main/kotlin/dev/buijs/klutter/example_plugin/ExamplePluginPlugin.kt"
           .replaceAll("/", s),
     )..createSync(recursive: true);
 
