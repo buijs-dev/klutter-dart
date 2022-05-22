@@ -31,3 +31,5 @@ build/
 /checklist.txt
 /coverage/
 /pana.sh
+/resimport.sh
+/dartdoc.sh

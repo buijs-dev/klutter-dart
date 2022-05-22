@@ -18,12 +18,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// Exception indicating a problem with the Klutter Framework either internally or by faulty configuration.
-///
-/// [Author] Gillian Buijs
+/// Exception indicating a problem with the Klutter Framework
+/// either internally or by faulty configuration.
 class KlutterException implements Exception {
+  /// Create instance of [KlutterException] with a message [cause].
   KlutterException(this.cause);
 
+  /// Message explaining the cause of the exception.
   String cause;
 
   @override

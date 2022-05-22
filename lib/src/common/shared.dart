@@ -18,13 +18,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'dart:io';
+import "dart:io";
 
-import 'exception.dart';
+import "exception.dart";
 
 /// File management utilities.
-///
-/// [Author] Gillian Buijs.
 extension FileUtil on FileSystemEntity {
   /// Execute a fallback function if FileSystemEntity does not exist.
   void ifNotExists(void Function(FileSystemEntity file) doElse) {
@@ -39,12 +37,18 @@ extension FileUtil on FileSystemEntity {
     return this;
   }
 
+  /// Return absolute path of current File or Folder as String.
   String get absolutePath => absolute.path;
+
+  /// Return absolute path of current File or Directory with all
+  /// forward slashes ('/') replaced for the platform specific
+  /// separator.
+  File get normalize {
+    return File(absolute.path.replaceAll("/", Platform.pathSeparator));
+  }
 }
 
 /// Utils for easier String manipulation.
-///
-/// [Author] Gillian Buijs.
 extension StringUtil on String {
   /// Create an absolute path to the given folder.
   ///
@@ -77,11 +81,13 @@ extension StringUtil on String {
   /// multiple lines.
   ///
   /// True story'
-  ///
-  /// [Author] Gillian Buijs.
   String get format => replaceAllMapped(
       // Find all '|' char including preceding whitespaces.
-      RegExp(r'(\s+?\|)'),
+      RegExp(r"(\s+?\|)"),
       // Replace them with a single linebreak.
       (_) => "\n").replaceAll("|", "");
+
+  /// Return current String value as being a path to a File or Directory
+  /// with forward slashes ('/') replaced for the platform specific separator.
+  String get normalize => replaceAll("/", Platform.pathSeparator);
 }

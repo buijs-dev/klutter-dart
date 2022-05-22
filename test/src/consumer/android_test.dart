@@ -8,7 +8,8 @@
 // furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.//
+// copies or substantial portions of the Software.
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -17,25 +18,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'dart:io';
+import "dart:io";
 
-import 'package:test/test.dart';
-import 'package:klutter/src/android.dart';
-import 'package:klutter/src/exception.dart';
+import "package:klutter/src/common/exception.dart";
+import "package:klutter/src/consumer/android.dart";
+import "package:test/test.dart";
 
-/// [Author] Gillian Buijs.
 void main() {
 
   final s = Platform.pathSeparator;
 
-  test('Verify exception is thrown if root/android does not exist', () {
+  test("Verify exception is thrown if root/android does not exist", () {
     expect(() => findFlutterSDK("fake"), throwsA(predicate((e) =>
     e is KlutterException &&
         e.cause.startsWith("Path does not exist:") &&
         e.cause.endsWith("/fake"))));
   });
 
-  test('Verify exception is thrown if root/android/local.properties does not exist', () {
+  test("Verify exception is thrown if root/android/local.properties does not exist", () {
     final root = Directory("${Directory.systemTemp.path}${s}plt1")
       ..createSync();
 
@@ -49,7 +49,7 @@ void main() {
     root.deleteSync(recursive: true);
   });
 
-  test('Verify exception is thrown if property key does not exists', () {
+  test("Verify exception is thrown if property key does not exists", () {
     final root = Directory("${Directory.systemTemp.path}${s}plt2")
       ..createSync();
 
@@ -66,7 +66,7 @@ void main() {
     root.deleteSync(recursive: true);
   });
 
-  test('Verify property value is returned if property key exists', () {
+  test("Verify property value is returned if property key exists", () {
     final root = Directory("${Directory.systemTemp.path}${s}plt3")
       ..createSync();
 
@@ -75,28 +75,27 @@ void main() {
 
     File("${android.absolute.path}${s}local.properties")
       ..createSync()
-      ..writeAsStringSync('''
-      sdk.dir=/Users/chewbacca/Library/Android/sdk
-      flutter.sdk=/Users/chewbacca/tools/flutter
-      flutter.versionName=1.0.0
-      flutter.versionCode=1
-      foo
-      bar=
-    ''');
+      ..writeAsStringSync("""
+          sdk.dir=/Users/chewbacca/Library/Android/sdk
+          flutter.sdk=/Users/chewbacca/tools/flutter
+          flutter.versionName=1.0.0
+          flutter.versionCode=1
+          foo
+          bar=""");
 
     expect(findFlutterSDK(android.path), "/Users/chewbacca/tools/flutter");
 
     root.deleteSync(recursive: true);
   });
 
-  test('Verify exception is thrown if root does not exist', () {
+  test("Verify exception is thrown if root does not exist", () {
     expect(() => writePluginLoaderGradleFile("fake"), throwsA(predicate((e) =>
         e is KlutterException &&
         e.cause.startsWith("Path does not exist:") &&
         e.cause.endsWith("/fake"))));
   });
 
-  test('Verify a new Gradle file is created if it does not exist', () {
+  test("Verify a new Gradle file is created if it does not exist", () {
 
     final root = Directory("${Directory.systemTemp.path}${s}sgt1")
       ..createSync();
@@ -111,8 +110,9 @@ void main() {
 
     writePluginLoaderGradleFile(root.path);
 
-    expect(pluginLoader.readAsStringSync().replaceAll(" ", "").replaceAll("\n", ""),
-          ''' // Copyright (c) 2021 - 2022 Buijs Software
+    expect(pluginLoader.readAsStringSync().replaceAll(" ", ""),
+          r'''
+            // Copyright (c) 2021 - 2022 Buijs Software
             //
             // Permission is hereby granted, free of charge, to any person obtaining a copy
             // of this software and associated documentation files (the "Software"), to deal
@@ -122,7 +122,8 @@ void main() {
             // furnished to do so, subject to the following conditions:
             //
             // The above copyright notice and this permission notice shall be included in all
-            // copies or substantial portions of the Software.//
+            // copies or substantial portions of the Software.
+            //
             // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
             // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
             // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -130,10 +131,11 @@ void main() {
             // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
             // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             // SOFTWARE.
+            
             import java.io.File
             
             val flutterProjectRoot = rootProject.projectDir.parentFile
-            val pluginsFile = File("\$flutterProjectRoot/.klutter-plugins")
+            val pluginsFile = File("$flutterProjectRoot/.klutter-plugins")
             if (pluginsFile.exists()) {
               val plugins = pluginsFile.readLines().forEach { line ->
                 val plugin = line.split("=").also {
@@ -146,7 +148,7 @@ void main() {
             
                 val pluginDirectory = File(plugin[1]).also {
                   if(!it.exists()) throw GradleException("""
-                    Invalid path for Klutter plugin: '\$it'.
+                    Invalid path for Klutter plugin: '$it'.
                     Check the .klutter-plugins file in the project root folder.
                   """.trimIndent())
                 }
@@ -155,31 +157,28 @@ void main() {
                 project(plugin[0]).projectDir = pluginDirectory
             
               }
-            }
-    '''.replaceAll(" ", "").replaceAll("\n", ""));
+            }'''.replaceAll(" ", ""));
 
       root.deleteSync(recursive: true);
 
   });
 
-  test('Verify content is overwritten if the Gradle file already exists', () {
+  test("Verify content is overwritten if the Gradle file already exists", () {
 
     final root = Directory("${Directory.systemTemp.path}${s}sgt2")
       ..createSync(recursive: true);
 
     final pluginLoader = File("${root.absolute.path}"
         "${s}packages${s}flutter_tools${s}gradle${s}klutter_plugin_loader.gradle.kts")
-      ..createSync(recursive: true);
-
-    // Write something else then the default generated file content.
-    pluginLoader.writeAsStringSync("some nonsense");
+      ..createSync(recursive: true)
+      ..writeAsStringSync("some nonsense");
 
     // Run test
     writePluginLoaderGradleFile(root.path);
 
     // Content should be overwritten
-    expect(pluginLoader.readAsStringSync().replaceAll(" ", "").replaceAll("\n", ""),
-        ''' // Copyright (c) 2021 - 2022 Buijs Software
+    expect(pluginLoader.readAsStringSync().replaceAll(" ", ""), r'''
+            // Copyright (c) 2021 - 2022 Buijs Software
             //
             // Permission is hereby granted, free of charge, to any person obtaining a copy
             // of this software and associated documentation files (the "Software"), to deal
@@ -189,7 +188,8 @@ void main() {
             // furnished to do so, subject to the following conditions:
             //
             // The above copyright notice and this permission notice shall be included in all
-            // copies or substantial portions of the Software.//
+            // copies or substantial portions of the Software.
+            //
             // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
             // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
             // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -197,10 +197,11 @@ void main() {
             // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
             // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             // SOFTWARE.
+            
             import java.io.File
             
             val flutterProjectRoot = rootProject.projectDir.parentFile
-            val pluginsFile = File("\$flutterProjectRoot/.klutter-plugins")
+            val pluginsFile = File("$flutterProjectRoot/.klutter-plugins")
             if (pluginsFile.exists()) {
               val plugins = pluginsFile.readLines().forEach { line ->
                 val plugin = line.split("=").also {
@@ -213,7 +214,7 @@ void main() {
             
                 val pluginDirectory = File(plugin[1]).also {
                   if(!it.exists()) throw GradleException("""
-                    Invalid path for Klutter plugin: '\$it'.
+                    Invalid path for Klutter plugin: '$it'.
                     Check the .klutter-plugins file in the project root folder.
                   """.trimIndent())
                 }
@@ -222,20 +223,19 @@ void main() {
                 project(plugin[0]).projectDir = pluginDirectory
             
               }
-            }
-    '''.replaceAll(" ", "").replaceAll("\n", ""));
+            }'''.replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
   });
 
-  test('Verify exception is thrown if root/android does not exist', () {
+  test("Verify exception is thrown if root/android does not exist", () {
     expect(() => applyPluginLoader("fake"), throwsA(predicate((e) =>
         e is KlutterException &&
         e.cause.startsWith("Path does not exist:") &&
         e.cause.endsWith("/fake"))));
   });
 
-  test('Verify exception is thrown if root/android/settings.gradle does not exist', () {
+  test("Verify exception is thrown if root/android/settings.gradle does not exist", () {
     final root = Directory("${Directory.systemTemp.path}${s}apl1")
       ..createSync();
 
@@ -249,39 +249,32 @@ void main() {
     root.deleteSync(recursive: true);
   });
 
-  test('Verify exception is thrown if settings.gradle misses app_plugin_loader', () {
+  test("Verify exception is thrown if settings.gradle misses app_plugin_loader", () {
     // Given an empty settings.gradle file
     final root = Directory("${Directory.systemTemp.path}${s}apl2")
       ..createSync();
-    final android = Directory("$root${s}android");
+    final android = Directory("${root.path}${s}android");
     File("${android.absolute.path}${s}settings.gradle").createSync(recursive: true);
 
     // An exception is thrown
     expect(() => applyPluginLoader(android.path), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause == '''Failed to apply Klutter plugin loader.
-             Check if the root/android/settings.gradle file contains the following line:
-             'apply from: "\$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"'
-             
-             Either add the line and retry or manually add the following line:
-             'apply from: "\$flutterSdkPath/packages/flutter_tools/gradle/klutter_plugin_loader.gradle.kts"'
-          ''')));
+            e is KlutterException &&
+            e.cause.contains("Failed to apply Klutter plugin loader.")
+    )));
 
     root.deleteSync(recursive: true);
 
   });
 
-  test('Verify line is added to standard Flutter settings.gradle file', () {
+  test("Verify line is added to standard Flutter settings.gradle file", () {
 
     final root = Directory("${Directory.systemTemp.path}${s}apl3")
       ..createSync();
-    final android = Directory("$root${s}sgv2${s}android");
+    final android = Directory("${root.path}${s}sgv2${s}android");
     final settingsGradle = File("${android.absolute.path}${s}settings.gradle")
-      ..createSync(recursive: true);
-
-    // Given a default settings.gradle file as generated by Flutter.
-    settingsGradle.writeAsStringSync(
-        '''include ':app'
+      ..createSync(recursive: true)
+      ..writeAsStringSync(r'''
+        include ':app'
 
         def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
         def properties = new Properties()
@@ -299,8 +292,8 @@ void main() {
     applyPluginLoader(android.path);
 
     // Then a new line applying the klutter_plugin_loader.gradle.kts is added.
-    expect(settingsGradle.readAsStringSync().replaceAll(" ", ""),
-        '''include ':app'
+    expect(settingsGradle.readAsStringSync().replaceAll(" ", ""), r'''
+        include ':app'
 
         def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
         def properties = new Properties()
@@ -319,30 +312,28 @@ void main() {
 
   });
 
-  test('Verify line is added to customized settings.gradle file', () {
+  test("Verify line is added to customized settings.gradle file", () {
 
     final root = Directory("${Directory.systemTemp.path}${s}apl4")
       ..createSync();
 
-    final android = Directory("$root${s}sgv3${s}android");
+    final android = Directory("${root.path}${s}sgv3${s}android");
     final settingsGradle = File("${android.absolute.path}${s}settings.gradle")
-      ..createSync(recursive: true);
-
-    // Given a default settings.gradle file as generated by Flutter.
-    settingsGradle.writeAsStringSync(
-        '''include ':app'
-           apply from: 'Users/foo/some/bar/folder/packages/flutter_tools/gradle/app_plugin_loader.gradle'
-        ''');
+      ..createSync(recursive: true)
+      ..writeAsStringSync("""
+          include ':app'
+          apply from: 'Users/foo/some/bar/folder/packages/flutter_tools/gradle/app_plugin_loader.gradle'
+        """);
 
     // When the visitor has done it's magic.
     applyPluginLoader(android.path);
 
     // Then a new line applying the klutter_plugin_loader.gradle.kts is added.
-    expect(settingsGradle.readAsStringSync().replaceAll(" ", ""),
-        '''include ':app'
-           apply from: 'Users/foo/some/bar/folder/packages/flutter_tools/gradle/app_plugin_loader.gradle'
-           apply from: 'Users/foo/some/bar/folder/packages/flutter_tools/gradle/klutter_plugin_loader.gradle.kts'
-        '''.replaceAll(" ", ""));
+    expect(settingsGradle.readAsStringSync().replaceAll(" ", ""), """
+          include ':app'
+          apply from: 'Users/foo/some/bar/folder/packages/flutter_tools/gradle/app_plugin_loader.gradle'
+          apply from: 'Users/foo/some/bar/folder/packages/flutter_tools/gradle/klutter_plugin_loader.gradle.kts'
+        """.replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
   });

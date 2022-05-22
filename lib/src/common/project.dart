@@ -8,7 +8,8 @@
 // furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.//
+// copies or substantial portions of the Software.
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -17,13 +18,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'dart:io';
+import "dart:io";
 
-import 'shared.dart';
+import "exception.dart";
+import "shared.dart";
 
 /// Create and/or append the .klutter-plugins file to register a Klutter plugin.
-///
-/// [Author] Gillian Buijs.
 void registerPlugin({
   required String pathToRoot,
   required String pluginName,
@@ -32,17 +32,37 @@ void registerPlugin({
     createRegistry(pathToRoot).append(pluginName, pluginLocation);
 
 /// Create registry file .klutter-plugins.
-///
-/// [Author] Gillian Buijs.
 File createRegistry(String pathToRoot) =>
     pathToRoot.verifyExists.toKlutterPlugins;
+
+/// Find package name in root/pubspec.yaml.
+///
+/// Returns value of element flutter:plugin:platforms:android:package.
+String findPackageName(String pathToRoot) =>
+    pathToRoot.verifyExists.toPubspecYaml.packageName;
+
+/// Find plugin name in root/pubspec.yaml.
+///
+/// Returns value of element name.
+String findPluginName(String pathToRoot) =>
+    pathToRoot.verifyExists.toPubspecYaml.pluginName;
+
+/// Find plugin name in root/pubspec.yaml.
+///
+/// Returns value of element version.
+String findPluginVersion(String pathToRoot) =>
+    pathToRoot.verifyExists.toPubspecYaml.pluginVersion;
 
 extension on String {
   /// Create a path to the root-project/.klutter-plugins file.
   /// If the file does not exist create it.
-  File get toKlutterPlugins =>
-      File("${this}${Platform.pathSeparator}.klutter-plugins")
-        ..ifNotExists((file) => File(file.absolutePath).createSync());
+  File get toKlutterPlugins => File("${this}/.klutter-plugins").normalize
+    ..ifNotExists((file) => file.normalize.createSync());
+
+  /// Create a path to the root-project/pubspec.yaml file.
+  File get toPubspecYaml => File("${this}/pubspec.yaml").normalize
+    ..ifNotExists((_) =>
+        throw KlutterException("Missing pubspec.yaml file in folder: ${this}"));
 }
 
 extension on File {
@@ -69,8 +89,37 @@ extension on File {
     }).toList();
 
     // If true then registry is already updated for given name.
-    if (!hasKey) lines.add("$name=$location");
+    if (!hasKey) {
+      lines.add("$name=$location");
+    }
 
-    writeAsStringSync(lines.join("\n"), mode: FileMode.write);
+    writeAsStringSync(lines.join("\n"));
+  }
+
+  String get pluginName {
+    return readAsLinesSync()
+        .map((line) => line.split(":"))
+        .where((line) => line.length == 2)
+        .firstWhere((line) => line[0] == "name",
+            orElse: () => throw KlutterException(
+                "Failed to find plugin name in pubspec.yaml."))[1]
+        .trim();
+  }
+
+  String get pluginVersion {
+    return readAsLinesSync()
+        .map((line) => line.split(":"))
+        .where((line) => line.length == 2)
+        .firstWhere((line) => line[0] == "version",
+            orElse: () => throw KlutterException(
+                "Failed to find plugin name in pubspec.yaml."))[1]
+        .trim();
+  }
+
+  String get packageName {
+    final content = readAsStringSync().replaceAll(" ", "");
+    final startIndex = content.indexOf("android:package:");
+    final endIndex = content.indexOf("pluginClass:");
+    return content.substring(startIndex, endIndex).trim();
   }
 }

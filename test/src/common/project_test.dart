@@ -8,7 +8,8 @@
 // furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.//
+// copies or substantial portions of the Software.
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -17,13 +18,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'dart:io';
+import "dart:io";
 
-import 'package:test/test.dart';
-import 'package:klutter/src/exception.dart';
-import 'package:klutter/src/registry.dart';
+import "package:klutter/src/common/exception.dart";
+import "package:klutter/src/common/project.dart";
+import "package:test/test.dart";
 
-/// [Author] Gillian Buijs.
 void main() {
 
   final s = Platform.pathSeparator;
@@ -40,7 +40,7 @@ void main() {
 
   });
 
-  test('Verify exception is thrown if root does not exist', () {
+  test("Verify exception is thrown if root does not exist", () {
     expect(() => registerPlugin(
       pathToRoot: "fake",
       pluginName: "some_plugin",
@@ -51,7 +51,7 @@ void main() {
         e.cause.endsWith("/fake"))));
   });
 
-  test('Verify .klutter-plugins file is created if it does not exist', () {
+  test("Verify .klutter-plugins file is created if it does not exist", () {
 
     // Given the registry does not exist
     expect(registry.existsSync(), false);
@@ -71,7 +71,7 @@ void main() {
 
   });
 
-  test('Verify content is appended to .klutter-plugins file', () {
+  test("Verify content is appended to .klutter-plugins file", () {
 
     // Given the registry exists
     expect(registry.existsSync(), true);

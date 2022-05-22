@@ -8,7 +8,8 @@
 // furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.//
+// copies or substantial portions of the Software.
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -17,11 +18,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'dart:io';
-import 'shared.dart';
-import 'package:klutter/src/exception.dart';
+import "dart:io";
 
-final _s = Platform.pathSeparator;
+import "../common/exception.dart";
+import "../common/shared.dart";
+
 const _klutterPluginLoaderGradleFile = "klutter_plugin_loader.gradle.kts";
 
 /// Get the path to the local Flutter SDK installation
@@ -30,52 +31,47 @@ const _klutterPluginLoaderGradleFile = "klutter_plugin_loader.gradle.kts";
 /// Either:
 /// - throws [KlutterException] if unsuccessful or
 /// - returns [String] path to Flutter SDK installation.
-///
-/// [Author] Gillian Buijs.
 String findFlutterSDK(String pathToAndroid) =>
     pathToAndroid.verifyExists.toPropertiesFile.read.property("flutter.sdk");
 
 /// Generate a new gradle file in the flutter/tools/gradle folder
 /// which will apply Klutter plugins to a Flutter project.
-///
-/// [Author] Gillian Buijs.
 void writePluginLoaderGradleFile(String pathToFlutterSDK) => pathToFlutterSDK
     .verifyExists
     .createFlutterToolsFolder
     .absolutePath
-    .createGradleFile
+    .createPluginLoaderGradleFile
     .writeGradleContent;
 
 /// Add apply plugin line to android/settings.gradle file.
-///
-/// [Author] Gillian Buijs.
 void applyPluginLoader(String pathToAndroid) =>
     pathToAndroid.verifyExists.toSettingsGradleFile.appendSettingsGradle;
 
 extension on String {
   /// Create a path to the root-project/android/local.properties file.
   /// If the file does not exist throw a [KlutterException].
-  File get toPropertiesFile => File("${this}${_s}local.properties")
+  File get toPropertiesFile => File("${this}/local.properties").normalize
     ..ifNotExists((_) => throw KlutterException(
         "Missing local.properties file in folder: ${this}"));
 
+  /// Create a path to the settings.gradle file.
+  /// If the file does not exist throw a [KlutterException].
+  File get toSettingsGradleFile => File("${this}/settings.gradle".normalize)
+    ..ifNotExists((_) => throw KlutterException(
+        "Missing settings.gradle file in folder: ${this}"));
+
   /// Create a path to the flutter/tools/gradle/klutter_plugin_loader.gradle.kts file.
   /// If the file does not exist create it.
-  File get createGradleFile => File("${this}$_s$_klutterPluginLoaderGradleFile")
-    ..ifNotExists((file) => File(file.absolutePath).createSync());
+  File get createPluginLoaderGradleFile =>
+      File("${this}/$_klutterPluginLoaderGradleFile").normalize
+        ..ifNotExists((file) => File(file.absolutePath).createSync());
 
   /// Create a path to flutter/tools/gradle folder.
   /// If the folder does not exist create it.
   Directory get createFlutterToolsFolder =>
-      Directory("${this}${_s}packages${_s}flutter_tools${_s}gradle")
+      Directory("${this}/packages/flutter_tools/gradle".normalize)
         ..ifNotExists((folder) =>
             Directory(folder.absolutePath).createSync(recursive: true));
-
-  /// Create a path to the root-project/android/settings.gradle file.
-  /// If the file does not exist throw a [KlutterException].
-  File get toSettingsGradleFile => File("${this}${_s}settings.gradle")
-    ..ifNotExists((_) => throw KlutterException(
-        "Missing settings.gradle file in folder: ${this}"));
 }
 
 extension on File {
@@ -90,8 +86,8 @@ extension on File {
   /// Write the content of the [_klutterPluginLoaderGradleFile] which configures
   /// the Klutter made plugins in a Flutter project.
   void get writeGradleContent {
-    writeAsStringSync(
-        ''' |// Copyright (c) 2021 - 2022 Buijs Software
+    writeAsStringSync(r'''
+            // Copyright (c) 2021 - 2022 Buijs Software
             |//
             |// Permission is hereby granted, free of charge, to any person obtaining a copy
             |// of this software and associated documentation files (the "Software"), to deal
@@ -101,7 +97,8 @@ extension on File {
             |// furnished to do so, subject to the following conditions:
             |//
             |// The above copyright notice and this permission notice shall be included in all
-            |// copies or substantial portions of the Software.//
+            |// copies or substantial portions of the Software.
+            |//
             |// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
             |// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
             |// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -113,7 +110,7 @@ extension on File {
             |import java.io.File
             |
             |val flutterProjectRoot = rootProject.projectDir.parentFile
-            |val pluginsFile = File("\$flutterProjectRoot/.klutter-plugins")
+            |val pluginsFile = File("$flutterProjectRoot/.klutter-plugins")
             |if (pluginsFile.exists()) {
             |  val plugins = pluginsFile.readLines().forEach { line ->
             |    val plugin = line.split("=").also {
@@ -126,7 +123,7 @@ extension on File {
             |
             |    val pluginDirectory = File(plugin[1]).also {
             |      if(!it.exists()) throw GradleException("""
-            |        Invalid path for Klutter plugin: '\$it'.
+            |        Invalid path for Klutter plugin: '$it'.
             |        Check the .klutter-plugins file in the project root folder.
             |      """.trimIndent())
             |    }
@@ -136,8 +133,7 @@ extension on File {
             |
             |  }
             |}'''
-            .format,
-        mode: FileMode.write);
+        .format);
   }
 
   /// Add the following line to the settings.gradle file if not present:
@@ -187,17 +183,19 @@ extension on File {
       // then throw exception because
       // no plugin made with Klutter will work without it.
       throw KlutterException(
-        '''Failed to apply Klutter plugin loader.
-             Check if the root/android/settings.gradle file contains the following line:
-             'apply from: "\$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"'
-             
-             Either add the line and retry or manually add the following line:
-             'apply from: "\$flutterSdkPath/packages/flutter_tools/gradle/$_klutterPluginLoaderGradleFile"'
-          ''',
+        r'''
+        |Failed to apply Klutter plugin loader.
+        |Check if the root/android/settings.gradle file contains the following line:
+        |'apply from: "$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"'
+        |     
+        |Either add the line and retry or manually add the following line:
+        |'apply from: "$flutterSdkPath/packages/flutter_tools/gradle/$_klutterPluginLoaderGradleFile"'
+        '''
+            .format,
       );
     }
 
-    writeAsStringSync(lines.join("\n"), mode: FileMode.write);
+    writeAsStringSync(lines.join("\n"));
   }
 }
 

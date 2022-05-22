@@ -8,7 +8,8 @@
 // furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.//
+// copies or substantial portions of the Software.
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -17,22 +18,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'dart:io';
+import "dart:io";
 
-import 'package:klutter/src/android.dart';
-import 'package:klutter/src/shared.dart';
-import 'package:klutter/src/exception.dart';
-import 'package:klutter/src/registry.dart';
+import "package:klutter/src/common/exception.dart";
+import "package:klutter/src/common/project.dart";
+import "package:klutter/src/common/shared.dart";
+import "package:klutter/src/consumer/android.dart";
 
 /// Enable the usage of Klutter made plugins in a Flutter project.
-///
-///[Author] Gillian Buijs.
 Future<void> main(List<String> args) async {
-  '''
+  """
   ════════════════════════════════════════════
      KLUTTER (v0.1.0)                               
   ════════════════════════════════════════════
-  '''
+  """
       .ok;
 
   switch (args.length) {
@@ -69,9 +68,9 @@ void register(String plugin) {
 }
 
 extension on String {
-  void get ok => print('"\x1B[32m"${this}');
-  void get nok => print('"\x1B[31m"${this}');
+  void get ok => print("\x1B[32m${this}");
+  void get nok => print("\x1B[31m${this}");
   void get invalid => print(
-        '\x1B[31m"KLUTTER: ${this} Example usage: \'flutter pub run klutter:add awesome_plugin\'',
+        "\x1B[31mKLUTTER: ${this} Example usage: 'flutter pub run klutter:add awesome_plugin'",
       );
 }
