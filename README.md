@@ -17,19 +17,22 @@ Add the Klutter library to dev_dependencies in the pubspec.yaml:
 
 ```yaml  
 dev_dependencies:  
- klutter: ^0.1.0```  
+ klutter: ^0.1.0
+ ```  
   
 Then run:  
   
 ```shell  
-flutter pub get```  
+flutter pub get
+```  
   
 #### Use plugins  
 Plugins build with the Klutter Framework work slightly different than regular plugins.  
 First [install](#Installation) the dev dependency. Next run the android command to setup Gradle:  
   
 ```shell  
-flutter pub run klutter:android```  
+flutter pub run klutter:android
+```  
   
 This task will do 3 things for your Flutter project:  
  4. Create a .klutter-plugins file in the root folder.  
@@ -46,7 +49,8 @@ by running klutter:add. For example to add the library 'awesome_plugin' to your 
 run:  
   
 ```shell  
-flutter pub run klutter:add awesome_plugin ```  
+flutter pub run klutter:add awesome_plugin 
+```  
   
 This will add the awesome_plugin to the .klutter-plugins file.  
   
@@ -55,12 +59,14 @@ This will add the awesome_plugin to the .klutter-plugins file.
  1. Create a new Flutter plugin project. Either use the wizard in Android Studio or run the following command, substituting 'org.example' with your organisation name and  'plugin_name' with your plugin name:
   
 ```shell  
-flutter create --org com.example --template=plugin --platforms=android,ios plugin_name```  
+flutter create --org com.example --template=plugin --platforms=android,ios plugin_name
+```  
   
   2.  [Install](#Installation) the dev dependency.
   3. Execute klutter:create in the root project:
 
 ```shell  
-flutter pub run klutter:plugin create  ```  
+flutter pub run klutter:plugin create  
+```  
 
 //TODO 
