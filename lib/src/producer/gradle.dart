@@ -60,7 +60,7 @@ class Gradle {
   }
 
   Future<void> get _loadGradlew async {
-    _gradlew = await _loadResource(
+    _gradlew = await loadResource(
       uri: "package:klutter/res/gradlew".toUri,
       targetRelativeToRoot: "",
       filename: "gradlew",
@@ -68,7 +68,7 @@ class Gradle {
   }
 
   Future<void> get _loadGradlewBat async {
-    _gradlewBat = await _loadResource(
+    _gradlewBat = await loadResource(
       uri: "package:klutter/res/gradlew.bat".toUri,
       targetRelativeToRoot: "",
       filename: "gradlew.bat",
@@ -76,7 +76,7 @@ class Gradle {
   }
 
   Future<void> get _loadGradlewJar async {
-    _gradlewJar = await _loadResource(
+    _gradlewJar = await loadResource(
       uri: "package:klutter/res/gradle-wrapper.jar".toUri,
       targetRelativeToRoot: "gradle/wrapper".normalize,
       filename: "gradle-wrapper.jar",
@@ -84,7 +84,7 @@ class Gradle {
   }
 
   Future<void> get _loadGradlewProperties async {
-    _gradlewProperties = await _loadResource(
+    _gradlewProperties = await loadResource(
       uri: "package:klutter/res/gradle-wrapper.properties".toUri,
       targetRelativeToRoot: "gradle/wrapper".normalize,
       filename: "gradle-wrapper.properties",
@@ -92,7 +92,7 @@ class Gradle {
   }
 
   Future<void> get _loadGradleProperties async {
-    _gradleProperties = await _loadResource(
+    _gradleProperties = await loadResource(
       uri: "package:klutter/res/gradle.properties".toUri,
       targetRelativeToRoot: "",
       filename: "gradle.properties",
@@ -172,7 +172,8 @@ class _GradleResource {
   final String pathToSource;
 }
 
-Future<_GradleResource> _loadResource({
+/// Load resource files from lib/res folder.
+Future<_GradleResource> loadResource({
   required Uri uri,
   required String filename,
   required String targetRelativeToRoot,

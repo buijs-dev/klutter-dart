@@ -105,4 +105,20 @@ void main() {
 
   });
 
+  test("If a resource does not exist a KlutterException is thrown", () async {
+
+    try {
+      await loadResource(
+        filename: "",
+        targetRelativeToRoot: "",
+        uri: Uri.parse(""),
+      );
+    } on KlutterException catch(e) {
+      expect(e.cause, "Failed to load resources");
+    }
+
+    expect("", "", reason: "exception should be thrown");
+
+  });
+
 }
