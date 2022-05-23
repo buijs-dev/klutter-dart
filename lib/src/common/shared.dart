@@ -43,10 +43,6 @@ extension FileUtil on FileSystemEntity {
       if (fse is Directory) {
         fse.createSync(recursive: true);
       }
-
-      if (fse is File) {
-        fse.createSync(recursive: true);
-      }
     });
     return this;
   }

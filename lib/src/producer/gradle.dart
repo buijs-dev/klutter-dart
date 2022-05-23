@@ -143,10 +143,8 @@ extension on String {
 
   Directory get rootFolder => Directory(this);
 
-  Directory get androidFolder => Directory("${this}/android".normalize)
-    ..ifNotExists((folder) {
-      throw KlutterException("Path does not exist: ${folder.absolute.path}");
-    });
+  Directory get androidFolder =>
+      Directory("${this}/android".normalize)..absolutePath.verifyExists;
 }
 
 extension on Directory {

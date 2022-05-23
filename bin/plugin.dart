@@ -57,15 +57,12 @@ void run(String task) {
 
 //TODO setup iOS
 Future<void> create() async {
-
   try {
-
     final pathToRoot = Directory.current.absolutePath
       ..setupRoot
       ..setupAndroid;
 
     await pathToRoot.addGradle;
-
   } on KlutterException catch (e) {
     return "KLUTTER: ${e.cause}".format.nok;
   }
@@ -115,5 +112,4 @@ extension on String {
       gradle.copyToAndroid,
     ]);
   }
-
 }
