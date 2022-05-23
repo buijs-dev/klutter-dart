@@ -1,9 +1,10 @@
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter-dart?color=black&logoColor=black)](https://github.com/buijs-dev/klutter-dart/blob/main/LICENSE) 
 [![codecov](https://codecov.io/gh/buijs-dev/klutter-dart/branch/main/graph/badge.svg?token=AS154MVM51)](https://codecov.io/gh/buijs-dev/klutter-dart)
 
-The Klutter Framework makes it possible to write a Flutter plugin for both Android and iOS using [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).  
-Instead of writing platform specific code twice in 2 languages (Swift + Kotlin), it can be written  
-once in Kotlin and used as a Flutter plugin.
+The Klutter Framework makes it possible to write a Flutter plugin for both Android 
+and iOS using [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html). 
+Instead of writing platform specific code twice in 2 languages (Swift + Kotlin), 
+it can be written once in Kotlin and used as a Flutter plugin.
 
 <B>Important</B>: Klutter is in alpha and not yet published to PUB.
 
