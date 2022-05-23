@@ -1,4 +1,4 @@
-[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter-dart?style=plastic)](https://github.com/buijs-dev/klutter-dart/blob/main/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter-dart?style=flat&color=purple)](https://github.com/buijs-dev/klutter-dart/blob/main/LICENSE)
 [![codecov](https://codecov.io/gh/buijs-dev/klutter-dart/branch/main/graph/badge.svg?token=AS154MVM51)](https://codecov.io/gh/buijs-dev/klutter-dart)
 
 The Klutter Framework makes it possible to write a Flutter plugin for both Android and iOS using [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
