@@ -26,8 +26,6 @@ import "package:klutter/src/common/shared.dart";
 import "package:klutter/src/consumer/android.dart";
 
 /// Initialize a Klutter plugin project.
-///
-///[Author] Gillian Buijs.
 Future<void> main(List<String> args) async {
   """
   ════════════════════════════════════════════

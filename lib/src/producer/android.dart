@@ -100,10 +100,12 @@ class _Configuration {
         .join()
         .postfixWithPlugin;
 
-    File("${pluginPath.absolutePath}/$className.kt").normalize
-      ..ifNotExists((file) => throw KlutterException(
-          "Missing Android plugin file: ${file.absolutePath}"),
-      )..writeAsStringSync('''
+    File("${pluginPath.absolutePath}/$className.kt").normalizeToFile
+      ..ifNotExists(
+        (file) => throw KlutterException(
+            "Missing Android plugin file: ${file.absolutePath}"),
+      )
+      ..writeAsStringSync('''
         package $packageName
         |
         |import dev.buijs.klutter.template.Greeting

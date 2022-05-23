@@ -15,15 +15,15 @@ jobs:
 
       # Get dependencies
       - name: Install dependencies
-        run: flutter pub get
+        run: dart pub get
 
       # Run all tests with coverage
       - name: Run tests with coverage
-        run: flutter pub run test --coverage="coverage"
+        run: dart run test --coverage="coverage"
 
       # Convert to LCOV
       - name: Convert coverage to LCOV
-        run: flutter pub run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --packages=.dart_tool/package_config.json --report-on=lib
+        run: dart pub run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --packages=.dart_tool/package_config.json --report-on=lib
 
       # Upload coverage data
       - name: Upload coverage to Codecov

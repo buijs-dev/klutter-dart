@@ -37,27 +37,49 @@ extension FileUtil on FileSystemEntity {
     return this;
   }
 
+  /// Check if the Directory exists and if not create it recursively.
+  FileSystemEntity get maybeCreate {
+    ifNotExists((fse) {
+      if (fse is Directory) {
+        fse.createSync(recursive: true);
+      }
+
+      if (fse is File) {
+        fse.createSync(recursive: true);
+      }
+    });
+    return this;
+  }
+
   /// Return absolute path of current File or Folder as String.
   String get absolutePath => absolute.path;
 
   /// Return absolute path of current File or Directory with all
-  /// forward slashes ('/') replaced for the platform specific
-  /// separator.
-  File get normalize {
+  /// forward slashes ('/') replaced for the platform specific separator.
+  File get normalizeToFile {
     return File(absolute.path.replaceAll("/", Platform.pathSeparator));
   }
+
+  /// Return a normalized path of this folder to the given filename.
+  File resolve(String filename) =>
+      File("$absolutePath/$filename").normalizeToFile;
 }
 
 /// Utils for easier String manipulation.
 extension StringUtil on String {
-  /// Create an absolute path to the given folder.
+  /// Create an absolute path to the given file or folder.
   ///
   /// If the path does not exist throw a [KlutterException].
-  String get verifyExists => Directory(this).orElse((folder) {
-        throw KlutterException(
-          "Path does not exist: ${folder.absolute.path}",
-        );
-      }).absolutePath;
+  String get verifyExists => Directory(this)
+
+      // If not a Directory check if it is an existing File.
+      .orElse((folder) => File(this)
+
+          // If not a File then forget about it.
+          .orElse((file) => throw KlutterException(
+                "Path does not exist: ${file.absolute.path}",
+              )))
+      .absolutePath;
 
   /// Utility to print templated Strings.
   ///

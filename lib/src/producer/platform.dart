@@ -52,16 +52,17 @@ void writeGradleProperties(String pathToRoot) => pathToRoot
 extension on String {
   /// Create a settings.gradle.kts in the root folder.
   File get createSettingsGradleFile =>
-      File("${this}/settings.gradle.kts").normalize
+      File("${this}/settings.gradle.kts").normalizeToFile
         ..ifNotExists((folder) => File(folder.absolutePath).createSync());
 
   /// Create a build.gradle.kts in the root folder.
-  File get createBuildGradleFile => File("${this}/build.gradle.kts").normalize
-    ..ifNotExists((folder) => File(folder.absolutePath).createSync());
+  File get createBuildGradleFile =>
+      File("${this}/build.gradle.kts").normalizeToFile
+        ..ifNotExists((folder) => File(folder.absolutePath).createSync());
 
   /// Create a build.gradle.kts in the root folder.
   File get createGradlePropertiesFile =>
-      File("${this}/gradle.properties").normalize
+      File("${this}/gradle.properties").normalizeToFile
         ..ifNotExists((folder) => File(folder.absolutePath).createSync());
 }
 

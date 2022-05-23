@@ -50,7 +50,7 @@ void applyPluginLoader(String pathToAndroid) =>
 extension on String {
   /// Create a path to the root-project/android/local.properties file.
   /// If the file does not exist throw a [KlutterException].
-  File get toPropertiesFile => File("${this}/local.properties").normalize
+  File get toPropertiesFile => File("${this}/local.properties").normalizeToFile
     ..ifNotExists((_) => throw KlutterException(
         "Missing local.properties file in folder: ${this}"));
 
@@ -63,7 +63,7 @@ extension on String {
   /// Create a path to the flutter/tools/gradle/klutter_plugin_loader.gradle.kts file.
   /// If the file does not exist create it.
   File get createPluginLoaderGradleFile =>
-      File("${this}/$_klutterPluginLoaderGradleFile").normalize
+      File("${this}/$_klutterPluginLoaderGradleFile").normalizeToFile
         ..ifNotExists((file) => File(file.absolutePath).createSync());
 
   /// Create a path to flutter/tools/gradle folder.

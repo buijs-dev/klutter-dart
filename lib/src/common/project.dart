@@ -56,11 +56,11 @@ String findPluginVersion(String pathToRoot) =>
 extension on String {
   /// Create a path to the root-project/.klutter-plugins file.
   /// If the file does not exist create it.
-  File get toKlutterPlugins => File("${this}/.klutter-plugins").normalize
-    ..ifNotExists((file) => file.normalize.createSync());
+  File get toKlutterPlugins => File("${this}/.klutter-plugins").normalizeToFile
+    ..ifNotExists((file) => file.normalizeToFile.createSync());
 
   /// Create a path to the root-project/pubspec.yaml file.
-  File get toPubspecYaml => File("${this}/pubspec.yaml").normalize
+  File get toPubspecYaml => File("${this}/pubspec.yaml").normalizeToFile
     ..ifNotExists((_) =>
         throw KlutterException("Missing pubspec.yaml file in folder: ${this}"));
 }
