@@ -179,12 +179,8 @@ Future<_GradleResource> loadResource({
   required String targetRelativeToRoot,
 }) =>
     Isolate.resolvePackageUri(uri).then((pathToSource) {
-      if (pathToSource == null) {
-        throw KlutterException("Failed to load resources");
-      }
-
       return _GradleResource(
-        pathToSource: pathToSource.path,
+        pathToSource: pathToSource!.path,
         filename: filename,
         targetRelativeToRoot: targetRelativeToRoot,
       );

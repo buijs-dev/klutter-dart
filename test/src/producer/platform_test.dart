@@ -271,7 +271,7 @@ void main() {
 
   });
 
-  test("Verify root/build.gradle.kts is overwritten if it exists", () {
+  test("Verify root/gradle.properties is overwritten if it exists", () {
 
     // Create root/android otherwise path does not exist exception is thrown
     final root = Directory("${Directory.systemTemp.path}${s}wsg1")
@@ -300,4 +300,5 @@ void main() {
     root.deleteSync(recursive: true);
 
   });
+
 }
