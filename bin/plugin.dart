@@ -18,14 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'dart:io';
+import "dart:io";
 
-import 'package:klutter/src/producer/platform.dart' as platform;
-import 'package:klutter/src/producer/android.dart' as android;
-import 'package:klutter/src/common/shared.dart';
-import 'package:klutter/src/common/exception.dart';
-import 'package:klutter/src/common/project.dart';
-import 'package:klutter/src/producer/gradle.dart';
+import "package:klutter/src/common/exception.dart";
+import "package:klutter/src/common/project.dart";
+import "package:klutter/src/common/shared.dart";
+import "package:klutter/src/producer/android.dart" as android;
+import "package:klutter/src/producer/gradle.dart";
+import "package:klutter/src/producer/platform.dart" as platform;
 
 /// Enable the usage of Klutter made plugins in a Flutter project.
 Future<void> main(List<String> args) async {
@@ -60,7 +60,8 @@ Future<void> create() async {
   try {
     final pathToRoot = Directory.current.absolutePath
       ..setupRoot
-      ..setupAndroid;
+      ..setupAndroid
+      ..setupPlatform;
 
     await pathToRoot.addGradle;
   } on KlutterException catch (e) {
@@ -80,11 +81,18 @@ extension on String {
       );
 
   void get setupRoot {
-    platform.writeBuildGradleFile(this);
+    final name = findPluginName(this);
+
     platform.writeGradleProperties(this);
-    platform.writeSettingsGradleFile(
+
+    platform.writeRootBuildGradleFile(
+        pathToRoot: this,
+        pluginName: name,
+    );
+
+    platform.writeRootSettingsGradleFile(
       pathToRoot: this,
-      pluginName: findPluginName(this),
+      pluginName: name,
     );
   }
 
@@ -102,6 +110,14 @@ extension on String {
     android.writeAndroidPlugin(
       pathToAndroid: pathToAndroid,
       packageName: packageName,
+    );
+  }
+
+  void get setupPlatform {
+    platform.createKlutterModule(
+      pathToRoot: this,
+      pluginName: findPluginName(this),
+      packageName: findPackageName(this),
     );
   }
 

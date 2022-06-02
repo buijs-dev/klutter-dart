@@ -53,6 +53,59 @@ String findPluginName(String pathToRoot) =>
 String findPluginVersion(String pathToRoot) =>
     pathToRoot.verifyExists.toPubspecYaml.pluginVersion;
 
+/// Get the relative path of a plugin dependency.
+///
+/// Given a pubspec.yaml in folder /foo/bar with the following local dependency:
+///
+/// ```
+/// dependencies:
+///
+///   awesome_plugin:
+///     path: ../
+///
+/// ```
+///
+/// Will return absolute path: foo/awesome_plugin
+///
+///
+/// When the dependency name and root folder name do not match, then the folder name specified in the path will be used.
+/// Given a pubspec.yaml in folder /foo/bar with the following local dependency:
+///
+/// ```
+/// dependencies:
+///
+///   awesome_plugin:
+///     path: ../awesome
+///
+/// ```
+///
+/// Will return absolute path: foo/awesome
+///
+/// When the dependency is not local then the path to the flutter cache folder is returned.
+String findDependencyPath({
+  required String pathToSDK,
+  required String pathToRoot,
+  required String pluginName,
+}) {
+
+  final pubspecYaml = pathToRoot.verifyExists.toPubspecYaml.readAsStringSync();
+
+  final regex = RegExp(
+      "dependencies[\\w\\W]+?$pluginName:\n.+?path:(.+)"
+  );
+
+  final match = regex.firstMatch(pubspecYaml);
+
+  if(match != null){
+    final relativeToRoot = match.group(1)!;
+    final path = Directory(pathToRoot).resolveFolder(relativeToRoot).path;
+    return path;
+  }
+
+  return "$pathToSDK/.pub-cache/hosted/pub.dartlang.org/$pluginName/klutter/android".normalize;
+
+}
+
 extension on String {
   /// Create a path to the root-project/.klutter-plugins file.
   /// If the file does not exist create it.

@@ -35,10 +35,11 @@ First [install](#Installation) the dev dependency. Next run the android command 
 flutter pub run klutter:android
 ```  
   
-This task will do 3 things for your Flutter project:  
- 4. Create a .klutter-plugins file in the root folder.  
- 5. Create a new Gradle file in the flutter/packages/flutter_tools/gradle.  
- 6. Update the android/settings.gradle file to apply the newly generated Gradle file.  
+This task will do the following for your Flutter project:  
+ 1. Create a .klutter-plugins file in the root folder.  
+ 2. Create a new Gradle file in the flutter/packages/flutter_tools/gradle.  
+ 3. Update the android/settings.gradle file to apply the newly generated Gradle file.  
+ 4. Update the min/compile/target SDK versions to 21/31/31 in the android/app/build.gradle file. 
   
 The .klutter-plugins file will register all Klutter made plugins used in your project.  
 The created Gradle file in the flutter_tools manages the plugins and enables them to  
@@ -54,7 +55,7 @@ flutter pub run klutter:add awesome_plugin
 ```  
   
 This will add the awesome_plugin to the .klutter-plugins file.  
-  
+
 #### Create plugins  
 
  1. Create a new Flutter plugin project. Either use the wizard in Android Studio or run the following command, substituting 'org.example' with your organisation name and  'plugin_name' with your plugin name:

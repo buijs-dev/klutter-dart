@@ -149,6 +149,80 @@ void main() {
 
   });
 
+  test("Verify absolute path is returned for a local pubspec dependency", () {
+
+    File("${root.path}/pubspec.yaml".normalize)
+      ..createSync()
+      ..writeAsStringSync("""
+          |# pub.dev using `flutter pub publish`. This is preferred for private packages.
+          |publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+          |
+          |environment:
+          |  sdk: ">=2.16.1 <3.0.0"
+          |
+          |# Dependencies specify other packages that your package needs in order to work.
+          |# To automatically upgrade your package dependencies to the latest versions
+          |# consider running `flutter pub upgrade --major-versions`. Alternatively,
+          |# dependencies can be manually updated by changing the version numbers below to
+          |# the latest version available on pub.dev. To see which dependencies have newer
+          |# versions available, run `flutter pub outdated`.
+          |dependencies:
+          |  flutter:
+          |    sdk: flutter
+          | 
+          |  awesome_plugin:
+          |    path: ../                             
+          |
+          |  cupertino_icons: ^1.0.2
+      """.format);
+
+    final path = findDependencyPath(
+      pathToSDK: "/foo/bar",
+      pathToRoot: root.absolute.path,
+      pluginName: "awesome_plugin"
+    );
+
+    expect("$path/regtest", root.path);
+
+  });
+
+  test("Verify absolute path is returned for a local pubspec dependency", () {
+
+    File("${root.path}/pubspec.yaml".normalize)
+      ..createSync()
+      ..writeAsStringSync("""
+          |# pub.dev using `flutter pub publish`. This is preferred for private packages.
+          |publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+          |
+          |environment:
+          |  sdk: ">=2.16.1 <3.0.0"
+          |
+          |# Dependencies specify other packages that your package needs in order to work.
+          |# To automatically upgrade your package dependencies to the latest versions
+          |# consider running `flutter pub upgrade --major-versions`. Alternatively,
+          |# dependencies can be manually updated by changing the version numbers below to
+          |# the latest version available on pub.dev. To see which dependencies have newer
+          |# versions available, run `flutter pub outdated`.
+          |dependencies:
+          |  flutter:
+          |    sdk: flutter
+          | 
+          |  awesome_plugin:
+          |    path: ../awesome                             
+          |
+          |  cupertino_icons: ^1.0.2
+      """.format);
+
+    final path = findDependencyPath(
+        pathToSDK: "/foo/bar",
+        pathToRoot: root.absolute.path,
+        pluginName: "awesome_plugin"
+    );
+
+    expect(root.path.replaceAll("regtest", "awesome"), path);
+
+  });
+
   tearDownAll(() => root.deleteSync(recursive: true));
 
 }

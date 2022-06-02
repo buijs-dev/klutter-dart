@@ -43,6 +43,16 @@ void writePluginLoaderGradleFile(String pathToFlutterSDK) => pathToFlutterSDK
     .createPluginLoaderGradleFile
     .writeGradleContent;
 
+/// Update Android SDK version constraints in the root/android/build.gradle file.
+///
+/// Sets the following properties in the build.gradle android DSL block:
+///
+/// - compileSdkVersion to 31
+/// - minSdkVersion to 21
+/// - targetSdkVersion to 31
+void setAndroidSdkConstraints(String pathToAndroid) =>
+    pathToAndroid.verifyExists.toBuildGradleFile.setAndroidSdkVersions;
+
 /// Add apply plugin line to android/settings.gradle file.
 void applyPluginLoader(String pathToAndroid) =>
     pathToAndroid.verifyExists.toSettingsGradleFile.appendSettingsGradle;
@@ -60,6 +70,12 @@ extension on String {
     ..ifNotExists((_) => throw KlutterException(
         "Missing settings.gradle file in folder: ${this}"));
 
+  /// Create a path to the build.gradle file.
+  /// If the file does not exist throw a [KlutterException].
+  File get toBuildGradleFile => File("${this}/build.gradle".normalize)
+    ..ifNotExists((_) => throw KlutterException(
+        "Missing build.gradle file in folder: ${this}"));
+
   /// Create a path to the flutter/tools/gradle/klutter_plugin_loader.gradle.kts file.
   /// If the file does not exist create it.
   File get createPluginLoaderGradleFile =>
@@ -72,6 +88,33 @@ extension on String {
       Directory("${this}/packages/flutter_tools/gradle".normalize)
         ..ifNotExists((folder) =>
             Directory(folder.absolutePath).createSync(recursive: true));
+
+  String setAndroidSdkVersion(String versionType, int version) {
+    final newContent = replaceAllMapped(RegExp("($versionType.+)"), (match) {
+      return "$versionType $version";
+    });
+
+    if(newContent.contains("$versionType $version")) {
+      return newContent;
+    }
+
+    throw KlutterException("""
+          |Failed to set '$versionType' in the root/android/build.gradle file.
+          |Check if the android DSL block in root/android/build.gradle file contains the following lines:
+          |
+          |compileSdkVersion 31
+          |
+          |defaultConfig {
+          |   ...
+          |   minSdkVersion 21
+          |   targetSdkVersion 31
+          |   ...
+          |}
+          """.format,
+    );
+
+  }
+
 }
 
 extension on File {
@@ -197,6 +240,25 @@ extension on File {
 
     writeAsStringSync(lines.join("\n"));
   }
+
+  /// Update Android SDK version constraints in the root/android/build.gradle file.
+  ///
+  /// Sets the following properties in the build.gradle android DSL block:
+  ///
+  /// - compileSdkVersion to 31
+  /// - minSdkVersion to 21
+  /// - targetSdkVersion to 31
+  void get setAndroidSdkVersions {
+    final buildGradleText = readAsStringSync()
+        .setAndroidSdkVersion("compileSdkVersion", 31)
+        .setAndroidSdkVersion("minSdkVersion", 21)
+        .setAndroidSdkVersion("targetSdkVersion", 31);
+
+    deleteSync();
+    createSync();
+    writeAsStringSync(buildGradleText);
+  }
+
 }
 
 extension on Map<String, String> {

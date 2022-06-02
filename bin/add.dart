@@ -45,14 +45,14 @@ Future<void> main(List<String> args) async {
 }
 
 void register(String plugin) {
-  final s = Platform.pathSeparator;
 
   final root = Directory.current.absolutePath;
 
-  final sdk = findFlutterSDK("$root${s}android");
-
-  final location =
-      "$sdk$s.pub-cache${s}hosted${s}pub.dartlang.org$s$plugin${s}klutter${s}android";
+  final location = findDependencyPath(
+    pathToSDK: findFlutterSDK("$root/android".normalize),
+    pathToRoot: root,
+    pluginName: plugin,
+  );
 
   try {
     registerPlugin(

@@ -21,7 +21,6 @@
 import "dart:io";
 import "dart:isolate";
 
-import "../common/exception.dart";
 import "../common/shared.dart";
 
 /// Copy Gradle files to root and root/android folders to enable the usage of Gradle.
@@ -155,7 +154,7 @@ extension on Directory {
         "$absolutePath/${resource.targetRelativeToRoot}".normalize,
       ).maybeCreate;
 
-      from.copySync(pathTo.resolve(resource.filename).absolutePath);
+      from.copySync(pathTo.resolveFile(resource.filename).absolutePath);
     }
   }
 }

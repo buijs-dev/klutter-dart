@@ -32,7 +32,7 @@ void writeBuildGradleFile({
     pathToAndroid.verifyExists.toBuildGradleFile.configure
       ..packageName = packageName
       ..version = pluginVersion
-      ..klutterVersion = "2022-alpha-1"
+      ..klutterVersion = "2022-alpha-2"
       ..writeBuildGradleContent;
 
 /// Overwrite the method channel Kotlin Class in src/main/kotlin.
@@ -62,7 +62,6 @@ extension on String {
     ..ifNotExists((_) =>
         throw KlutterException("Missing src/main/kotlin folder in: ${this}"));
 
-  String get postfixWithPlugin => "${this}Plugin";
 }
 
 class _Configuration {
@@ -97,8 +96,7 @@ class _Configuration {
     final className = channelName
         .split("_")
         .map((e) => "${e[0].toUpperCase()}${e.substring(1, e.length)}")
-        .join()
-        .postfixWithPlugin;
+        .join();
 
     File("${pluginPath.absolutePath}/$className.kt").normalizeToFile
       ..ifNotExists(

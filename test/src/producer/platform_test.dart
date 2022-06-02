@@ -31,7 +31,7 @@ void main() {
   const pluginName = "some_plugin";
 
   test("Verify exception is thrown if root does not exist", () {
-    expect(() => writeSettingsGradleFile(
+    expect(() => writeRootSettingsGradleFile(
       pathToRoot: "fake",
       pluginName: pluginName,
     ), throwsA(predicate((e) =>
@@ -48,7 +48,7 @@ void main() {
 
     final settingsGradle = File("${root.path}${s}settings.gradle.kts");
 
-    writeSettingsGradleFile(
+    writeRootSettingsGradleFile(
       pathToRoot: root.path,
       pluginName: pluginName,
     );
@@ -89,7 +89,7 @@ void main() {
     final settingsGradle = File("${root.path}${s}settings.gradle.kts")
       ..writeAsStringSync("nonsense");
 
-    writeSettingsGradleFile(
+    writeRootSettingsGradleFile(
       pathToRoot: root.path,
       pluginName: pluginName,
     );
@@ -122,13 +122,13 @@ void main() {
   });
 
   test("Verify exception is thrown if root does not exist", () {
-    expect(() => writeBuildGradleFile("fake"), throwsA(predicate((e) =>
+    expect(() => writeRootBuildGradleFile(pathToRoot: "fake", pluginName: "some_plugin"), throwsA(predicate((e) =>
     e is KlutterException &&
         e.cause.startsWith("Path does not exist:") &&
         e.cause.endsWith("/fake"))));
   });
 
-  test("Verify root/settings.gradle.kts is created if it does not exist", () {
+  test("Verify root/build.gradle.kts is created if it does not exist", () {
 
     // Create root/android otherwise path does not exist exception is thrown
     final root = Directory("${Directory.systemTemp.path}${s}wsg1")
@@ -136,7 +136,7 @@ void main() {
 
     final buildGradle = File("${root.path}${s}build.gradle.kts");
 
-    writeBuildGradleFile(root.path);
+    writeRootBuildGradleFile(pathToRoot: root.path, pluginName: "some_plugin");
 
     expect(buildGradle.readAsStringSync().replaceAll(" ", ""), """
           buildscript {
@@ -149,8 +149,8 @@ void main() {
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath("dev.buijs.klutter:core:2022-alpha-1")
-                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-1")
+                  classpath("dev.buijs.klutter:core:2022-alpha-3")
+                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-3")
               }
           }
           
@@ -175,6 +175,19 @@ void main() {
           
           tasks.register("clean", Delete::class) {
               delete(rootProject.buildDir)
+          }
+          
+          tasks.register("installPlatform", Exec::class) {
+              commandLine("bash", "./gradlew", "clean", "build", "-p", "klutter/some_plugin")
+              finalizedBy("copyAarFile")
+          }
+          
+          tasks.register("copyAarFile", Copy::class) {
+              from("klutter/some_plugin/build/outputs/aar/some_plugin-release.aar")
+              into("klutter/android")
+              rename { fileName ->
+                  fileName.replace("-release", "")
+              }
           }""".replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
@@ -190,7 +203,10 @@ void main() {
     final buildGradle = File("${root.path}${s}build.gradle.kts")
       ..writeAsStringSync("more nonsense");
 
-    writeBuildGradleFile(root.path);
+    writeRootBuildGradleFile(
+        pathToRoot: root.path,
+        pluginName: "some_plugin",
+    );
 
     expect(buildGradle.readAsStringSync().replaceAll(" ", ""), """
           buildscript {
@@ -203,8 +219,8 @@ void main() {
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath("dev.buijs.klutter:core:2022-alpha-1")
-                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-1")
+                  classpath("dev.buijs.klutter:core:2022-alpha-3")
+                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-3")
               }
           }
           
@@ -229,6 +245,19 @@ void main() {
           
           tasks.register("clean", Delete::class) {
               delete(rootProject.buildDir)
+          }
+          
+          tasks.register("installPlatform", Exec::class) {
+              commandLine("bash", "./gradlew", "clean", "build", "-p", "klutter/some_plugin")
+              finalizedBy("copyAarFile")
+          }
+          
+          tasks.register("copyAarFile", Copy::class) {
+              from("klutter/some_plugin/build/outputs/aar/some_plugin-release.aar")
+              into("klutter/android")
+              rename { fileName ->
+                  fileName.replace("-release", "")
+              }
           }""".replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);

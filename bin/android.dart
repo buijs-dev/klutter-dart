@@ -37,13 +37,15 @@ Future<void> main(List<String> args) async {
   final root = Directory.current.absolutePath;
   final android = "$root${Platform.pathSeparator}android";
   final sdk = findFlutterSDK(android);
+  final app = "$android${Platform.pathSeparator}app";
 
   try {
     writePluginLoaderGradleFile(sdk);
     createRegistry(root);
     applyPluginLoader(android);
+    setAndroidSdkConstraints(app);
   } on KlutterException catch (e) {
-    return "KLUTTER: $e.cause".format.nok;
+    return "KLUTTER: ${e.cause}".format.nok;
   }
 
   "KLUTTER: Android setup complete! Project is ready to use Klutter plugins."

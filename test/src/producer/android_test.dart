@@ -97,7 +97,7 @@ void main() {
             dependencies {
                 classpath 'com.android.tools.build:gradle:7.0.4'
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
-                classpath "dev.buijs.klutter:core:2022-alpha-1"
+                classpath "dev.buijs.klutter:core:2022-alpha-2"
             }
         }
         
@@ -136,7 +136,7 @@ void main() {
         dependencies {
             runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
             implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-            implementation "dev.buijs.klutter:core:2022-alpha-1"
+            implementation "dev.buijs.klutter:core:2022-alpha-2"
             implementation project(":klutter:example_plugin")
         }
         
@@ -236,7 +236,7 @@ void main() {
       ..createSync(recursive: true);
 
     final pluginClass = File(
-      "${android.path}/src/main/kotlin/dev/buijs/klutter/example_plugin/ExamplePluginPlugin.kt"
+      "${android.path}/src/main/kotlin/dev/buijs/klutter/example_plugin/ExamplePlugin.kt"
           .replaceAll("/", s),
     )..createSync(recursive: true);
 
@@ -260,8 +260,8 @@ void main() {
         import kotlinx.coroutines.Dispatchers
         import kotlinx.coroutines.launch
         
-        /** ExamplePluginPlugin */
-        class ExamplePluginPlugin: FlutterPlugin, MethodCallHandler {
+        /** ExamplePlugin */
+        class ExamplePlugin: FlutterPlugin, MethodCallHandler {
           // The MethodChannel that will the communication between Flutter and native Android
           //
           // This local reference serves to register the plugin with the Flutter Engine and unregister it
