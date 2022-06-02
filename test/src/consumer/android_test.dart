@@ -21,7 +21,7 @@
 import "dart:io";
 
 import "package:klutter/src/common/exception.dart";
-import 'package:klutter/src/common/project.dart';
+import "package:klutter/src/common/project.dart";
 import "package:klutter/src/consumer/android.dart";
 import "package:test/test.dart";
 
@@ -365,9 +365,7 @@ void main() {
       pathToRoot: root.absolute.path,
       pluginName: "",
       pathToSDK: "",
-    ), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.contains("Missing settings.gradle file in folder"))));
+    ), throwsA(predicate((e) => e is KlutterException)));
 
     root.deleteSync(recursive: true);
   });
