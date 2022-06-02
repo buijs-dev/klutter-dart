@@ -21,7 +21,6 @@
 import "dart:io";
 
 import "package:klutter/src/common/exception.dart";
-import "package:klutter/src/common/project.dart";
 import "package:klutter/src/consumer/android.dart";
 import "package:test/test.dart";
 
@@ -357,19 +356,6 @@ void main() {
     root.deleteSync(recursive: true);
   });
 
-  test("Verify exception is thrown if root/android/app/build.gradle does not exist", () {
-    final root = Directory("${Directory.systemTemp.path}${s}apl10")
-      ..createSync();
-
-    expect(() => findDependencyPath(
-      pathToRoot: root.absolute.path,
-      pluginName: "",
-      pathToSDK: "",
-    ), throwsA(predicate((e) => e is KlutterException)));
-
-    root.deleteSync(recursive: true);
-  });
-
   test("Verify min, compile and target SDK are updated in build.gradle file", () {
 
     final root = Directory("${Directory.systemTemp.path}${s}apl5")
@@ -523,6 +509,18 @@ void main() {
               implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
           }
         """.replaceAll(" ", ""));
+
+    root.deleteSync(recursive: true);
+  });
+
+  test("Verify exception is thrown if root/android/app/build.gradle does not exist", () {
+    final root = Directory("${Directory.systemTemp.path}${s}apl10")
+      ..createSync();
+
+    final android = Directory("${root.path}${s}android")..createSync();
+
+    expect(() => setAndroidSdkConstraints(android.absolute.path),
+        throwsA(predicate((e) => e is KlutterException && e.cause.startsWith("Missing build.gradle file in folder"))));
 
     root.deleteSync(recursive: true);
   });
