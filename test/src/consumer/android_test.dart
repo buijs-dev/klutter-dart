@@ -21,6 +21,7 @@
 import "dart:io";
 
 import "package:klutter/src/common/exception.dart";
+import 'package:klutter/src/common/project.dart';
 import "package:klutter/src/consumer/android.dart";
 import "package:test/test.dart";
 
@@ -352,6 +353,21 @@ void main() {
         e is KlutterException &&
         e.cause.contains("Failed to set 'compileSdkVersion' in the root/android/build.gradle file")
     )));
+
+    root.deleteSync(recursive: true);
+  });
+
+  test("Verify exception is thrown if root/android/app/build.gradle does not exist", () {
+    final root = Directory("${Directory.systemTemp.path}${s}apl10")
+      ..createSync();
+
+    expect(() => findDependencyPath(
+      pathToRoot: root.absolute.path,
+      pluginName: "",
+      pathToSDK: "",
+    ), throwsA(predicate((e) =>
+        e is KlutterException &&
+        e.cause.contains("Missing settings.gradle file in folder"))));
 
     root.deleteSync(recursive: true);
   });
