@@ -38,7 +38,8 @@ Future<void> main(List<String> args) async {
 
   switch (args.length) {
     case 0:
-      return "Missing task argument. Specify which task to run: [create]."
+      return "Missing task argument. "
+              "Specify which task to run: [create]."
           .invalid;
     case 1:
       return run(args[0].toUpperCase());
@@ -86,8 +87,8 @@ extension on String {
     platform.writeGradleProperties(this);
 
     platform.writeRootBuildGradleFile(
-        pathToRoot: this,
-        pluginName: name,
+      pathToRoot: this,
+      pluginName: name,
     );
 
     platform.writeRootSettingsGradleFile(

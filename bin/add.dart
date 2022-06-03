@@ -45,7 +45,6 @@ Future<void> main(List<String> args) async {
 }
 
 void register(String plugin) {
-
   final root = Directory.current.absolutePath;
 
   final location = findDependencyPath(
