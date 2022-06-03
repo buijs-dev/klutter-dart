@@ -61,7 +61,6 @@ extension on String {
       "${this}/src/main/kotlin".normalize)
     ..ifNotExists((_) =>
         throw KlutterException("Missing src/main/kotlin folder in: ${this}"));
-
 }
 
 class _Configuration {

@@ -87,23 +87,28 @@ String findDependencyPath({
   required String pathToRoot,
   required String pluginName,
 }) {
+  // Default path where dependencies retrieved from pub are stored.
+  final cachePath = ""
+      "$pathToSDK/.pub-cache/hosted/pub.dartlang.org/"
+      "$pluginName/klutter/android";
 
+  // Local path pointing to a (relative) folder.
+  final localPath = "dependencies[\\w\\W]+?$pluginName:\n.+?path:(.+)";
+
+  // The root/pubspec.yaml.
   final pubspecYaml = pathToRoot.verifyExists.toPubspecYaml.readAsStringSync();
 
-  final regex = RegExp(
-      "dependencies[\\w\\W]+?$pluginName:\n.+?path:(.+)"
-  );
+  // Try to find a local path in the pubspec.yaml.
+  final pathToPlugin = RegExp(localPath).firstMatch(pubspecYaml);
 
-  final match = regex.firstMatch(pubspecYaml);
-
-  if(match != null){
-    final relativeToRoot = match.group(1)!;
-    final path = Directory(pathToRoot).resolveFolder(relativeToRoot).path;
-    return path;
+  /// Create an absolute path to a locally stored dependency.
+  if (pathToPlugin != null) {
+    final relativeToRoot = pathToPlugin.group(1)!;
+    return Directory(pathToRoot).resolveFolder(relativeToRoot).path;
   }
 
-  return "$pathToSDK/.pub-cache/hosted/pub.dartlang.org/$pluginName/klutter/android".normalize;
-
+  /// Create an absolute path to the the default pub-cache folder.
+  return cachePath.normalize;
 }
 
 extension on String {

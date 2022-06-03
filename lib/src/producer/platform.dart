@@ -43,8 +43,9 @@ void writeRootSettingsGradleFile({
 void writeRootBuildGradleFile({
   required String pathToRoot,
   required String pluginName,
-}) => pathToRoot.verifyExists.createRootBuildGradleFile
-      .writeRootBuildGradleContent(pluginName);
+}) =>
+    pathToRoot.verifyExists.createRootBuildGradleFile
+        .writeRootBuildGradleContent(pluginName);
 
 /// Generate the root/klutter folder.
 ///
@@ -246,18 +247,25 @@ class _KlutterModule {
     );
   }
 
+  /// The root/klutter folder.
   final Directory root;
 
+  /// The name of the plugin as defined in the pubspec.yaml 'name:' tag.
   final String pluginName;
 
+  /// The android package name being.
   final String packageName;
 
+  /// The root/klutter/<plugin-name> folder.
   final Directory platformRoot;
 
+  /// The root/klutter/<plugin-name>/src/androidMain/kotlin/<organisation>/platform/ folder.
   final Directory androidMain;
 
+  /// The root/klutter/<plugin-name>/src/commonMain/kotlin/<organisation>/platform/ folder.
   final Directory commonMain;
 
+  /// The root/klutter/<plugin-name>/src/iosMain/kotlin/<organisation>/platform/ folder.
   final Directory iosMain;
 
   void get createPlatformSourceFolders {
@@ -276,7 +284,8 @@ class _KlutterModule {
       ..writeAsStringSync("""
           configurations.maybeCreate("default")
           |artifacts.add("default", file("$pluginName.aar"))
-      """.format);
+      """
+          .format);
   }
 
   void get createPlatformFolder {

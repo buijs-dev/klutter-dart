@@ -70,8 +70,9 @@ extension FileUtil on FileSystemEntity {
   String get _substitute {
     final normalized = <String>[];
 
-    for (final part in absolute.path.split("/")..removeWhere((e) => e.isEmpty)) {
-      if(part.trim() == "..") {
+    for (final part in absolute.path.split("/")
+      ..removeWhere((e) => e.isEmpty)) {
+      if (part.trim() == "..") {
         normalized.removeLast();
       } else {
         normalized.add(part);

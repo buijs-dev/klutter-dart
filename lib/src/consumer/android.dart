@@ -73,8 +73,8 @@ extension on String {
   /// Create a path to the build.gradle file.
   /// If the file does not exist throw a [KlutterException].
   File get toBuildGradleFile => File("${this}/build.gradle".normalize)
-    ..ifNotExists((_) => throw KlutterException(
-        "Missing build.gradle file in folder: ${this}"));
+    ..ifNotExists((_) =>
+        throw KlutterException("Missing build.gradle file in folder: ${this}"));
 
   /// Create a path to the flutter/tools/gradle/klutter_plugin_loader.gradle.kts file.
   /// If the file does not exist create it.
@@ -94,11 +94,12 @@ extension on String {
       return "$versionType $version";
     });
 
-    if(newContent.contains("$versionType $version")) {
+    if (newContent.contains("$versionType $version")) {
       return newContent;
     }
 
-    throw KlutterException("""
+    throw KlutterException(
+      """
           |Failed to set '$versionType' in the root/android/build.gradle file.
           |Check if the android DSL block in root/android/build.gradle file contains the following lines:
           |
@@ -110,11 +111,10 @@ extension on String {
           |   targetSdkVersion 31
           |   ...
           |}
-          """.format,
+          """
+          .format,
     );
-
   }
-
 }
 
 extension on File {
@@ -258,7 +258,6 @@ extension on File {
     createSync();
     writeAsStringSync(buildGradleText);
   }
-
 }
 
 extension on Map<String, String> {
