@@ -25,7 +25,9 @@ import "package:klutter/src/common/project.dart";
 import "package:klutter/src/common/shared.dart";
 import "package:klutter/src/producer/android.dart" as android;
 import "package:klutter/src/producer/gradle.dart";
+import "package:klutter/src/producer/ios.dart" as ios;
 import "package:klutter/src/producer/platform.dart" as platform;
+import "package:klutter/src/producer/project.dart" as example;
 
 /// Enable the usage of Klutter made plugins in a Flutter project.
 Future<void> main(List<String> args) async {
@@ -56,13 +58,14 @@ void run(String task) {
   }
 }
 
-//TODO setup iOS
 Future<void> create() async {
   try {
     final pathToRoot = Directory.current.absolutePath
       ..setupRoot
       ..setupAndroid
-      ..setupPlatform;
+      ..setupIOS
+      ..setupPlatform
+      ..setupExample;
 
     await pathToRoot.addGradle;
   } on KlutterException catch (e) {
@@ -83,14 +86,8 @@ extension on String {
 
   void get setupRoot {
     final name = findPluginName(this);
-
     platform.writeGradleProperties(this);
-
-    platform.writeRootBuildGradleFile(
-      pathToRoot: this,
-      pluginName: name,
-    );
-
+    platform.writeRootBuildGradleFile(this);
     platform.writeRootSettingsGradleFile(
       pathToRoot: this,
       pluginName: name,
@@ -112,14 +109,27 @@ extension on String {
       pathToAndroid: pathToAndroid,
       packageName: packageName,
     );
+
+    android.writeKlutterGradleFile(pathToAndroid);
   }
 
   void get setupPlatform {
-    platform.createKlutterModule(
+    platform.createPlatformModule(
       pathToRoot: this,
       pluginName: findPluginName(this),
       packageName: findPackageName(this),
     );
+  }
+
+  void get setupExample {
+    example.writeExampleMainDartFile(
+      pathToExample: "${this}/example".normalize,
+      pluginName: findPluginName(this),
+    );
+  }
+
+  void get setupIOS {
+    ios.createIosKlutterFolder("${this}/ios");
   }
 
   Future<void> get addGradle async {

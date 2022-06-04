@@ -171,6 +171,10 @@ void main() {
           |    sdk: flutter
           | 
           |  awesome_plugin:
+          |    # bla
+          |    # bla bla
+          |    # bla
+          |    # bla.. dee.. bla dee.. bla !!
           |    path: ../                             
           |
           |  cupertino_icons: ^1.0.2
@@ -182,8 +186,8 @@ void main() {
       pluginName: "awesome_plugin"
     );
 
-    expect("$path/regtest", root.path);
-
+    expect(path.endsWith("android/klutter"), true);
+    expect(path.contains("pub-cache"), false);
   });
 
   test("Verify absolute path is returned for a local pubspec dependency", () {
@@ -219,11 +223,12 @@ void main() {
         pluginName: "awesome_plugin"
     );
 
-    expect(root.path.replaceAll("regtest", "awesome"), path);
+    expect(path.endsWith("awesome/android/klutter"), true);
+    expect(path.contains("pub-cache"), false);
 
   });
 
-  test("Verify absolute path is returned for a local pubspec dependency", () {
+  test("Verify pub-cache path is returned for a remote pubspec dependency", () {
 
     File("${root.path}/pubspec.yaml".normalize)
       ..createSync()
@@ -255,7 +260,7 @@ void main() {
         pluginName: "awesome_plugin"
     );
 
-    expect("/foo/bar/.pub-cache/hosted/pub.dartlang.org/awesome_plugin/klutter/android", path);
+    expect("/foo/bar/.pub-cache/hosted/pub.dartlang.org/awesome_plugin/android/klutter", path);
 
   });
 

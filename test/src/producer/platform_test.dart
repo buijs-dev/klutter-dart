@@ -75,6 +75,7 @@ void main() {
             // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             // SOFTWARE.
             include(":klutter:some_plugin")
+            project(":klutter:some_plugin").projectDir = File("platform")
             include(":android")""".replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
@@ -116,6 +117,7 @@ void main() {
             // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             // SOFTWARE.
             include(":klutter:some_plugin")
+            project(":klutter:some_plugin").projectDir = File("platform")
             include(":android")""".replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
@@ -123,7 +125,7 @@ void main() {
   });
 
   test("Verify exception is thrown if root does not exist", () {
-    expect(() => writeRootBuildGradleFile(pathToRoot: "fake", pluginName: "some_plugin"), throwsA(predicate((e) =>
+    expect(() => writeRootBuildGradleFile("fake"), throwsA(predicate((e) =>
     e is KlutterException &&
         e.cause.startsWith("Path does not exist:") &&
         e.cause.endsWith("/fake"))));
@@ -137,7 +139,7 @@ void main() {
 
     final buildGradle = File("${root.path}${s}build.gradle.kts");
 
-    writeRootBuildGradleFile(pathToRoot: root.path, pluginName: "some_plugin");
+    writeRootBuildGradleFile(root.path);
 
     expect(buildGradle.readAsStringSync().replaceAll(" ", ""), """
           buildscript {
@@ -150,8 +152,8 @@ void main() {
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath("dev.buijs.klutter:core:2022-alpha-3")
-                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-3")
+                  classpath("dev.buijs.klutter:core:2022-alpha-4")
+                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-4")
               }
           }
           
@@ -179,16 +181,21 @@ void main() {
           }
           
           tasks.register("installPlatform", Exec::class) {
-              commandLine("bash", "./gradlew", "clean", "build", "-p", "klutter/some_plugin")
-              finalizedBy("copyAarFile")
+              commandLine("bash", "./gradlew", "clean", "build", "-p", "platform")
+              finalizedBy("copyAarFile", "copyFramework")
           }
           
           tasks.register("copyAarFile", Copy::class) {
-              from("klutter/some_plugin/build/outputs/aar/some_plugin-release.aar")
-              into("klutter/android")
+              from("platform/build/outputs/aar/platform-release.aar")
+              into("android/klutter")
               rename { fileName ->
                   fileName.replace("-release", "")
               }
+          }
+          
+          tasks.register("copyFramework", Copy::class) {
+              from("platform/build/fat-framework/release")
+              into("ios/Klutter")
           }""".replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
@@ -204,10 +211,7 @@ void main() {
     final buildGradle = File("${root.path}${s}build.gradle.kts")
       ..writeAsStringSync("more nonsense");
 
-    writeRootBuildGradleFile(
-        pathToRoot: root.path,
-        pluginName: "some_plugin",
-    );
+    writeRootBuildGradleFile(root.path);
 
     expect(buildGradle.readAsStringSync().replaceAll(" ", ""), """
           buildscript {
@@ -220,8 +224,8 @@ void main() {
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath("dev.buijs.klutter:core:2022-alpha-3")
-                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-3")
+                  classpath("dev.buijs.klutter:core:2022-alpha-4")
+                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-4")
               }
           }
           
@@ -249,16 +253,21 @@ void main() {
           }
           
           tasks.register("installPlatform", Exec::class) {
-              commandLine("bash", "./gradlew", "clean", "build", "-p", "klutter/some_plugin")
-              finalizedBy("copyAarFile")
+              commandLine("bash", "./gradlew", "clean", "build", "-p", "platform")
+              finalizedBy("copyAarFile", "copyFramework")
           }
           
           tasks.register("copyAarFile", Copy::class) {
-              from("klutter/some_plugin/build/outputs/aar/some_plugin-release.aar")
-              into("klutter/android")
+              from("platform/build/outputs/aar/platform-release.aar")
+              into("android/klutter")
               rename { fileName ->
                   fileName.replace("-release", "")
               }
+          }
+          
+          tasks.register("copyFramework", Copy::class) {
+              from("platform/build/fat-framework/release")
+              into("ios/Klutter")
           }""".replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
@@ -331,46 +340,27 @@ void main() {
 
   });
 
-  test("Verify a  root/klutter module is created", () {
+  test("Verify a root/platform module is created", () {
 
     final root = Directory("${Directory.systemTemp.path}${s}wsg7")
       ..createSync(recursive: true);
 
-    createKlutterModule(
+    createPlatformModule(
         pathToRoot: root.path,
         pluginName: "nigulp",
         packageName: "com.organisation.nigulp",
     );
 
-    final android =  Directory("${root.path}/klutter/android".normalize);
+    final platform =  Directory("${root.path}/platform".normalize);
 
-    expect(true, android.existsSync(),
-      reason: "root/klutter/android should be created",
-    );
-
-    final androidBuildGradle = File("${android.path}/build.gradle.kts".normalize);
-
-    expect(true, androidBuildGradle.existsSync(),
-      reason: "root/klutter/android/build.gradle.kts should be created",
-    );
-
-    expect("""
-      configurations.maybeCreate("default")
-      artifacts.add("default", file("nigulp.aar"))
-      """.replaceAll(" ", ""),
-      androidBuildGradle.readAsStringSync().replaceAll(" ", ""),
-    );
-
-    final platform =  Directory("${root.path}/klutter/nigulp".normalize);
-
-    expect(true, android.existsSync(),
-      reason: "root/klutter/nigulp should be created",
+    expect(true, platform.existsSync(),
+      reason: "root/platform should be created",
     );
 
     final platformBuildGradle = File("${platform.path}/build.gradle.kts".normalize);
 
     expect(true, platformBuildGradle.existsSync(),
-      reason: "root/klutter/nigulp/build.gradle.kts should be created",
+      reason: "root/platform/build.gradle.kts should be created",
     );
 
     expect("""
@@ -410,7 +400,7 @@ void main() {
               val commonMain by getting {
                   dependencies {
                       api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-                      api("dev.buijs.klutter:annotations-kmp:2022-alpha-3")
+                      api("dev.buijs.klutter:annotations-kmp:2022-alpha-4")
                   }
               }
       

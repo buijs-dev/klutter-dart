@@ -21,6 +21,7 @@
 import "dart:io";
 
 import "package:klutter/src/common/exception.dart";
+import "package:klutter/src/common/shared.dart";
 import "package:klutter/src/producer/android.dart";
 import "package:test/test.dart";
 
@@ -97,7 +98,7 @@ void main() {
             dependencies {
                 classpath 'com.android.tools.build:gradle:7.0.4'
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
-                classpath "dev.buijs.klutter:core:2022-alpha-2"
+                classpath "dev.buijs.klutter:core:2022-alpha-4"
             }
         }
         
@@ -136,7 +137,7 @@ void main() {
         dependencies {
             runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
             implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-            implementation "dev.buijs.klutter:core:2022-alpha-2"
+            implementation "dev.buijs.klutter:core:2022-alpha-4"
             implementation project(":klutter:example_plugin")
         }
         
@@ -293,4 +294,38 @@ void main() {
     );
 
   });
+
+  test("Verify exception is thrown if plugin file does not exist", () {
+
+    final root =  Directory("${Directory.systemTemp.path}${s}wag3")
+      ..createSync(recursive: true);
+
+    final android = Directory("${root.path}${s}android")
+      ..createSync(recursive: true);
+
+    writeKlutterGradleFile(android.path);
+
+    final klutter = Directory("${android.path}/klutter".normalize);
+
+    expect(true, klutter.existsSync(),
+      reason: "root/android/klutter should be created",
+    );
+
+    final androidBuildGradle = File("${klutter.path}/build.gradle.kts".normalize);
+
+    expect(true, androidBuildGradle.existsSync(),
+      reason: "root/android/klutter/build.gradle.kts should be created",
+    );
+
+    expect("""
+        configurations.maybeCreate("default")
+        artifacts.add("default", file("platform.aar"))
+        """.replaceAll(" ", ""),
+      androidBuildGradle.readAsStringSync().replaceAll(" ", ""),
+    );
+
+    root.deleteSync(recursive: true);
+
+  });
+
 }

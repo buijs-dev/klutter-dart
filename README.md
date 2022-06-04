@@ -58,17 +58,32 @@ This will add the awesome_plugin to the .klutter-plugins file.
 
 #### Create plugins  
 
- 1. Create a new Flutter plugin project. Either use the wizard in Android Studio or run the following command, substituting 'org.example' with your organisation name and  'plugin_name' with your plugin name:
+ 1. Create a new Flutter plugin project. Either use the wizard in Android Studio or run the following command, 
+    substituting 'org.example' with your organisation name and  'plugin_name' with your plugin name:
   
 ```shell  
 flutter create --org com.example --template=plugin --platforms=android,ios plugin_name
 ```  
   
-  2.  [Install](#Installation) the dev dependency.
-  3. Execute klutter:create in the root project:
+  2. [Install](#Installation) the dev dependency.
+  3. Initialize Klutter in your project:
 
 ```shell  
 flutter pub run klutter:plugin create  
 ```  
 
-//TODO 
+ 4. Build the platform module by running the following in the root folder:
+
+```shell
+ ./gradlew installPlatform
+```
+
+ 5. Generate the plugin Dart code:
+
+```shell
+./gradlew generateAdapters
+```
+
+ 6. To test the plugin run the steps outlined [here](#Use%20plugins) in the root/example project.
+
+When done you can run the example project from the root/example/lib folder and see your first plugin in action.

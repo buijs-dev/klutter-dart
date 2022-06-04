@@ -22,6 +22,25 @@ import "dart:io";
 
 import "exception.dart";
 
+/// The plugin ClassName which is equal to the library name
+/// converted to camelcase + 'Plugin' postfix.
+///
+/// Example:
+/// Given [pluginName] 'super_awesome'
+/// will return SuperAwesomePlugin.
+///
+/// Example:
+/// Given [pluginName] 'super_awesome_plugin'
+/// will return SuperAwesomePlugin.
+String toPluginClassName(String pluginName) {
+  final name = pluginName
+      .split("_")
+      .map((e) => "${e[0].toUpperCase()}${e.substring(1, e.length)}")
+      .join();
+
+  return name.endsWith("Plugin") ? name : "${name}Plugin";
+}
+
 /// File management utilities.
 extension FileUtil on FileSystemEntity {
   /// Execute a fallback function if FileSystemEntity does not exist.

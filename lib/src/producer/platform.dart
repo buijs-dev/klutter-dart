@@ -33,19 +33,18 @@ import "../common/shared.dart";
 void writeRootSettingsGradleFile({
   required String pathToRoot,
   required String pluginName,
-}) =>
-    pathToRoot.verifyExists.createRootSettingsGradleFile
-        .writeSettingsGradleContent(pluginName);
+}) => pathToRoot
+    .verifyExists
+    .createRootSettingsGradleFile
+    .writeSettingsGradleContent(pluginName);
 
 /// Generate the build.gradle.kts file in the root folder.
 ///
 /// The build file applies the Klutter Gradle plugin.
-void writeRootBuildGradleFile({
-  required String pathToRoot,
-  required String pluginName,
-}) =>
-    pathToRoot.verifyExists.createRootBuildGradleFile
-        .writeRootBuildGradleContent(pluginName);
+void writeRootBuildGradleFile(String pathToRoot) => pathToRoot
+    .verifyExists
+    .createRootBuildGradleFile
+    .writeRootBuildGradleContent;
 
 /// Generate the root/klutter folder.
 ///
@@ -56,7 +55,7 @@ void writeRootBuildGradleFile({
 /// The android folder contains the .aar artifact.
 ///
 /// The <plugin-name> folder contains the Kotlin Multiplatform module.
-void createKlutterModule({
+void createPlatformModule({
   required String pathToRoot,
   required String pluginName,
   required String packageName,
@@ -66,9 +65,6 @@ void createKlutterModule({
       pluginName: pluginName,
       packageName: packageName,
     )
-      ..createAndroidFolder
-      ..createAndroidGradleFile
-      ..createPlatformFolder
       ..createPlatformGradleFile
       ..createPlatformSourceFolders
       ..createAndroidManifest
@@ -124,12 +120,13 @@ extension on File {
             |// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             |// SOFTWARE.
             |include(":klutter:$pluginName")
+            |project(":klutter:$pluginName").projectDir = File("platform")
             |include(":android")'''
         .format);
   }
 
   /// Write the content of the the settings.gradle.kts of a Klutter plugin.
-  void writeRootBuildGradleContent(String pluginName) {
+  void get writeRootBuildGradleContent {
     writeAsStringSync('''
           buildscript {
           |    repositories {
@@ -141,8 +138,8 @@ extension on File {
           |    dependencies {
           |        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
           |        classpath("com.android.tools.build:gradle:7.0.4")
-          |        classpath("dev.buijs.klutter:core:2022-alpha-3")
-          |        classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-3")
+          |        classpath("dev.buijs.klutter:core:2022-alpha-4")
+          |        classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-4")
           |    }
           |}
           |
@@ -170,18 +167,22 @@ extension on File {
           |}
           |
           |tasks.register("installPlatform", Exec::class) {
-          |    commandLine("bash", "./gradlew", "clean", "build", "-p", "klutter/$pluginName")
-          |    finalizedBy("copyAarFile")
+          |    commandLine("bash", "./gradlew", "clean", "build", "-p", "platform")
+          |    finalizedBy("copyAarFile", "copyFramework")
           |}
           |
           |tasks.register("copyAarFile", Copy::class) {
-          |    from("klutter/$pluginName/build/outputs/aar/$pluginName-release.aar")
-          |    into("klutter/android")
+          |    from("platform/build/outputs/aar/platform-release.aar")
+          |    into("android/klutter")
           |    rename { fileName ->
           |        fileName.replace("-release", "")
           |    }
-          |}'''
-        .format);
+          |}
+          |
+          |tasks.register("copyFramework", Copy::class) {
+          |    from("platform/build/fat-framework/release")
+          |    into("ios/Klutter")
+          |}'''.format);
   }
 
   /// Write the content of gradle.properties.
@@ -209,7 +210,6 @@ class _KlutterModule {
     required this.root,
     required this.pluginName,
     required this.packageName,
-    required this.platformRoot,
     required this.androidMain,
     required this.commonMain,
     required this.iosMain,
@@ -220,34 +220,25 @@ class _KlutterModule {
     required String pluginName,
     required String packageName,
   }) {
-    final root = Directory("$pathToRoot/klutter".normalize)
+    final root = Directory("$pathToRoot/platform".normalize)
       ..ifNotExists((folder) => Directory(folder.absolutePath).createSync());
 
-    final platformRoot =
-        Directory("${root.absolute.path}/$pluginName".normalize);
-
     final kotlinSource = "kotlin/${packageName.replaceAll(".", "/")}/platform";
-
-    final androidMain =
-        platformRoot.resolveFolder("src/androidMain/$kotlinSource");
-
-    final commonMain =
-        platformRoot.resolveFolder("src/commonMain/$kotlinSource");
-
-    final iosMain = platformRoot.resolveFolder("src/iosMain/$kotlinSource");
+    final androidMain = root.resolveFolder("src/androidMain/$kotlinSource");
+    final commonMain = root.resolveFolder("src/commonMain/$kotlinSource");
+    final iosMain = root.resolveFolder("src/iosMain/$kotlinSource");
 
     return _KlutterModule(
+      root: root,
       pluginName: pluginName,
       packageName: packageName,
-      root: root,
       androidMain: androidMain,
       commonMain: commonMain,
       iosMain: iosMain,
-      platformRoot: platformRoot,
     );
   }
 
-  /// The root/klutter folder.
+  /// The root/platform folder.
   final Directory root;
 
   /// The name of the plugin as defined in the pubspec.yaml 'name:' tag.
@@ -256,16 +247,13 @@ class _KlutterModule {
   /// The android package name being.
   final String packageName;
 
-  /// The root/klutter/<plugin-name> folder.
-  final Directory platformRoot;
-
-  /// The root/klutter/<plugin-name>/src/androidMain/kotlin/<organisation>/platform/ folder.
+  /// The root/platform/src/androidMain/kotlin/<organisation>/platform/ folder.
   final Directory androidMain;
 
-  /// The root/klutter/<plugin-name>/src/commonMain/kotlin/<organisation>/platform/ folder.
+  /// The root/platform/src/commonMain/kotlin/<organisation>/platform/ folder.
   final Directory commonMain;
 
-  /// The root/klutter/<plugin-name>/src/iosMain/kotlin/<organisation>/platform/ folder.
+  /// The root/platform/src/iosMain/kotlin/<organisation>/platform/ folder.
   final Directory iosMain;
 
   void get createPlatformSourceFolders {
@@ -274,26 +262,8 @@ class _KlutterModule {
     iosMain.maybeCreate;
   }
 
-  void get createAndroidFolder {
-    Directory("${root.absolute.path}/android".normalize).maybeCreate;
-  }
-
-  void get createAndroidGradleFile {
-    File("${root.absolute.path}/android/build.gradle.kts".normalize)
-      ..maybeCreate
-      ..writeAsStringSync("""
-          configurations.maybeCreate("default")
-          |artifacts.add("default", file("$pluginName.aar"))
-      """
-          .format);
-  }
-
-  void get createPlatformFolder {
-    Directory("${root.absolute.path}/$pluginName".normalize).maybeCreate;
-  }
-
   void get createPlatformGradleFile {
-    File("${root.absolute.path}/$pluginName/build.gradle.kts".normalize)
+    File("${root.absolute.path}/build.gradle.kts".normalize)
       ..maybeCreate
       ..writeAsStringSync("""
       plugins {
@@ -332,7 +302,7 @@ class _KlutterModule {
       |        val commonMain by getting {
       |            dependencies {
       |                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-      |                api("dev.buijs.klutter:annotations-kmp:2022-alpha-3")
+      |                api("dev.buijs.klutter:annotations-kmp:2022-alpha-4")
       |            }
       |        }
       |
@@ -390,15 +360,13 @@ class _KlutterModule {
   }
 
   void get createAndroidManifest {
-    platformRoot
-        .resolveFile("src/androidMain/AndroidManifest.xml")
-        .normalizeToFile
+    root.resolveFile("src/androidMain/AndroidManifest.xml").normalizeToFile
       ..maybeCreate
       ..writeAsStringSync("""
         <?xml version="1.0" encoding="utf-8"?>
         |<manifest package="$packageName.platform" />
-        """
-          .format);
+        """.format,
+      );
   }
 
   void get createAndroidPlatformClass {

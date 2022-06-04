@@ -32,7 +32,7 @@ void writeBuildGradleFile({
     pathToAndroid.verifyExists.toBuildGradleFile.configure
       ..packageName = packageName
       ..version = pluginVersion
-      ..klutterVersion = "2022-alpha-2"
+      ..klutterVersion = "2022-alpha-4"
       ..writeBuildGradleContent;
 
 /// Overwrite the method channel Kotlin Class in src/main/kotlin.
@@ -43,6 +43,12 @@ void writeAndroidPlugin({
     pathToAndroid.verifyExists.toKotlinSourcePackage.configure
       ..packageName = packageName
       ..writePluginContent;
+
+/// Create the android/klutter folder if it does not exist.
+void writeKlutterGradleFile(String pathToAndroid) => pathToAndroid
+    .verifyExists
+    .toKlutterFolder
+  ..writeAndroidGradleFile;
 
 extension on FileSystemEntity {
   _Configuration get configure => _Configuration(this);
@@ -61,6 +67,24 @@ extension on String {
       "${this}/src/main/kotlin".normalize)
     ..ifNotExists((_) =>
         throw KlutterException("Missing src/main/kotlin folder in: ${this}"));
+
+  /// Create a path to the android/klutter folder.
+  /// If the file does not exist then create it.
+  Directory get toKlutterFolder =>
+      Directory("${this}/klutter".normalize)..maybeCreate;
+
+}
+
+extension on Directory {
+
+  void get writeAndroidGradleFile {
+    File("${absolute.path}/build.gradle.kts".normalize)
+      ..maybeCreate
+      ..writeAsStringSync("""
+          configurations.maybeCreate("default")
+          |artifacts.add("default", file("platform.aar"))
+      """.format);
+  }
 }
 
 class _Configuration {
@@ -88,14 +112,7 @@ class _Configuration {
 
     /// The Kotlin plugin ClassName which is equal to the library name
     /// converted to camelcase + 'Plugin' postfix.
-    ///
-    /// Example:
-    /// Given [channelName] 'super_awesome'
-    /// will return [className] SuperAwesomePlugin.
-    final className = channelName
-        .split("_")
-        .map((e) => "${e[0].toUpperCase()}${e.substring(1, e.length)}")
-        .join();
+    final className = toPluginClassName(channelName);
 
     File("${pluginPath.absolutePath}/$className.kt").normalizeToFile
       ..ifNotExists(
