@@ -41,10 +41,13 @@ void writeRootSettingsGradleFile({
 /// Generate the build.gradle.kts file in the root folder.
 ///
 /// The build file applies the Klutter Gradle plugin.
-void writeRootBuildGradleFile(String pathToRoot) => pathToRoot
+void writeRootBuildGradleFile({
+  required String pathToRoot,
+  required String pluginName,
+}) => pathToRoot
     .verifyExists
     .createRootBuildGradleFile
-    .writeRootBuildGradleContent;
+    .writeRootBuildGradleContent(pluginName);
 
 /// Generate the root/klutter folder.
 ///
@@ -126,7 +129,7 @@ extension on File {
   }
 
   /// Write the content of the the settings.gradle.kts of a Klutter plugin.
-  void get writeRootBuildGradleContent {
+  void writeRootBuildGradleContent(String pluginName) {
     writeAsStringSync('''
           buildscript {
           |    repositories {
@@ -172,10 +175,10 @@ extension on File {
           |}
           |
           |tasks.register("copyAarFile", Copy::class) {
-          |    from("platform/build/outputs/aar/platform-release.aar")
+          |    from("platform/build/outputs/aar/$pluginName-release.aar")
           |    into("android/klutter")
           |    rename { fileName ->
-          |        fileName.replace("-release", "")
+          |        fileName.replace("$pluginName-release", "platform")
           |    }
           |}
           |

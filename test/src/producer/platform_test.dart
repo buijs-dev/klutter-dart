@@ -125,7 +125,10 @@ void main() {
   });
 
   test("Verify exception is thrown if root does not exist", () {
-    expect(() => writeRootBuildGradleFile("fake"), throwsA(predicate((e) =>
+    expect(() => writeRootBuildGradleFile(
+      pathToRoot: "fake",
+      pluginName: "some_plugin",
+    ), throwsA(predicate((e) =>
     e is KlutterException &&
         e.cause.startsWith("Path does not exist:") &&
         e.cause.endsWith("/fake"))));
@@ -139,7 +142,10 @@ void main() {
 
     final buildGradle = File("${root.path}${s}build.gradle.kts");
 
-    writeRootBuildGradleFile(root.path);
+    writeRootBuildGradleFile(
+      pathToRoot: root.path,
+      pluginName: "some_plugin",
+    );
 
     expect(buildGradle.readAsStringSync().replaceAll(" ", ""), """
           buildscript {
@@ -186,10 +192,10 @@ void main() {
           }
           
           tasks.register("copyAarFile", Copy::class) {
-              from("platform/build/outputs/aar/platform-release.aar")
+              from("platform/build/outputs/aar/some_plugin-release.aar")
               into("android/klutter")
               rename { fileName ->
-                  fileName.replace("-release", "")
+                  fileName.replace("some_plugin-release", "platform")
               }
           }
           
@@ -211,7 +217,10 @@ void main() {
     final buildGradle = File("${root.path}${s}build.gradle.kts")
       ..writeAsStringSync("more nonsense");
 
-    writeRootBuildGradleFile(root.path);
+    writeRootBuildGradleFile(
+      pathToRoot: root.path,
+      pluginName: "some_plugin",
+    );
 
     expect(buildGradle.readAsStringSync().replaceAll(" ", ""), """
           buildscript {
@@ -258,10 +267,10 @@ void main() {
           }
           
           tasks.register("copyAarFile", Copy::class) {
-              from("platform/build/outputs/aar/platform-release.aar")
+              from("platform/build/outputs/aar/some_plugin-release.aar")
               into("android/klutter")
               rename { fileName ->
-                  fileName.replace("-release", "")
+                  fileName.replace("some_plugin-release", "platform")
               }
           }
           

@@ -87,7 +87,12 @@ extension on String {
   void get setupRoot {
     final name = findPluginName(this);
     platform.writeGradleProperties(this);
-    platform.writeRootBuildGradleFile(this);
+
+    platform.writeRootBuildGradleFile(
+      pathToRoot: this,
+      pluginName: name,
+    );
+
     platform.writeRootSettingsGradleFile(
       pathToRoot: this,
       pluginName: name,
