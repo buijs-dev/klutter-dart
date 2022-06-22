@@ -20,6 +20,7 @@
 
 import "dart:io";
 
+import 'package:klutter/src/common/config.dart';
 import "package:klutter/src/common/exception.dart";
 import "package:klutter/src/common/shared.dart";
 import "package:klutter/src/producer/platform.dart";
@@ -158,8 +159,8 @@ void main() {
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath("dev.buijs.klutter:core:2022-alpha-4")
-                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-4")
+                  classpath("dev.buijs.klutter:core:$klutterGradleVersion")
+                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:$klutterGradleVersion")
               }
           }
           
@@ -186,12 +187,12 @@ void main() {
               delete(rootProject.buildDir)
           }
           
-          tasks.register("installPlatform", Exec::class) {
+          tasks.register("klutterInstallPlatform", Exec::class) {
               commandLine("bash", "./gradlew", "clean", "build", "-p", "platform")
-              finalizedBy("copyAarFile", "copyFramework")
+              finalizedBy("klutterCopyAarFile", "klutterCopyFramework")
           }
           
-          tasks.register("copyAarFile", Copy::class) {
+          tasks.register("klutterCopyAarFile", Copy::class) {
               from("platform/build/outputs/aar/some_plugin-release.aar")
               into("android/klutter")
               rename { fileName ->
@@ -199,7 +200,7 @@ void main() {
               }
           }
           
-          tasks.register("copyFramework", Copy::class) {
+          tasks.register("klutterCopyFramework", Copy::class) {
               from("platform/build/fat-framework/release")
               into("ios/Klutter")
           }""".replaceAll(" ", ""));
@@ -233,8 +234,8 @@ void main() {
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath("dev.buijs.klutter:core:2022-alpha-4")
-                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-4")
+                  classpath("dev.buijs.klutter:core:$klutterGradleVersion")
+                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:$klutterGradleVersion")
               }
           }
           
@@ -261,12 +262,12 @@ void main() {
               delete(rootProject.buildDir)
           }
           
-          tasks.register("installPlatform", Exec::class) {
+          tasks.register("klutterInstallPlatform", Exec::class) {
               commandLine("bash", "./gradlew", "clean", "build", "-p", "platform")
-              finalizedBy("copyAarFile", "copyFramework")
+              finalizedBy("klutterCopyAarFile", "klutterCopyFramework")
           }
           
-          tasks.register("copyAarFile", Copy::class) {
+          tasks.register("klutterCopyAarFile", Copy::class) {
               from("platform/build/outputs/aar/some_plugin-release.aar")
               into("android/klutter")
               rename { fileName ->
@@ -274,7 +275,7 @@ void main() {
               }
           }
           
-          tasks.register("copyFramework", Copy::class) {
+          tasks.register("klutterCopyFramework", Copy::class) {
               from("platform/build/fat-framework/release")
               into("ios/Klutter")
           }""".replaceAll(" ", ""));
@@ -400,7 +401,7 @@ void main() {
               homepage = "Link to the Shared Module homepage"
               ios.deploymentTarget = "14.1"
               framework {
-                  baseName = "TODO"
+                  baseName = "Platform"
               }
           }
           
@@ -409,7 +410,7 @@ void main() {
               val commonMain by getting {
                   dependencies {
                       api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-                      api("dev.buijs.klutter:annotations-kmp:2022-alpha-4")
+                      api("dev.buijs.klutter:annotations-kmp:$klutterGradleVersion")
                   }
               }
       

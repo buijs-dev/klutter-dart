@@ -20,6 +20,7 @@
 
 import "dart:io";
 
+import "../common/config.dart";
 import "../common/exception.dart";
 import "../common/shared.dart";
 
@@ -32,7 +33,6 @@ void writeBuildGradleFile({
     pathToAndroid.verifyExists.toBuildGradleFile.configure
       ..packageName = packageName
       ..version = pluginVersion
-      ..klutterVersion = "2022-alpha-4"
       ..writeBuildGradleContent;
 
 /// Overwrite the method channel Kotlin Class in src/main/kotlin.
@@ -45,10 +45,8 @@ void writeAndroidPlugin({
       ..writePluginContent;
 
 /// Create the android/klutter folder if it does not exist.
-void writeKlutterGradleFile(String pathToAndroid) => pathToAndroid
-    .verifyExists
-    .toKlutterFolder
-  ..writeAndroidGradleFile;
+void writeKlutterGradleFile(String pathToAndroid) =>
+    pathToAndroid.verifyExists.toKlutterFolder..writeAndroidGradleFile;
 
 extension on FileSystemEntity {
   _Configuration get configure => _Configuration(this);
@@ -72,18 +70,17 @@ extension on String {
   /// If the file does not exist then create it.
   Directory get toKlutterFolder =>
       Directory("${this}/klutter".normalize)..maybeCreate;
-
 }
 
 extension on Directory {
-
   void get writeAndroidGradleFile {
     File("${absolute.path}/build.gradle.kts".normalize)
       ..maybeCreate
       ..writeAsStringSync("""
           configurations.maybeCreate("default")
           |artifacts.add("default", file("platform.aar"))
-      """.format);
+      """
+          .format);
   }
 }
 
@@ -93,7 +90,6 @@ class _Configuration {
   final FileSystemEntity file;
   late final String packageName;
   late final String version;
-  late final String klutterVersion;
 
   /// Write the boilerplate code in
   /// root/android/src/main/kotlin/<package>/<PackageNamePlugin>.
@@ -187,7 +183,7 @@ class _Configuration {
         |    dependencies {
         |        classpath 'com.android.tools.build:gradle:7.0.4'
         |        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
-        |        classpath "dev.buijs.klutter:core:$klutterVersion"
+        |        classpath "dev.buijs.klutter:core:$klutterGradleVersion"
         |    }
         |}
         |
@@ -203,7 +199,7 @@ class _Configuration {
         |apply plugin: 'kotlin-android'
         |
         |android {
-        |    compileSdkVersion 31
+        |    compileSdkVersion $androidCompileSdk
         |
         |    compileOptions {
         |        sourceCompatibility JavaVersion.VERSION_1_8
@@ -219,14 +215,14 @@ class _Configuration {
         |    }
         |
         |    defaultConfig {
-        |        minSdkVersion 21
+        |        minSdkVersion $androidMinSdk
         |    }
         |}
         |
         |dependencies {
         |    runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
         |    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-        |    implementation "dev.buijs.klutter:core:$klutterVersion"
+        |    implementation "dev.buijs.klutter:core:$klutterGradleVersion"
         |    implementation project(":klutter:${packageName.substring(1 + packageName.lastIndexOf("."))}")
         |}
         |

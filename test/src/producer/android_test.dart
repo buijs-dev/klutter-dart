@@ -20,6 +20,7 @@
 
 import "dart:io";
 
+import "package:klutter/src/common/config.dart";
 import "package:klutter/src/common/exception.dart";
 import "package:klutter/src/common/shared.dart";
 import "package:klutter/src/producer/android.dart";
@@ -98,7 +99,7 @@ void main() {
             dependencies {
                 classpath 'com.android.tools.build:gradle:7.0.4'
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
-                classpath "dev.buijs.klutter:core:2022-alpha-4"
+                classpath "dev.buijs.klutter:core:$klutterGradleVersion"
             }
         }
         
@@ -137,7 +138,7 @@ void main() {
         dependencies {
             runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
             implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-            implementation "dev.buijs.klutter:core:2022-alpha-4"
+            implementation "dev.buijs.klutter:core:$klutterGradleVersion"
             implementation project(":klutter:example_plugin")
         }
         

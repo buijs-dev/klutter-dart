@@ -135,6 +135,10 @@ extension on String {
 
   void get setupIOS {
     ios.createIosKlutterFolder("${this}/ios");
+    ios.addFrameworkToPodspec(
+      pathToIos: "${this}/ios",
+      pluginName: findPluginName(this),
+    );
   }
 
   Future<void> get addGradle async {

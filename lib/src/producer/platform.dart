@@ -20,6 +20,7 @@
 
 import "dart:io";
 
+import "../common/config.dart";
 import "../common/shared.dart";
 
 /// Generate the settings.gradle.kts file in the root folder.
@@ -33,10 +34,9 @@ import "../common/shared.dart";
 void writeRootSettingsGradleFile({
   required String pathToRoot,
   required String pluginName,
-}) => pathToRoot
-    .verifyExists
-    .createRootSettingsGradleFile
-    .writeSettingsGradleContent(pluginName);
+}) =>
+    pathToRoot.verifyExists.createRootSettingsGradleFile
+        .writeSettingsGradleContent(pluginName);
 
 /// Generate the build.gradle.kts file in the root folder.
 ///
@@ -44,10 +44,9 @@ void writeRootSettingsGradleFile({
 void writeRootBuildGradleFile({
   required String pathToRoot,
   required String pluginName,
-}) => pathToRoot
-    .verifyExists
-    .createRootBuildGradleFile
-    .writeRootBuildGradleContent(pluginName);
+}) =>
+    pathToRoot.verifyExists.createRootBuildGradleFile
+        .writeRootBuildGradleContent(pluginName);
 
 /// Generate the root/klutter folder.
 ///
@@ -141,8 +140,8 @@ extension on File {
           |    dependencies {
           |        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
           |        classpath("com.android.tools.build:gradle:7.0.4")
-          |        classpath("dev.buijs.klutter:core:2022-alpha-4")
-          |        classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:2022-alpha-4")
+          |        classpath("dev.buijs.klutter:core:$klutterGradleVersion")
+          |        classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:$klutterGradleVersion")
           |    }
           |}
           |
@@ -169,12 +168,12 @@ extension on File {
           |    delete(rootProject.buildDir)
           |}
           |
-          |tasks.register("installPlatform", Exec::class) {
+          |tasks.register("klutterInstallPlatform", Exec::class) {
           |    commandLine("bash", "./gradlew", "clean", "build", "-p", "platform")
-          |    finalizedBy("copyAarFile", "copyFramework")
+          |    finalizedBy("klutterCopyAarFile", "klutterCopyFramework")
           |}
           |
-          |tasks.register("copyAarFile", Copy::class) {
+          |tasks.register("klutterCopyAarFile", Copy::class) {
           |    from("platform/build/outputs/aar/$pluginName-release.aar")
           |    into("android/klutter")
           |    rename { fileName ->
@@ -182,10 +181,11 @@ extension on File {
           |    }
           |}
           |
-          |tasks.register("copyFramework", Copy::class) {
+          |tasks.register("klutterCopyFramework", Copy::class) {
           |    from("platform/build/fat-framework/release")
           |    into("ios/Klutter")
-          |}'''.format);
+          |}'''
+        .format);
   }
 
   /// Write the content of gradle.properties.
@@ -296,7 +296,7 @@ class _KlutterModule {
       |        homepage = "Link to the Shared Module homepage"
       |        ios.deploymentTarget = "14.1"
       |        framework {
-      |            baseName = "TODO"
+      |            baseName = "Platform"
       |        }
       |    }
       |    
@@ -305,7 +305,7 @@ class _KlutterModule {
       |        val commonMain by getting {
       |            dependencies {
       |                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-      |                api("dev.buijs.klutter:annotations-kmp:2022-alpha-4")
+      |                api("dev.buijs.klutter:annotations-kmp:$klutterGradleVersion")
       |            }
       |        }
       |
@@ -352,11 +352,11 @@ class _KlutterModule {
       |}
       |
       |android {
-      |    compileSdk = 31
+      |    compileSdk = $androidCompileSdk
       |    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
       |    defaultConfig {
-      |        minSdk = 21
-      |        targetSdk = 31
+      |        minSdk = $androidMinSdk
+      |        targetSdk = $androidTargetSdk
       |    }
       |}"""
           .format);
@@ -365,10 +365,12 @@ class _KlutterModule {
   void get createAndroidManifest {
     root.resolveFile("src/androidMain/AndroidManifest.xml").normalizeToFile
       ..maybeCreate
-      ..writeAsStringSync("""
+      ..writeAsStringSync(
+        """
         <?xml version="1.0" encoding="utf-8"?>
         |<manifest package="$packageName.platform" />
-        """.format,
+        """
+            .format,
       );
   }
 

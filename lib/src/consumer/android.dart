@@ -20,6 +20,7 @@
 
 import "dart:io";
 
+import "../common/config.dart";
 import "../common/exception.dart";
 import "../common/shared.dart";
 
@@ -47,9 +48,9 @@ void writePluginLoaderGradleFile(String pathToFlutterSDK) => pathToFlutterSDK
 ///
 /// Sets the following properties in the build.gradle android DSL block:
 ///
-/// - compileSdkVersion to 31
-/// - minSdkVersion to 21
-/// - targetSdkVersion to 31
+/// - compileSdkVersion to [androidCompileSdk]
+/// - minSdkVersion to [androidMinSdk]
+/// - targetSdkVersion to [androidTargetSdk]
 void setAndroidSdkConstraints(String pathToAndroid) =>
     pathToAndroid.verifyExists.toBuildGradleFile.setAndroidSdkVersions;
 
@@ -103,12 +104,12 @@ extension on String {
           |Failed to set '$versionType' in the root/android/build.gradle file.
           |Check if the android DSL block in root/android/build.gradle file contains the following lines:
           |
-          |compileSdkVersion 31
+          |compileSdkVersion $androidCompileSdk
           |
           |defaultConfig {
           |   ...
-          |   minSdkVersion 21
-          |   targetSdkVersion 31
+          |   minSdkVersion $androidMinSdk
+          |   targetSdkVersion $androidTargetSdk
           |   ...
           |}
           """
@@ -245,14 +246,14 @@ extension on File {
   ///
   /// Sets the following properties in the build.gradle android DSL block:
   ///
-  /// - compileSdkVersion to 31
-  /// - minSdkVersion to 21
-  /// - targetSdkVersion to 31
+  /// - compileSdkVersion to [androidCompileSdk]
+  /// - minSdkVersion to [androidMinSdk]
+  /// - targetSdkVersion to [androidTargetSdk]
   void get setAndroidSdkVersions {
     final buildGradleText = readAsStringSync()
-        .setAndroidSdkVersion("compileSdkVersion", 31)
-        .setAndroidSdkVersion("minSdkVersion", 21)
-        .setAndroidSdkVersion("targetSdkVersion", 31);
+        .setAndroidSdkVersion("compileSdkVersion", androidCompileSdk)
+        .setAndroidSdkVersion("minSdkVersion", androidMinSdk)
+        .setAndroidSdkVersion("targetSdkVersion", androidTargetSdk);
 
     deleteSync();
     createSync();

@@ -81,7 +81,7 @@ void main() {
               Future<void> initPlatformState() async {
                 // Klutter generated Adapters don't throw exceptions but always return a
                 // response object. No need for try-catch here. Do or do not. There is no try.
-                await ImpressiveDependencyPlugin.greeting.then((response) {
+                await ImpressiveDependency.greeting.then((response) {
                   String platformVersion = response.isSuccess()
                       ? response.object
                       : response.exception.toString();

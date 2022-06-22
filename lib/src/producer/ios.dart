@@ -24,10 +24,9 @@ import "../common/exception.dart";
 import "../common/shared.dart";
 
 /// Overwrite the build.gradle file in the root/android folder.
-void createIosKlutterFolder(String pathToIos) => pathToIos
-    .verifyExists
-    ..createKlutterFolder
-    ..createKlutterReadmeFile;
+void createIosKlutterFolder(String pathToIos) => pathToIos.verifyExists
+  ..createKlutterFolder
+  ..createKlutterReadmeFile;
 
 /// Edit the root/ios/<plugin-name>.podspec file to depend on the
 /// fat-framework build by the platform module.
@@ -36,10 +35,8 @@ void createIosKlutterFolder(String pathToIos) => pathToIos
 void addFrameworkToPodspec({
   required String pathToIos,
   required String pluginName,
-}) => pathToIos
-    .verifyExists
-    .toPodspec(pluginName)
-    .addFramework;
+}) =>
+    pathToIos.verifyExists.toPodspec(pluginName).addFramework;
 
 extension on String {
   void get createKlutterFolder {
@@ -50,14 +47,15 @@ extension on String {
     File("${this}/Klutter/klutter.md").normalizeToFile.maybeCreate;
   }
 
-  File toPodspec(String pluginName) =>
-      File("${this}$pluginName.podspec").normalizeToFile
-        ..ifNotExists((file) => throw KlutterException("Missing podspec file: ${file.path}"));
+  File toPodspec(String pluginName) => File("${this}/$pluginName.podspec")
+      .normalizeToFile
+    ..ifNotExists(
+        (file) => throw KlutterException("Missing podspec file: ${file.path}"));
 }
 
 extension on File {
   void get addFramework {
-    final regex = RegExp("Pod::Spec.new.+?do.+?|([^|]+?)|");
+    final regex = RegExp("Pod::Spec.new.+?do.+?.([^|]+?).");
 
     /// Check the prefix used in the podspec or default to 's'.
     ///
@@ -74,20 +72,38 @@ extension on File {
     // OUTPUT
     final newLines = <String>[];
 
-    for(final line in lines){
+    // Used to check if adding framework is done.
+    var hasAdded = false;
+
+    for (final line in lines) {
       newLines.add(line);
 
       // Check if line contains Flutter dependency (which should always be present).
       // If so then add the vendored framework dependency.
       // This is done so the line is added at a fixed point in the podspec.
-      if(line.replaceAll(" ", "").contains("$prefix.dependency'Flutter'")) {
-        newLines.add("""$prefix.ios.vendored_frameworks = "Klutter/Platform.framework" """);
-      }
+      if (line.replaceAll(" ", "").contains("$prefix.dependency'Flutter'")) {
+        newLines.add(
+          """  $prefix.ios.vendored_frameworks = "Klutter/Platform.framework" """,
+        );
 
+        hasAdded = true;
+      }
+    }
+
+    if (!hasAdded) {
+      throw KlutterException(
+        """
+      |Failed to add Platform.framework to ios folder.
+      |
+      |Unable to find the following line in file $path:
+      |- '$prefix.dependency 'Flutter''
+      |
+      |"""
+            .format,
+      );
     }
 
     // Write the editted line to the podspec file.
     writeAsStringSync(newLines.join("\n"));
-
   }
 }

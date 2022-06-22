@@ -32,14 +32,10 @@ import "exception.dart";
 /// Example:
 /// Given [pluginName] 'super_awesome_plugin'
 /// will return SuperAwesomePlugin.
-String toPluginClassName(String pluginName) {
-  final name = pluginName
-      .split("_")
-      .map((e) => "${e[0].toUpperCase()}${e.substring(1, e.length)}")
-      .join();
-
-  return name.endsWith("Plugin") ? name : "${name}Plugin";
-}
+String toPluginClassName(String pluginName) => pluginName
+    .split("_")
+    .map((e) => "${e[0].toUpperCase()}${e.substring(1, e.length)}")
+    .join();
 
 /// File management utilities.
 extension FileUtil on FileSystemEntity {
@@ -144,10 +140,13 @@ extension StringUtil on String {
   ///
   /// True story'
   String get format => replaceAllMapped(
-      // Find all '|' char including preceding whitespaces.
-      RegExp(r"(\s+?\|)"),
-      // Replace them with a single linebreak.
-      (_) => "\n").replaceAll("|", "").trimLeft();
+          // Find all '|' char including preceding whitespaces.
+          RegExp(r"(\s+?\|)"),
+          // Replace them with a single linebreak.
+          (_) => "\n")
+      .replaceAll(RegExp(r"(!?,)\|"), "")
+      .trimLeft()
+      .replaceAll(",|", "|");
 
   /// Return current String value as being a path to a File or Directory
   /// with forward slashes ('/') replaced for the platform specific separator.
