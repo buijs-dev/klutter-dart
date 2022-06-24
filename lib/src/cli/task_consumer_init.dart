@@ -35,28 +35,27 @@ class ConsumerInit extends Task {
         );
 
   @override
-  void Function() toBeExecuted({
+  void toBeExecuted({
     required String pathToRoot,
     required String? option,
-  }) =>
-      () {
-        final notNullOption = option?.trim().toLowerCase() ?? "";
+  }) {
+    final notNullOption = option?.trim().toLowerCase() ?? "";
 
-        if (notNullOption == "") {
-          _executeInitAndroid(pathToRoot);
-          _executeInitIOS(pathToRoot);
-        }
-
-        if (notNullOption == "android") {
-          _executeInitAndroid(pathToRoot);
-        }
-
-        if (notNullOption == "ios") {
-          _executeInitIOS(pathToRoot);
-        }
-
+    switch (notNullOption) {
+      case "android":
+        _executeInitAndroid(pathToRoot);
+        break;
+      case "ios":
+        _executeInitIOS(pathToRoot);
+        break;
+      case "":
+        _executeInitAndroid(pathToRoot);
+        _executeInitIOS(pathToRoot);
+        break;
+      default:
         throw KlutterException("Invalid option value: '$option'");
-      };
+    }
+  }
 
   @override
   List<String> optionValues() => ["", "android", "ios"];

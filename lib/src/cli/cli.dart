@@ -48,8 +48,6 @@
 /// - Option: <I>android</I>
 library cli;
 
-import "dart:io";
-
 import "../common/shared.dart";
 import "task_name.dart";
 import "task_service.dart" as service;
@@ -66,7 +64,11 @@ export "task_result.dart";
 export "task_service.dart";
 
 ///
-Future<void> execute(ScriptName scriptName, List<String> args) async {
+Future<void> execute({
+  required ScriptName scriptName,
+  required String pathToRoot,
+  required List<String> args,
+}) async {
   """
   ════════════════════════════════════════════
      KLUTTER (v0.1.0)                               
@@ -87,7 +89,6 @@ Future<void> execute(ScriptName scriptName, List<String> args) async {
   }
 
   for (final task in tasks) {
-    final pathToRoot = Directory.current.absolutePath;
     final result = task.execute(
       pathToRoot: pathToRoot,
       option: command.option,
@@ -146,7 +147,7 @@ extension CommandParser on ScriptName {
   Command? parseCommand(String args) {
     /// Regex to parse the CLI arguments.
     final taskRegex = RegExp(
-      r"^\s*(<task>init|add|install)\s*=*\s*(<option>\S+)",
+      r"^\s*(init|add|install)\s*=*\s*([^\s]+|$)",
     );
 
     final match = taskRegex.firstMatch(args);
@@ -155,14 +156,14 @@ extension CommandParser on ScriptName {
       return null;
     }
 
-    final taskName = match.namedGroup("task").toTaskNameOrNull;
+    final taskName = match.group(1).toTaskNameOrNull;
 
     if (taskName == null) {
       return null;
     }
 
     return Command(
-      option: match.namedGroup("option"),
+      option: match.group(2),
       taskName: taskName,
       scriptName: this,
     );

@@ -36,7 +36,7 @@ abstract class Task {
   final ScriptName scriptName;
 
   /// Task logic implemented by the child class which will be executed.
-  void Function() toBeExecuted({
+  void toBeExecuted({
     required String pathToRoot,
     required String? option,
   });

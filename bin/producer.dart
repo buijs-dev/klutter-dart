@@ -18,9 +18,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import "dart:io";
+
 import "package:klutter/klutter.dart";
+import "package:klutter/src/common/shared.dart";
 
 /// Run tasks for a Producer project.
 Future<void> main(List<String> args) async {
-  await execute(ScriptName.producer, args);
+  final pathToRoot = Directory.current.absolutePath;
+  await execute(
+    scriptName: ScriptName.producer,
+    pathToRoot: pathToRoot,
+    args: args,
+  );
 }

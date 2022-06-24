@@ -45,28 +45,26 @@ class ProducerInstall extends Task {
   ///
   /// Throws [KlutterException] if option is null or invalid.
   @override
-  void Function() toBeExecuted({
+  void toBeExecuted({
     required String pathToRoot,
     required String? option,
-  }) =>
-      () {
-        final notNullOption = option?.trim().toLowerCase() ?? "";
+  }) {
+    final notNullOption = option?.trim().toLowerCase() ?? "";
 
-        if (notNullOption == "platform") {
-          _installLibrary(pathToRoot);
-        }
-
-        if (notNullOption == "library") {
-          _installLibrary(pathToRoot);
-          _installPlatform(pathToRoot);
-        }
-
-        if (notNullOption == "") {
-          throw KlutterException("Missing option value for task 'install'");
-        }
-
+    switch (notNullOption) {
+      case "platform":
+        _installLibrary(pathToRoot);
+        break;
+      case "library":
+        _installLibrary(pathToRoot);
+        _installPlatform(pathToRoot);
+        break;
+      case "":
+        throw KlutterException("Missing option value for task 'install'");
+      default:
         throw KlutterException("Invalid option value: '$option'");
-      };
+    }
+  }
 
   @override
   List<Task> dependsOn() => [const ProducerInit()];

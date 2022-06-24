@@ -1,9 +1,4 @@
 tags:
   # ST (SystemTest) is a long slow test so give it some time
   ST:
-    timeout: 3x
-    skip: "Slow test that validates entire package."
-
-presets:
-  ST:
-    run_skipped: true
+    timeout: 10x

@@ -18,8 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "dart:io";
-
 import "../common/project.dart";
 import "../common/shared.dart";
 import "../producer/android.dart";
@@ -39,19 +37,18 @@ class ProducerInit extends Task {
         );
 
   @override
-  void Function() toBeExecuted({
+  void toBeExecuted({
     required String pathToRoot,
     required String? option,
-  }) =>
-      () {
-        Directory.current.absolutePath
-          ..setupRoot
-          ..setupAndroid
-          ..setupIOS
-          ..setupPlatform
-          ..setupExample
-          ..addGradle;
-      };
+  }) {
+    pathToRoot
+      ..setupRoot
+      ..setupAndroid
+      ..setupIOS
+      ..setupPlatform
+      ..setupExample
+      ..addGradle;
+  }
 }
 
 extension on String {
