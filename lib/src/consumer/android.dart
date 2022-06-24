@@ -33,7 +33,18 @@ const _klutterPluginLoaderGradleFile = "klutter_plugin_loader.gradle.kts";
 /// - throws [KlutterException] if unsuccessful or
 /// - returns [String] path to Flutter SDK installation.
 String findFlutterSDK(String pathToAndroid) =>
-    pathToAndroid.verifyExists.toPropertiesFile.read.property("flutter.sdk");
+    pathToAndroid.verifyExists.toPropertiesFile.asProperties
+        .property("flutter.sdk");
+
+/// Get the path to the local Android SDK installation
+/// as configured in the root-project/android/local.properties folder.
+///
+/// Either:
+/// - throws [KlutterException] if unsuccessful or
+/// - returns [String] path to Android SDK installation.
+String findAndroidSDK(String pathToAndroid) =>
+    pathToAndroid.verifyExists.toPropertiesFile.asProperties
+        .property("sdk.dir");
 
 /// Generate a new gradle file in the flutter/tools/gradle folder
 /// which will apply Klutter plugins to a Flutter project.
@@ -121,7 +132,7 @@ extension on String {
 extension on File {
   /// Read the content of a properties File and
   /// return a Map<String, String> with property key and property value.
-  Map<String, String> get read => readAsLinesSync()
+  Map<String, String> get asProperties => readAsLinesSync()
       .map((line) => line.split("="))
       .where((line) => line.length == 2)
       .map((line) => line.map((e) => e.trim()).toList())

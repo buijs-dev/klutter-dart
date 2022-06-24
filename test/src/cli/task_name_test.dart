@@ -18,10 +18,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// The Klutter Framework makes it possible to write a Flutter plugin for both Android
-/// and iOS using [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
-/// Instead of writing platform specific code twice in 2 languages (Swift + Kotlin),
-/// it can be written once in Kotlin and used as a Flutter plugin.
-library klutter;
+import "package:klutter/src/cli/cli.dart";
+import "package:test/test.dart";
 
-export "src/cli/cli.dart";
+void main() {
+
+  test("Verify TaskNameParser", () {
+
+    <String?, TaskName?>{
+      "add"                : TaskName.add,
+      " add "              : TaskName.add,
+      " init"              : TaskName.init,
+      "INIT"               : TaskName.init,
+      "install"            : TaskName.install,
+      "i n s t a l l"      : null,
+      "destroyAllHumans!"  : null,
+      null                 : null,
+      ""                   : null,
+      "   "                : null,
+    }.forEach((input, taskName) {
+      expect(input.toTaskNameOrNull, taskName,
+          reason: "Expected '$input' to be converted to '$taskName' ");
+    });
+
+  });
+
+
+}

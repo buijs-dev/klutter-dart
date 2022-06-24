@@ -18,10 +18,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// The Klutter Framework makes it possible to write a Flutter plugin for both Android
-/// and iOS using [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
-/// Instead of writing platform specific code twice in 2 languages (Swift + Kotlin),
-/// it can be written once in Kotlin and used as a Flutter plugin.
-library klutter;
+/// Result object indicating a Task was executed successfully or not.
+///
+/// [isOk] is true when task is finished without exceptions or false when not.
+/// [message] contains the exception message or is null when task was successful.
+class TaskResult {
+  /// Create a new result with a message if there was an exception.
+  const TaskResult({
+    required this.isOk,
+    this.message,
+  });
 
-export "src/cli/cli.dart";
+  /// Is true when successful or false when not.
+  final bool isOk;
+
+  /// Exception message if there is any.
+  final String? message;
+}

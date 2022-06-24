@@ -18,10 +18,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// The Klutter Framework makes it possible to write a Flutter plugin for both Android
-/// and iOS using [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
-/// Instead of writing platform specific code twice in 2 languages (Swift + Kotlin),
-/// it can be written once in Kotlin and used as a Flutter plugin.
-library klutter;
+/// List of available tasks.
+///
+/// The task functionality depends on the calling script.
+enum TaskName {
+  /// Tasks which add libraries.
+  add,
 
-export "src/cli/cli.dart";
+  /// Tasks which do project initialization (setup).
+  init,
+
+  /// Tasks which do project installation (code or artifact generation).
+  install,
+}
+
+/// Convert a String value to a [TaskName].
+extension TaskNameParser on String? {
+  /// Find a [TaskName] that matches the current
+  /// (trimmed) String value or return null.
+  TaskName? get toTaskNameOrNull {
+    if (this == null) {
+      return null;
+    }
+
+    switch (this!.trim().toUpperCase()) {
+      case "ADD":
+        return TaskName.add;
+      case "INIT":
+        return TaskName.init;
+      case "INSTALL":
+        return TaskName.install;
+      default:
+        return null;
+    }
+  }
+}

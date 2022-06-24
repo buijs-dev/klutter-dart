@@ -108,13 +108,14 @@ class _Configuration {
 
     /// The Kotlin plugin ClassName which is equal to the library name
     /// converted to camelcase + 'Plugin' postfix.
-    final className = toPluginClassName(channelName);
+    final className = toPluginClassName(channelName, postfixWithPlugin: true);
 
     File("${pluginPath.absolutePath}/$className.kt").normalizeToFile
-      ..ifNotExists(
-        (file) => throw KlutterException(
-            "Missing Android plugin file: ${file.absolutePath}"),
-      )
+      ..ifNotExists((file) {
+        throw KlutterException(
+          "Missing Android plugin file: ${file.absolutePath}",
+        );
+      })
       ..writeAsStringSync('''
         package $packageName
         |

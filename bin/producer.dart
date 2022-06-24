@@ -18,34 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "dart:io";
+import "package:klutter/klutter.dart";
 
-import "package:klutter/src/common/exception.dart";
-import "package:klutter/src/common/shared.dart";
-import "package:klutter/src/consumer/ios.dart";
-
-/// Initialize a Klutter plugin project.
+/// Run tasks for a Producer project.
 Future<void> main(List<String> args) async {
-  """
-  ════════════════════════════════════════════
-     KLUTTER (v0.1.0)                               
-  ════════════════════════════════════════════
-  """
-      .ok;
-
-  final root = Directory.current.absolutePath;
-  final ios = "$root${Platform.pathSeparator}ios";
-
-  try {
-    excludeArm64FromPodfile(ios);
-  } on KlutterException catch (e) {
-    return "KLUTTER: ${e.cause}".format.nok;
-  }
-
-  "KLUTTER: IOS setup complete! Project is ready to use Klutter plugins.".ok;
-}
-
-extension on String {
-  void get ok => print("\x1B[32m${this}");
-  void get nok => print("\x1B[31m${this}");
+  await execute(ScriptName.producer, args);
 }

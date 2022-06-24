@@ -23,7 +23,7 @@ import "dart:io";
 import "exception.dart";
 
 /// The plugin ClassName which is equal to the library name
-/// converted to camelcase + 'Plugin' postfix.
+/// converted to camelcase + 'Plugin' postfix if [postfixWithPlugin] is set to true.
 ///
 /// Example:
 /// Given [pluginName] 'super_awesome'
@@ -32,10 +32,14 @@ import "exception.dart";
 /// Example:
 /// Given [pluginName] 'super_awesome_plugin'
 /// will return SuperAwesomePlugin.
-String toPluginClassName(String pluginName) => pluginName
-    .split("_")
-    .map((e) => "${e[0].toUpperCase()}${e.substring(1, e.length)}")
-    .join();
+String toPluginClassName(String pluginName, {bool postfixWithPlugin = false}) {
+  final className = pluginName
+      .split("_")
+      .map((e) => "${e[0].toUpperCase()}${e.substring(1, e.length)}")
+      .join();
+
+  return postfixWithPlugin ? className.postfixedWithPlugin : className;
+}
 
 /// File management utilities.
 extension FileUtil on FileSystemEntity {
@@ -51,6 +55,14 @@ extension FileUtil on FileSystemEntity {
     ifNotExists(doElse);
     return this;
   }
+
+  /// Create an absolute path to the given file.
+  ///
+  /// If the path does not exist throw a [KlutterException].
+  File get verifyExists => File(absolutePath)
+    ..ifNotExists((file) {
+      throw KlutterException("Path does not exist: ${file.absolute.path}");
+    });
 
   /// Check if the Directory exists and if not create it recursively.
   FileSystemEntity get maybeCreate {
@@ -151,4 +163,13 @@ extension StringUtil on String {
   /// Return current String value as being a path to a File or Directory
   /// with forward slashes ('/') replaced for the platform specific separator.
   String get normalize => replaceAll("/", Platform.pathSeparator);
+
+  /// Return current String value with 'Plugin' postfix if not present.
+  String get postfixedWithPlugin {
+    if (endsWith("Plugin")) {
+      return this;
+    } else {
+      return "${this}Plugin";
+    }
+  }
 }
