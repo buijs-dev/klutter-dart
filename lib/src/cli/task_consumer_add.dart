@@ -34,33 +34,33 @@ class ConsumerAdd extends Task {
         );
 
   @override
-  void Function() toBeExecuted({
+  void toBeExecuted({
     required String pathToRoot,
     required String? option,
-  }) =>
-      () {
-        final pluginName = option?.trim();
+  }) {
 
-        if (pluginName == null) {
-          throw KlutterException(
-            "Name of Flutter plugin to add not specified.",
-          );
-        }
+    final pluginName = option?.trim();
 
-        final location = findDependencyPath(
-          pathToRoot: pathToRoot,
-          pluginName: pluginName,
-          pathToSDK: findFlutterSDK(
-            "$pathToRoot/android".normalize,
-          ),
+      if (pluginName == null) {
+        throw KlutterException(
+          "Name of Flutter plugin to add not specified.",
         );
+      }
 
-        registerPlugin(
-          pathToRoot: pathToRoot,
-          pluginName: ":klutter:$pluginName",
-          pluginLocation: location,
-        );
-      };
+      final location = findDependencyPath(
+        pathToRoot: pathToRoot,
+        pluginName: pluginName,
+        pathToSDK: findFlutterSDK(
+          "$pathToRoot/android".normalize,
+        ),
+      );
+
+      registerPlugin(
+        pathToRoot: pathToRoot,
+        pluginName: ":klutter:$pluginName",
+        pluginLocation: location,
+      );
+    }
 
   @override
   List<Task> dependsOn() => [ConsumerInit()];
