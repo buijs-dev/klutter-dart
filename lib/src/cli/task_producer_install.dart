@@ -53,11 +53,10 @@ class ProducerInstall extends Task {
 
     switch (notNullOption) {
       case "platform":
-        _installLibrary(pathToRoot);
+        _installPlatform(pathToRoot);
         break;
       case "library":
         _installLibrary(pathToRoot);
-        _installPlatform(pathToRoot);
         break;
       case "":
         throw KlutterException("Missing option value for task 'install'");
