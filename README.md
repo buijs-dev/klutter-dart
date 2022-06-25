@@ -46,39 +46,80 @@ flutter pub get
 ```
 
 # Usage
-<b>What's the point?</b></br>
+#### What's the point?
 Plugins build with the Klutter Framework work slightly different than regular plugins. 
 The following tasks help Flutter to locate Klutter plugins 
 and ensure compatibility between Flutter Android/IOS configuration and Klutter plugin Android/IOS configuration.
 
-<b>Steps:</b></br>
-1. [Install](#Installation) the dev dependency. 
-2. Setup Android.
-3. Setup IOS.
+#### Steps:
+1. Installation.
+3. Initialization.
 4. Add dependencies.
+
+Install Klutter as dev_dependency as described [here](#Installation).
+
+Initialize Klutter in your project by running:
+
+```shell  
+flutter pub run klutter:consumer init
+```  
+
+The init task will setup Klutter for both Android and iOS.
+Alternatively you can setup Android and IOS separately.
 
 Setup Android by running:  
   
 ```shell  
-flutter pub run klutter:android
+flutter pub run klutter:consumer init=android
 ```  
 
 Setup IOS by running:
 
 ```shell  
-flutter pub run klutter:ios
+flutter pub run klutter:consumer init=ios
 ```  
 
-Add Klutter plugins by running the add command.
+Finally Klutter plugins can be added by running the add command.
 
-<B>Example</B>: Add the library 'awesome_plugin' to your project:
+<B>Example</B>:<br/> Add the library 'awesome_plugin' to your project:
 
 ```shell  
-flutter pub run klutter:add awesome_plugin 
+flutter pub run klutter:consumer add=awesome_plugin 
 ```  
 
-<b>Background</b></br>
-This task will do the following for your Flutter project:  
+#### Background
+The consumer init task will configure your Flutter project in:
+2. [ios](#ios)
+3. [android](#android)
+
+#### IOS
+The Podfile has to be editted to be able to run the app on an iPhone simulator.
+Klutter will look for the following code block in the Podfile:
+
+```
+ post_install do |installer|
+   installer.pods_project.targets.each do |target|
+     flutter_additional_ios_build_settings(target)
+   end
+ end
+```
+
+Then it will be updated to the following code:
+
+```
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+    target.build_configurations.each do |bc|
+        bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`
+     end
+  end
+end
+```
+
+
+#### Android
+The consumer init task will do the following for Android in your Flutter project:  
  1. Create a .klutter-plugins file in the root folder.  
  2. Create a new Gradle file in the flutter/packages/flutter_tools/gradle.  
  3. Update the android/settings.gradle file to apply the newly generated Gradle file.  
@@ -93,14 +134,14 @@ This is then used by the Android Gradle file to find the plugin location
 and add the generated artifacts to your build.
 
 # Creation
-<b>What's the point?</b></br>
+#### What's the point?
 The starting point of a Klutter plugins is a regular Flutter plugin project. 
 The following steps describe how to create a Flutter plugin project and initialize Klutter in it.
 
-<b>Steps:</b></br>
+#### Steps:
 1. Create Flutter plugin project.
-2. [Install](#Installation) the dev dependency.
-3. Initialize Klutter in your project.
+2. [Installation](#Installation).
+3. Initialization.
 4. Build Platform module.
 5. Generate Dart code.
 6. Verify your plugin.
@@ -116,19 +157,19 @@ flutter create --org com.example --template=plugin --platforms=android,ios plugi
 Install the Klutter Framework as dev_dependency and then run:
 
 ```shell  
-flutter pub run klutter:plugin create  
+flutter pub run klutter:producer init  
 ```  
 
 Build the platform module by running the following in the root folder:
 
 ```shell
- ./gradlew klutterInstallPlatform
+flutter pub run klutter:producer install=platform 
 ```
 
 Generate the plugin Dart code:
 
 ```shell
-./gradlew klutterGenerateAdapters
+flutter pub run klutter:producer install=library  
 ```
 
 Now test the plugin by following the steps outlined [here](#Usage) in the root/example project. 
