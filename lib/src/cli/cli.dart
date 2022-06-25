@@ -63,6 +63,9 @@ export "task_producer_install.dart";
 export "task_result.dart";
 export "task_service.dart";
 
+// It should print doh...
+// ignore_for_file: avoid_print
+
 ///
 Future<void> execute({
   required ScriptName scriptName,
@@ -96,7 +99,7 @@ Future<void> execute({
       return;
     }
 
-    "KLUTTER: Task finished successful.".format.ok;
+    "KLUTTER: Task '${task.scriptName.name} ${task.taskName.name}' finished successful.".format.ok;
   }
 }
 
