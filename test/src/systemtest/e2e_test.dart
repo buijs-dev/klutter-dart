@@ -108,12 +108,12 @@ void main() {
       expect(Directory("${producerPlugin.absolutePath}/ios/Klutter".normalize).existsSync(), true,
           reason: "ios/Klutter should exist");
 
-      // /// Install KMP Platform module.
-      // await sut.execute(
-      //   pathToRoot: producerPlugin.absolutePath,
-      //   scriptName: sut.ScriptName.producer,
-      //   args: ["install=platform"],
-      // );
+      /// Install KMP Platform module.
+      await sut.execute(
+        pathToRoot: producerPlugin.absolutePath,
+        scriptName: sut.ScriptName.producer,
+        args: ["install=platform"],
+      );
 
       /// Generate Dart service code.
       await sut.execute(
@@ -133,12 +133,24 @@ void main() {
         root: consumerPlugin.absolutePath,
       );
 
-      /// Setup Klutter.
+      /// Setup Klutter in consumer project.
       await sut.execute(
         pathToRoot: consumerPlugin.absolutePath,
         scriptName: sut.ScriptName.consumer,
         args: ["init"],
       );
+
+      final excludeArchsHasRun = File("${consumerPlugin.absolutePath}/ios/Podfile".normalize)
+          .readAsStringSync()
+          .contains("bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`");
+
+      expect(excludeArchsHasRun, true,
+          reason: "IOS init should have visited the ios Podfile.");
+
+      final registry = File("${consumerPlugin.absolutePath}/.klutter-plugins".normalize);
+
+      expect(registry.existsSync(), true,
+          reason: "klutter-plugins file should be created");
 
       /// Add plugin to consumer project.
       await sut.execute(
@@ -146,6 +158,11 @@ void main() {
         scriptName: sut.ScriptName.consumer,
         args: ["add=$pluginName"],
       );
+
+      final registryContainsPlugin = registry.readAsStringSync().contains(pluginName);
+
+      expect(registryContainsPlugin, true,
+          reason: "add task should have added plugin name to the .klutter-plugins file");
 
     });
 
