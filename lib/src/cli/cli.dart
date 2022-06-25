@@ -76,7 +76,7 @@ Future<void> execute({
   """
       .ok;
 
-  final command = scriptName.parseCommand(args.join());
+  final command = scriptName.fromArgList(args);
 
   if (command == null) {
     return _fail;
@@ -89,10 +89,7 @@ Future<void> execute({
   }
 
   for (final task in tasks) {
-    final result = task.execute(
-      pathToRoot: pathToRoot,
-      option: command.option,
-    );
+    final result = task.execute(pathToRoot);
 
     if (!result.isOk) {
       "KLUTTER: ${result.message}".format.nok;
@@ -144,13 +141,13 @@ extension CommandParser on ScriptName {
   /// Takes the CLI arguments list prefixed with the script name
   /// and returns a [Command] object which can be mapped to a Task
   /// or null if the command (user input) is invalid.
-  Command? parseCommand(String args) {
+  Command? fromArgList(List<String> args) {
     /// Regex to parse the CLI arguments.
     final taskRegex = RegExp(
       r"^\s*(init|add|install)\s*=*\s*([^\s]+|$)",
     );
 
-    final match = taskRegex.firstMatch(args);
+    final match = taskRegex.firstMatch(args.join());
 
     if (match == null) {
       return null;

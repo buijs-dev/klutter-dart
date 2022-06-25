@@ -31,7 +31,7 @@ import "cli.dart";
 /// Tasks do perform project installation (code or artifact generation).
 class ProducerInstall extends Task {
   /// Create new Task based of the root folder.
-  const ProducerInstall()
+  ProducerInstall()
       : super(
           scriptName: ScriptName.producer,
           taskName: TaskName.install,
@@ -67,7 +67,7 @@ class ProducerInstall extends Task {
   }
 
   @override
-  List<Task> dependsOn() => [const ProducerInit()];
+  List<Task> dependsOn() => [ProducerInit()];
 
   @override
   List<String> optionValues() => ["platform", "library"];

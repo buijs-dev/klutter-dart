@@ -86,7 +86,7 @@ void main() {
 
     test("Verify exception is thrown if duplicate tasks are found", () {
 
-      const duplicateTasks = [
+      final duplicateTasks = [
         ConsumerInit(),
         ConsumerInit(),
       ];

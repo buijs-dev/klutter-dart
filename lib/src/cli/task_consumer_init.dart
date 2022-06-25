@@ -28,7 +28,7 @@ import "cli.dart";
 /// Task to prepare a Flutter project for using Klutter-made plugins.
 class ConsumerInit extends Task {
   /// Create new Task based of the root folder.
-  const ConsumerInit()
+  ConsumerInit()
       : super(
           scriptName: ScriptName.consumer,
           taskName: TaskName.init,

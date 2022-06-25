@@ -27,10 +27,10 @@ import "../producer/platform.dart";
 import "../producer/project.dart";
 import "cli.dart";
 
-/// Taskto run project initialization (setup).
+/// Task to run project initialization (setup).
 class ProducerInit extends Task {
   /// Create new Task based of the root folder.
-  const ProducerInit()
+  ProducerInit()
       : super(
           scriptName: ScriptName.producer,
           taskName: TaskName.init,
@@ -40,15 +40,14 @@ class ProducerInit extends Task {
   void toBeExecuted({
     required String pathToRoot,
     required String? option,
-  }) {
-    pathToRoot
-      ..setupRoot
-      ..setupAndroid
-      ..setupIOS
-      ..setupPlatform
-      ..setupExample
-      ..addGradle;
-  }
+  }) =>
+      pathToRoot
+        ..setupRoot
+        ..setupAndroid
+        ..setupIOS
+        ..setupPlatform
+        ..setupExample
+        ..addGradle;
 }
 
 extension on String {

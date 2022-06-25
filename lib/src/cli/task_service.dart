@@ -35,10 +35,10 @@ Set<Task> allTasks(
     [List<Task>? tasks]) {
   final list = tasks ??
       [
-        const ConsumerAdd(),
-        const ConsumerInit(),
-        const ProducerInit(),
-        const ProducerInstall(),
+        ConsumerAdd(),
+        ConsumerInit(),
+        ProducerInit(),
+        ProducerInstall(),
       ]
     ..verifyNoDuplicates
     ..verifyNoCircularDependencies;
@@ -71,7 +71,8 @@ Set<Task> tasksOrEmptyList(Command command,
   /// Retrieve the Task which at this point always exists.
   final primaryTask = tasksForScript.firstWhere((task) {
     return task.taskName == command.taskName;
-  });
+  })
+    ..option = command.option;
 
   final taskList = [primaryTask];
 

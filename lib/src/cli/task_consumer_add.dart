@@ -27,7 +27,7 @@ import "cli.dart";
 /// Task to add a Klutter-made Flutter plugin to a Flutter project.
 class ConsumerAdd extends Task {
   /// Create new Task based of the root folder.
-  const ConsumerAdd()
+  ConsumerAdd()
       : super(
           scriptName: ScriptName.consumer,
           taskName: TaskName.add,
@@ -63,7 +63,7 @@ class ConsumerAdd extends Task {
       };
 
   @override
-  List<Task> dependsOn() => [const ConsumerInit()];
+  List<Task> dependsOn() => [ConsumerInit()];
 
   @override
   List<String> optionValues() => ["<name_of_plugin_to_add>"];

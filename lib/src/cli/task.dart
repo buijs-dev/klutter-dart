@@ -24,7 +24,7 @@ import "cli.dart";
 /// Interface to encapsulate CLI task functionality.
 abstract class Task {
   /// Create a new CliTask.
-  const Task({
+  Task({
     required this.scriptName,
     required this.taskName,
   });
@@ -35,6 +35,17 @@ abstract class Task {
   /// The script the task belongs to.
   final ScriptName scriptName;
 
+  /// The option value which configures the task.
+  String? _option;
+
+  /// Set option to be used for executing the task.
+  set option(String? option) {
+    _option = option;
+  }
+
+  /// Get the option value.
+  String get option => _option ?? "";
+
   /// Task logic implemented by the child class which will be executed.
   void toBeExecuted({
     required String pathToRoot,
@@ -42,14 +53,11 @@ abstract class Task {
   });
 
   /// Execute the task.
-  TaskResult execute({
-    required String pathToRoot,
-    required String? option,
-  }) {
+  TaskResult execute(String pathToRoot) {
     try {
       toBeExecuted(
         pathToRoot: pathToRoot,
-        option: option,
+        option: _option,
       );
 
       return const TaskResult(isOk: true);

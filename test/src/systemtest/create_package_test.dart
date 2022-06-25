@@ -31,15 +31,21 @@ const organisation = "dev.buijs.integrationtest.example";
 
 const pluginName = "ridiculous_awesome";
 
+const appName = "my_flutter_app";
+
 void main() {
 
   final pathToRoot = Directory(
       "${Directory.systemTemp.absolute.path}/createklutterpluginit".normalize
   )..createSync();
 
+  final producerPlugin = Directory("${pathToRoot.absolute.path}/$pluginName".normalize);
+
+  final consumerPlugin = Directory("${producerPlugin.absolute.path}/example".normalize);
+
   group("end-to-end test", () {
 
-    test("Verify producer tasks", () async {
+    test("Create a Klutter plugin with producer tasks", () async {
 
       /// Create Flutter plugin project.
       await createFlutterPlugin(
@@ -48,34 +54,97 @@ void main() {
         root: pathToRoot.absolute.path,
       );
 
-      final plugin = Directory("${pathToRoot.absolute.path}/$pluginName".normalize);
-
-      expect(plugin.existsSync(), true, reason: "Plugin should be created in: '${plugin.absolute.path}'");
+      expect(producerPlugin.existsSync(), true, reason: "Plugin should be created in: '${producerPlugin.absolute.path}'");
 
       /// Add Klutter as dev_dependency.
       await addKlutterAsDevDependency(
-        root: plugin.absolutePath,
+        root: producerPlugin.absolutePath,
       );
 
       /// Setup Klutter as dev_dependency.
       await sut.execute(
-          pathToRoot: plugin.absolutePath,
+          pathToRoot: producerPlugin.absolutePath,
           scriptName: sut.ScriptName.producer,
           args: ["init"],
       );
 
-      /// Install KMP Platform module.
-      await sut.execute(
-        pathToRoot: plugin.absolutePath,
-        scriptName: sut.ScriptName.producer,
-        args: ["install=platform"],
-      );
+      /// Gradle files should be copied to root folder.
+      expect(File("${producerPlugin.absolutePath}/gradlew".normalize).existsSync(), true,
+          reason: "root/gradlew should exist");
+      expect(File("${producerPlugin.absolutePath}/gradlew.bat".normalize).existsSync(), true,
+          reason: "root/gradlew.bat should exist");
+      expect(File("${producerPlugin.absolutePath}/gradle.properties".normalize).existsSync(), true,
+          reason: "root/gradle.properties should exist");
+      expect(File("${producerPlugin.absolutePath}/gradle/wrapper/gradle-wrapper.jar".normalize).existsSync(), true,
+          reason: "root/gradle/wrapper/gradle-wrapper.jar should exist");
+      expect(File("${producerPlugin.absolutePath}/gradle/wrapper/gradle-wrapper.properties".normalize).existsSync(), true,
+          reason: "root/gradle/wrapper/gradle-wrapper.properties should exist");
+
+      /// Gradle files should be copied to android folder.
+      expect(File("${producerPlugin.absolutePath}/android/gradlew".normalize).existsSync(), true,
+          reason: "root/gradlew should exist");
+      expect(File("${producerPlugin.absolutePath}/android/gradlew.bat".normalize).existsSync(), true,
+          reason: "root/gradlew.bat should exist");
+      expect(File("${producerPlugin.absolutePath}/android/gradle.properties".normalize).existsSync(), true,
+          reason: "root/gradle.properties should exist");
+      expect(File("${producerPlugin.absolutePath}/android/gradle/wrapper/gradle-wrapper.jar".normalize).existsSync(), true,
+          reason: "root/gradle/wrapper/gradle-wrapper.jar should exist");
+      expect(File("${producerPlugin.absolutePath}/android/gradle/wrapper/gradle-wrapper.properties".normalize).existsSync(), true,
+          reason: "root/gradle/wrapper/gradle-wrapper.properties should exist");
+
+      /// Root build.gradle file should be created.
+      expect(File("${producerPlugin.absolutePath}/build.gradle.kts".normalize).existsSync(), true,
+          reason: "root/build.gradle.kts should exist");
+
+      /// Root settings.gradle file should be created.
+      expect(File("${producerPlugin.absolutePath}/settings.gradle.kts".normalize).existsSync(), true,
+          reason: "root/settings.gradle.kts should exist");
+
+      /// Android/Klutter build.gradle file should be created.
+      expect(File("${producerPlugin.absolutePath}/android/klutter/build.gradle.kts".normalize).existsSync(), true,
+          reason: "android/klutter/build.gradle.kts should exist");
+
+      /// IOS/Klutter folder should be created.
+      expect(Directory("${producerPlugin.absolutePath}/ios/Klutter".normalize).existsSync(), true,
+          reason: "ios/Klutter should exist");
+
+      // /// Install KMP Platform module.
+      // await sut.execute(
+      //   pathToRoot: producerPlugin.absolutePath,
+      //   scriptName: sut.ScriptName.producer,
+      //   args: ["install=platform"],
+      // );
 
       /// Generate Dart service code.
       await sut.execute(
-        pathToRoot: plugin.absolutePath,
+        pathToRoot: producerPlugin.absolutePath,
         scriptName: sut.ScriptName.producer,
         args: ["install=library"],
+      );
+
+    });
+
+    test("Use the Klutter plugin in with the consumer tasks", () async {
+
+      expect(consumerPlugin.existsSync(), true, reason: "Plugin should be created in: '${producerPlugin.absolute.path}'");
+
+      /// Add Klutter as dev_dependency.
+      await addKlutterAsDevDependency(
+        root: consumerPlugin.absolutePath,
+      );
+
+      /// Setup Klutter.
+      await sut.execute(
+        pathToRoot: consumerPlugin.absolutePath,
+        scriptName: sut.ScriptName.consumer,
+        args: ["init"],
+      );
+
+      /// Add plugin to consumer project.
+      await sut.execute(
+        pathToRoot: consumerPlugin.absolutePath,
+        scriptName: sut.ScriptName.consumer,
+        args: ["add=$pluginName"],
       );
 
     });
