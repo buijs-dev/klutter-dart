@@ -91,16 +91,21 @@ Future<void> execute({
     return _fail;
   }
 
+  final s = command.scriptName.name;
+  final t = command.taskName.name;
+  final o = command.option;
+
   for (final task in tasks) {
     final result = task.execute(pathToRoot);
 
     if (!result.isOk) {
       "KLUTTER: ${result.message}".format.nok;
+      "KLUTTER: Task '$s $t $o' finished unsuccessfully.".format.nok;
       return;
     }
-
-    "KLUTTER: Task '${task.scriptName.name} ${task.taskName.name}' finished successful.".format.ok;
   }
+
+  "KLUTTER: Task '$s $t $o' finished successful.".format.ok;
 }
 
 void get _fail => """

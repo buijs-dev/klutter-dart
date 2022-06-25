@@ -30,7 +30,7 @@ import "cli.dart";
 /// - Task D depends on nothing
 ///
 /// Result:
-/// Set [Task D, Task C, Task B, Task A]
+/// Sorted set in order: Task D, Task C, Task B, Task A.
 int dependsOnComparator(Task t1, Task t2) {
   /// True if Task t1 depends on Task t2.
   final t1DependsOnT2 = t1.dependsOn().map((e) {

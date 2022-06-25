@@ -120,9 +120,11 @@ void main() {
       args: ["install=library"],
     );
 
-
     expect(consumerPlugin.existsSync(), true,
         reason: "Plugin should be created in: '${producerPlugin.absolute.path}'");
+
+    final podFile = File("${consumerPlugin.absolutePath}/ios/Podfile".normalize);
+    expect(podFile.existsSync(), true, reason: "Podfile should exist");
 
     /// Add Klutter as dev_dependency.
     await addKlutterAsDevDependency(
@@ -136,7 +138,7 @@ void main() {
       args: ["init"],
     );
 
-    final excludeArchsHasRun = File("${consumerPlugin.absolutePath}/ios/Podfile".normalize)
+    final excludeArchsHasRun = podFile
         .readAsStringSync()
         .contains("bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`");
 
