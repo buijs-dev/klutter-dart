@@ -81,7 +81,7 @@ flutter pub run klutter:consumer init=ios
 
 Finally Klutter plugins can be added by running the add command.
 
-<B>Example</B>:<br/> Add the library 'awesome_plugin' to your project:
+<B>Example</B>:</br> Add the library 'awesome_plugin' to your project:
 
 ```shell  
 flutter pub run klutter:consumer add=awesome_plugin 
@@ -89,8 +89,8 @@ flutter pub run klutter:consumer add=awesome_plugin
 
 #### Background
 The consumer init task will configure your Flutter project in:
-2. [ios](#ios)
-3. [android](#android)
+1. [ios](#ios)
+2. [android](#android)
 
 #### IOS
 The Podfile has to be editted to be able to run the app on an iPhone simulator.
