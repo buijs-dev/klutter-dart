@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "cli.dart";
+import "library.dart";
 
 /// Comparator function to sort Tasks based on their dependencies.
 ///
@@ -31,7 +31,7 @@ import "cli.dart";
 ///
 /// Result:
 /// Sorted set in order: Task D, Task C, Task B, Task A.
-int dependsOnComparator(Task t1, Task t2) {
+int compareByDependsOn(Task t1, Task t2) {
   /// True if Task t1 depends on Task t2.
   final t1DependsOnT2 = t1.dependsOn().map((e) {
     return e.taskName == t2.taskName && e.scriptName == t2.scriptName;

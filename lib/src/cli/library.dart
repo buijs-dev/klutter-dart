@@ -49,9 +49,13 @@
 library cli;
 
 import "../common/shared.dart";
-import "task_name.dart";
+import "command.dart";
+import "script.dart";
+import "task.dart";
 import "task_service.dart" as service;
 
+export "command.dart";
+export "script.dart";
 export "task.dart";
 export "task_comparator.dart";
 export "task_comparator.dart";
@@ -68,9 +72,9 @@ export "task_service.dart";
 
 ///
 Future<void> execute({
-  required ScriptName scriptName,
+  required ScriptName script,
   required String pathToRoot,
-  required List<String> args,
+  required List<String> arguments,
 }) async {
   """
   ════════════════════════════════════════════
@@ -79,124 +83,53 @@ Future<void> execute({
   """
       .ok;
 
-  final command = scriptName.fromArgList(args);
+  /// Parse user input to a Command.
+  final command = Command.from(
+    task: arguments.join(),
+    script: script,
+  );
 
-  if (command == null) {
-    return _fail;
-  }
+  /// Retrieve all tasks for the specified command.
+  ///
+  /// Set is empty if command is null or task processing failed.
+  final tasks = command == null ? <Task>{} : service.tasksOrEmptyList(command);
 
-  final tasks = service.tasksOrEmptyList(command);
-
+  /// When there are no tasks then the user input is incorrect.
+  ///
+  /// Stop processing and print list of available tasks.
   if (tasks.isEmpty) {
-    return _fail;
-  }
-
-  final s = command.scriptName.name;
-  final t = command.taskName.name;
-  final o = command.option;
-
-  for (final task in tasks) {
-    final result = task.execute(pathToRoot);
-
-    if (!result.isOk) {
-      "KLUTTER: ${result.message}".format.nok;
-      "KLUTTER: Task '$s $t $o' finished unsuccessfully.".format.nok;
-      return;
-    }
-  }
-
-  "KLUTTER: Task '$s $t $o' finished successful.".format.ok;
-}
-
-void get _fail => """
+    """
     |KLUTTER: Received invalid command.
     |
     |${service.printTasksAsCommands}
     """
-    .format
-    .invalid;
+        .format
+        .invalid;
+  }
+
+  /// Process all the given tasks.
+  else {
+    final s = command!.scriptName.name;
+    final t = command.taskName.name;
+    final o = command.option;
+
+    for (final task in tasks) {
+      final result = task.execute(pathToRoot);
+
+      /// Stop executing tasks when one has failed.
+      if (!result.isOk) {
+        "KLUTTER: ${result.message}".format.nok;
+        "KLUTTER: Task '$s $t $o' finished unsuccessfully.".format.nok;
+        return;
+      }
+    }
+
+    "KLUTTER: Task '$s $t $o' finished successful.".format.ok;
+  }
+}
 
 extension on String {
   void get ok => print("\x1B[32m${this}");
   void get nok => print("\x1B[31m${this}");
   void get invalid => print("\x1B[31m${this}");
-}
-
-/// Object to store parsed user input.
-class Command {
-  /// Create a Command object which should always
-  /// contain a [TaskName]  and [ScriptName].
-  ///
-  /// Option value is optional but might be required by a Task.
-  const Command({
-    required this.taskName,
-    required this.scriptName,
-    this.option,
-  });
-
-  /// Name of Task to be executed.
-  final TaskName taskName;
-
-  /// Optional value which may or may not be used by the Task.
-  final String? option;
-
-  /// Name of script which should contain a Task with [TaskName].
-  final ScriptName scriptName;
-}
-
-/// Parse a received command and return the command data.
-extension CommandParser on ScriptName {
-  /// Takes the CLI arguments list prefixed with the script name
-  /// and returns a [Command] object which can be mapped to a Task
-  /// or null if the command (user input) is invalid.
-  Command? fromArgList(List<String> args) {
-    /// Regex to parse the CLI arguments.
-    final taskRegex = RegExp(
-      r"^\s*(init|add|install)\s*=*\s*([^\s]+|$)",
-    );
-
-    final match = taskRegex.firstMatch(args.join());
-
-    if (match == null) {
-      return null;
-    }
-
-    final taskName = match.group(1).toTaskNameOrNull;
-
-    if (taskName == null) {
-      return null;
-    }
-
-    return Command(
-      option: match.group(2),
-      taskName: taskName,
-      scriptName: this,
-    );
-  }
-}
-
-/// List of available scripts.
-///
-/// Tasks are accessible through scripts.
-/// There are 2 scripts:
-/// - Consumer
-/// - Producer
-///
-/// <B>Consumer:</B>
-///
-/// Tasks to be executed in a project that will use (consume)
-/// libraries that are created with the use of Klutter.
-///
-/// <B>Producer:</B>
-///
-/// Tasks to be executed in a project that will use
-/// Klutter to create (produce) a new Flutter library.
-enum ScriptName {
-  /// Script containing tasks for projects
-  /// that use libraries created with Klutter.
-  consumer,
-
-  /// Script containing tasks for projects
-  /// that are being created with Klutter.
-  producer,
 }

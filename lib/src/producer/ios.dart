@@ -47,10 +47,11 @@ extension on String {
     File("${this}/Klutter/klutter.md").normalizeToFile.maybeCreate;
   }
 
-  File toPodspec(String pluginName) => File("${this}/$pluginName.podspec")
-      .normalizeToFile
-    ..ifNotExists(
-        (file) => throw KlutterException("Missing podspec file: ${file.path}"));
+  File toPodspec(String pluginName) =>
+      File("${this}/$pluginName.podspec").normalizeToFile
+        ..ifNotExists((file) {
+          throw KlutterException("Missing podspec file: ${file.path}");
+        });
 }
 
 extension on File {
@@ -93,12 +94,12 @@ extension on File {
     if (!hasAdded) {
       throw KlutterException(
         """
-      |Failed to add Platform.framework to ios folder.
-      |
-      |Unable to find the following line in file $path:
-      |- '$prefix.dependency 'Flutter''
-      |
-      |"""
+        |Failed to add Platform.framework to ios folder.
+        |
+        |Unable to find the following line in file $path:
+        |- '$prefix.dependency 'Flutter''
+        |
+        |"""
             .format,
       );
     }

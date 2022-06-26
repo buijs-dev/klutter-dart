@@ -155,7 +155,7 @@ void main() {
         dependsOnList: [task2],
       );
 
-      final tasks = [task1, task2]..sort(dependsOnComparator);
+      final tasks = [task1, task2]..sort(compareByDependsOn);
 
       expect(tasks.first, task2);
 
@@ -172,7 +172,7 @@ void main() {
         dependsOnList: [task1],
       );
 
-      final tasks = [task1, task2]..sort(dependsOnComparator);
+      final tasks = [task1, task2]..sort(compareByDependsOn);
 
       expect(tasks.first, task1);
 
@@ -192,10 +192,10 @@ void main() {
           dependsOnList: [taskNotInList]
       );
 
-      final tasks = [task1, task2]..sort(dependsOnComparator);
+      final tasks = [task1, task2]..sort(compareByDependsOn);
       expect(tasks.first, task1);
 
-      final reversed = [task2, task1]..sort(dependsOnComparator);
+      final reversed = [task2, task1]..sort(compareByDependsOn);
       expect(reversed.first, task2);
 
     });
@@ -212,10 +212,10 @@ void main() {
           dependsOnList: []
       );
 
-      final tasks = [task1, task2]..sort(dependsOnComparator);
+      final tasks = [task1, task2]..sort(compareByDependsOn);
       expect(tasks.first, task1);
 
-      final reversed = [task2, task1]..sort(dependsOnComparator);
+      final reversed = [task2, task1]..sort(compareByDependsOn);
       expect(reversed.first, task2);
 
     });
@@ -234,10 +234,10 @@ void main() {
           dependsOnList: []
       );
 
-      final tasks = [task1, task2]..sort(dependsOnComparator);
+      final tasks = [task1, task2]..sort(compareByDependsOn);
       expect(tasks.first, task2);
 
-      final reversed = [task2, task1]..sort(dependsOnComparator);
+      final reversed = [task2, task1]..sort(compareByDependsOn);
       expect(reversed.first, task2);
 
     });
@@ -256,10 +256,10 @@ void main() {
           dependsOnList: [taskNotInList]
       );
 
-      final tasks = [task1, task2]..sort(dependsOnComparator);
+      final tasks = [task1, task2]..sort(compareByDependsOn);
       expect(tasks.first, task1);
 
-      final reversed = [task2, task1]..sort(dependsOnComparator);
+      final reversed = [task2, task1]..sort(compareByDependsOn);
       expect(reversed.first, task1);
 
     });

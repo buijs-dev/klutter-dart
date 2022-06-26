@@ -25,29 +25,21 @@ import "../producer/gradle.dart";
 import "../producer/ios.dart";
 import "../producer/platform.dart";
 import "../producer/project.dart";
-import "cli.dart";
+import "library.dart";
 
 /// Task to run project initialization (setup).
 class ProducerInit extends Task {
   /// Create new Task based of the root folder.
-  ProducerInit()
-      : super(
-          scriptName: ScriptName.producer,
-          taskName: TaskName.init,
-        );
+  ProducerInit() : super(ScriptName.producer, TaskName.init);
 
   @override
-  void toBeExecuted({
-    required String pathToRoot,
-    required String? option,
-  }) =>
-      pathToRoot
-        ..setupRoot
-        ..setupAndroid
-        ..setupIOS
-        ..setupPlatform
-        ..setupExample
-        ..addGradle;
+  void toBeExecuted(String pathToRoot) => pathToRoot
+    ..setupRoot
+    ..setupAndroid
+    ..setupIOS
+    ..setupPlatform
+    ..setupExample
+    ..addGradle;
 }
 
 extension on String {

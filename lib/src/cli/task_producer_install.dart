@@ -26,16 +26,12 @@ import "../common/exception.dart";
 import "../common/project.dart";
 import "../common/shared.dart";
 import "../consumer/android.dart";
-import "cli.dart";
+import "library.dart";
 
 /// Tasks do perform project installation (code or artifact generation).
 class ProducerInstall extends Task {
   /// Create new Task based of the root folder.
-  ProducerInstall()
-      : super(
-          scriptName: ScriptName.producer,
-          taskName: TaskName.install,
-        );
+  ProducerInstall() : super(ScriptName.producer, TaskName.install);
 
   /// Run a task depending on the given option value.
   ///
@@ -45,13 +41,8 @@ class ProducerInstall extends Task {
   ///
   /// Throws [KlutterException] if option is null or invalid.
   @override
-  void toBeExecuted({
-    required String pathToRoot,
-    required String? option,
-  }) {
-    final notNullOption = option?.trim().toLowerCase() ?? "";
-
-    switch (notNullOption) {
+  void toBeExecuted(String pathToRoot) {
+    switch (option) {
       case "platform":
         _installPlatform(pathToRoot);
         break;

@@ -20,7 +20,7 @@
 
 import "../common/exception.dart";
 import "../common/shared.dart";
-import "cli.dart";
+import "library.dart";
 
 const _prefix = "|flutter pub run klutter:";
 
@@ -86,7 +86,7 @@ Set<Task> tasksOrEmptyList(Command command,
   /// Sort the taskList to make sure the Tasks are executed in
   /// the correct order e.g. tasks without dependencies before
   /// those with dependencies.
-  taskList.sort(dependsOnComparator);
+  taskList.sort(compareByDependsOn);
 
   return taskList.toSet();
 }

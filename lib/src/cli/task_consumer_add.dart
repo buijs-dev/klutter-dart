@@ -22,25 +22,16 @@ import "../common/exception.dart";
 import "../common/project.dart";
 import "../common/shared.dart";
 import "../consumer/android.dart";
-import "cli.dart";
+import "library.dart";
 
 /// Task to add a Klutter-made Flutter plugin to a Flutter project.
 class ConsumerAdd extends Task {
   /// Create new Task based of the root folder.
-  ConsumerAdd()
-      : super(
-          scriptName: ScriptName.consumer,
-          taskName: TaskName.add,
-        );
+  ConsumerAdd() : super(ScriptName.consumer, TaskName.add);
 
   @override
-  void toBeExecuted({
-    required String pathToRoot,
-    required String? option,
-  }) {
-    final pluginName = option?.trim();
-
-    if (pluginName == null) {
+  void toBeExecuted(String pathToRoot) {
+    if (option == "") {
       throw KlutterException(
         "Name of Flutter plugin to add not specified.",
       );
@@ -48,7 +39,7 @@ class ConsumerAdd extends Task {
 
     final location = findDependencyPath(
       pathToRoot: pathToRoot,
-      pluginName: pluginName,
+      pluginName: option,
       pathToSDK: findFlutterSDK(
         "$pathToRoot/android".normalize,
       ),
@@ -56,7 +47,7 @@ class ConsumerAdd extends Task {
 
     registerPlugin(
       pathToRoot: pathToRoot,
-      pluginName: ":klutter:$pluginName",
+      pluginName: ":klutter:$option",
       pluginLocation: location,
     );
   }

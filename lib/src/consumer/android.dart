@@ -32,6 +32,8 @@ const _klutterPluginLoaderGradleFile = "klutter_plugin_loader.gradle.kts";
 /// Either:
 /// - throws [KlutterException] if unsuccessful or
 /// - returns [String] path to Flutter SDK installation.
+///
+/// {@category Consumer}
 String findFlutterSDK(String pathToAndroid) =>
     pathToAndroid.verifyExists.toPropertiesFile.asProperties
         .property("flutter.sdk");
@@ -42,6 +44,8 @@ String findFlutterSDK(String pathToAndroid) =>
 /// Either:
 /// - throws [KlutterException] if unsuccessful or
 /// - returns [String] path to Android SDK installation.
+///
+/// {@category Consumer}
 String findAndroidSDK(String pathToAndroid) =>
     pathToAndroid.verifyExists.toPropertiesFile.asProperties
         .property("sdk.dir");

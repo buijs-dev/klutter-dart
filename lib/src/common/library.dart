@@ -18,14 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-library klutter;
+///
+library cli;
 
-export "src/cli/library.dart";
-export "src/common/library.dart";
-export "src/consumer/android.dart";
-export "src/consumer/ios.dart";
-export "src/producer/android.dart";
-export "src/producer/gradle.dart";
-export "src/producer/ios.dart";
-export "src/producer/platform.dart";
-export "src/producer/project.dart";
+export "config.dart";
+export "exception.dart";
+export "project.dart";
+export "shared.dart";

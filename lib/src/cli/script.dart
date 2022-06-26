@@ -18,14 +18,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-library klutter;
+/// List of available scripts.
+///
+/// Tasks are accessible through scripts.
+/// There are 2 scripts:
+/// - Consumer
+/// - Producer
+///
+/// <B>Consumer:</B>
+///
+/// Tasks to be executed in a project that will use (consume)
+/// libraries that are created with the use of Klutter.
+///
+/// <B>Producer:</B>
+///
+/// Tasks to be executed in a project that will use
+/// Klutter to create (produce) a new Flutter library.
+enum ScriptName {
+  /// Script containing tasks for projects
+  /// that use libraries created with Klutter.
+  consumer,
 
-export "src/cli/library.dart";
-export "src/common/library.dart";
-export "src/consumer/android.dart";
-export "src/consumer/ios.dart";
-export "src/producer/android.dart";
-export "src/producer/gradle.dart";
-export "src/producer/ios.dart";
-export "src/producer/platform.dart";
-export "src/producer/project.dart";
+  /// Script containing tasks for projects
+  /// that are being created with Klutter.
+  producer,
+}

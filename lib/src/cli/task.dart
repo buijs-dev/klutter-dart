@@ -19,15 +19,12 @@
 // SOFTWARE.
 
 import "../common/exception.dart";
-import "cli.dart";
+import "library.dart";
 
 /// Interface to encapsulate CLI task functionality.
 abstract class Task {
   /// Create a new CliTask.
-  Task({
-    required this.scriptName,
-    required this.taskName,
-  });
+  Task(this.scriptName, this.taskName);
 
   /// The name of this task.
   final TaskName taskName;
@@ -44,22 +41,15 @@ abstract class Task {
   }
 
   /// Get the option value.
-  String get option => _option ?? "";
+  String get option => (_option ?? "").trim().toLowerCase();
 
   /// Task logic implemented by the child class which will be executed.
-  void toBeExecuted({
-    required String pathToRoot,
-    required String? option,
-  });
+  void toBeExecuted(String pathToRoot);
 
   /// Execute the task.
   TaskResult execute(String pathToRoot) {
     try {
-      toBeExecuted(
-        pathToRoot: pathToRoot,
-        option: _option,
-      );
-
+      toBeExecuted(pathToRoot);
       return const TaskResult(isOk: true);
     } on KlutterException catch (e) {
       return TaskResult(isOk: false, message: e.cause);

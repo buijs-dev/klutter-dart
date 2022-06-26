@@ -21,14 +21,13 @@
 import "dart:io";
 
 import "package:klutter/klutter.dart";
-import "package:klutter/src/common/shared.dart";
 
 /// Run tasks for a Producer project.
 Future<void> main(List<String> args) async {
   final pathToRoot = Directory.current.absolutePath;
   await execute(
-    scriptName: ScriptName.producer,
+    script: ScriptName.producer,
     pathToRoot: pathToRoot,
-    args: args,
+    arguments: args,
   );
 }
