@@ -1,0 +1,9 @@
+dartdoc:
+  categories:
+    "Consumer":
+      markdown: doc/consumer.md
+      name: Consumer
+    "Producer":
+      markdown: doc/producer.md
+      name: Producer
+  categoryOrder: ["Consumer", "Producer"]
