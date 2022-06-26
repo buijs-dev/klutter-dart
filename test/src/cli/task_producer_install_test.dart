@@ -18,29 +18,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// It should print doh...
-// ignore_for_file: avoid_print
+import "package:klutter/src/cli/library.dart";
+import "package:test/test.dart";
 
-import "dart:io";
+void main() {
 
-import "package:klutter/klutter.dart";
+  test("When option is invalid then result is not ok", () {
+    final task = ProducerInstall()..option = "nothing";
+    final result = task.execute("");
+    expect(result.isOk, false);
+    expect(result.message, "Invalid option value: 'nothing'");
+  });
 
-/// Run tasks for a Producer project.
-Future<void> main(List<String> args) async {
-
-  print("""
-  ════════════════════════════════════════════
-     KLUTTER (v0.1.0)                               
-  ════════════════════════════════════════════
-  """.ok);
-
-  final pathToRoot = Directory.current.absolutePath;
-  final result =  await execute(
-    script: ScriptName.producer,
-    pathToRoot: pathToRoot,
-    arguments: args,
-  );
-
-  print(result);
+  test("When option is missing then result is not ok", () {
+    final task = ProducerInstall();
+    final result = task.execute("");
+    expect(result.isOk, false);
+    expect(result.message, "Missing option value for task 'install'");
+  });
 
 }

@@ -67,21 +67,13 @@ export "task_producer_install.dart";
 export "task_result.dart";
 export "task_service.dart";
 
-// It should print doh...
-// ignore_for_file: avoid_print
 
 ///
-Future<void> execute({
+Future<String> execute({
   required ScriptName script,
   required String pathToRoot,
   required List<String> arguments,
 }) async {
-  """
-  ════════════════════════════════════════════
-     KLUTTER (v0.1.0)                               
-  ════════════════════════════════════════════
-  """
-      .ok;
 
   /// Parse user input to a Command.
   final command = Command.from(
@@ -98,13 +90,11 @@ Future<void> execute({
   ///
   /// Stop processing and print list of available tasks.
   if (tasks.isEmpty) {
-    """
+    return """
     |KLUTTER: Received invalid command.
     |
     |${service.printTasksAsCommands}
-    """
-        .format
-        .invalid;
+    """.format.nok;
   }
 
   /// Process all the given tasks.
@@ -118,18 +108,23 @@ Future<void> execute({
 
       /// Stop executing tasks when one has failed.
       if (!result.isOk) {
-        "KLUTTER: ${result.message}".format.nok;
-        "KLUTTER: Task '$s $t $o' finished unsuccessfully.".format.nok;
-        return;
+        return """
+          |KLUTTER: ${result.message}
+          |KLUTTER: Task '$s $t $o' finished unsuccessfully.""".format.nok;
       }
     }
 
-    "KLUTTER: Task '$s $t $o' finished successful.".format.ok;
+    return "KLUTTER: Task '$s $t $o' finished successful.".format.ok;
   }
 }
 
-extension on String {
-  void get ok => print("\x1B[32m${this}");
-  void get nok => print("\x1B[31m${this}");
-  void get invalid => print("\x1B[31m${this}");
+/// Output log message to console.
+extension ColoredMessage on String {
+
+  /// Log a green colored message.
+  String get ok => "\x1B[32m${this}";
+
+  /// Log a red colored message.
+  String get nok => "\x1B[31m${this}";
+
 }

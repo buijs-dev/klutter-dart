@@ -18,16 +18,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// It should print doh...
+// ignore_for_file: avoid_print
+
 import "dart:io";
 
 import "package:klutter/klutter.dart";
 
 /// Run tasks for a Consumer project.
 Future<void> main(List<String> args) async {
+
+  print("""
+  ════════════════════════════════════════════
+     KLUTTER (v0.1.0)                               
+  ════════════════════════════════════════════
+  """.ok);
+
   final pathToRoot = Directory.current.absolutePath;
-  await execute(
+  final result = await execute(
     script: ScriptName.consumer,
     pathToRoot: pathToRoot,
     arguments: args,
   );
+
+  print(result);
+
 }

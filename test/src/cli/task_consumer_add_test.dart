@@ -18,29 +18,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// It should print doh...
-// ignore_for_file: avoid_print
+import "package:klutter/src/cli/library.dart";
+import "package:test/test.dart";
 
-import "dart:io";
+void main() {
 
-import "package:klutter/klutter.dart";
+  test("ConsumerAdd fails when option is not set", () {
+    final result = ConsumerAdd().execute("");
+    expect(result.isOk, false);
+    expect(result.message, "Name of Flutter plugin to add not specified.");
+  });
 
-/// Run tasks for a Producer project.
-Future<void> main(List<String> args) async {
-
-  print("""
-  ════════════════════════════════════════════
-     KLUTTER (v0.1.0)                               
-  ════════════════════════════════════════════
-  """.ok);
-
-  final pathToRoot = Directory.current.absolutePath;
-  final result =  await execute(
-    script: ScriptName.producer,
-    pathToRoot: pathToRoot,
-    arguments: args,
-  );
-
-  print(result);
 
 }
