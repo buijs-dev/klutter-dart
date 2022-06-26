@@ -22,7 +22,7 @@
 
 import "dart:io";
 
-import "package:klutter/src/cli/cli.dart" as sut;
+import "package:klutter/src/cli/library.dart" as sut;
 import "package:klutter/src/common/exception.dart";
 import "package:klutter/src/common/shared.dart";
 import "package:test/test.dart";
@@ -62,8 +62,8 @@ void main() {
     /// Setup Klutter as dev_dependency.
     await sut.execute(
         pathToRoot: producerPlugin.absolutePath,
-        scriptName: sut.ScriptName.producer,
-        args: ["init"],
+        script: sut.ScriptName.producer,
+        arguments: ["init"],
     );
 
     /// Gradle files should be copied to root folder.
@@ -109,15 +109,15 @@ void main() {
     /// Install KMP Platform module.
     await sut.execute(
       pathToRoot: producerPlugin.absolutePath,
-      scriptName: sut.ScriptName.producer,
-      args: ["install=platform"],
+      script: sut.ScriptName.producer,
+      arguments: ["install=platform"],
     );
 
     /// Generate Dart service code.
     await sut.execute(
       pathToRoot: producerPlugin.absolutePath,
-      scriptName: sut.ScriptName.producer,
-      args: ["install=library"],
+      script: sut.ScriptName.producer,
+      arguments: ["install=library"],
     );
 
     expect(consumerPlugin.existsSync(), true,
@@ -134,8 +134,8 @@ void main() {
     /// Setup Klutter in consumer project.
     await sut.execute(
       pathToRoot: consumerPlugin.absolutePath,
-      scriptName: sut.ScriptName.consumer,
-      args: ["init"],
+      script: sut.ScriptName.consumer,
+      arguments: ["init"],
     );
 
     final excludeArchsHasRun = podFile
@@ -153,8 +153,8 @@ void main() {
     /// Add plugin to consumer project.
     await sut.execute(
       pathToRoot: consumerPlugin.absolutePath,
-      scriptName: sut.ScriptName.consumer,
-      args: ["add=$pluginName"],
+      script: sut.ScriptName.consumer,
+      arguments: ["add=$pluginName"],
     );
 
     final registryContainsPlugin = registry.readAsStringSync().contains(pluginName);

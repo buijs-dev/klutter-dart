@@ -18,30 +18,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "package:klutter/src/cli/library.dart";
+import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
 
-  test("Verify TaskNameParser", () {
-
-    <String?, TaskName?>{
-      "add"                : TaskName.add,
-      " add "              : TaskName.add,
-      " init"              : TaskName.init,
-      "INIT"               : TaskName.init,
-      "install"            : TaskName.install,
-      "i n s t a l l"      : null,
-      "destroyAllHumans!"  : null,
-      null                 : null,
-      ""                   : null,
-      "   "                : null,
-    }.forEach((input, taskName) {
-      expect(input.toTaskNameOrNull, taskName,
-          reason: "Expected '$input' to be converted to '$taskName' ");
-    });
-
+  test("When a task fails with a KlutterException, it is caught", () {
+    final result = _ExplodingTask().execute("");
+    expect(result.isOk, false);
+    expect(result.message, "BOOM!");
   });
 
+}
+
+class _ExplodingTask extends Task {
+
+  _ExplodingTask() : super(ScriptName.producer, TaskName.add);
+
+  @override
+  List<Task> dependsOn() => const [];
+
+  @override
+  void toBeExecuted(String pathToRoot) {
+    throw KlutterException("BOOM!");
+  }
 
 }

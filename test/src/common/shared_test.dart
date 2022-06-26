@@ -18,30 +18,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "package:klutter/src/cli/library.dart";
+import "dart:io";
+
+import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
 
-  test("Verify TaskNameParser", () {
-
-    <String?, TaskName?>{
-      "add"                : TaskName.add,
-      " add "              : TaskName.add,
-      " init"              : TaskName.init,
-      "INIT"               : TaskName.init,
-      "install"            : TaskName.install,
-      "i n s t a l l"      : null,
-      "destroyAllHumans!"  : null,
-      null                 : null,
-      ""                   : null,
-      "   "                : null,
-    }.forEach((input, taskName) {
-      expect(input.toTaskNameOrNull, taskName,
-          reason: "Expected '$input' to be converted to '$taskName' ");
-    });
-
+  test("Verify verifyExists throws exception if File does not exist", () {
+    expect(() => File("BLABLA").verifyExists, throwsA(predicate((e) =>
+        e is KlutterException &&
+        e.cause.startsWith("Path does not exist"))));
   });
-
 
 }

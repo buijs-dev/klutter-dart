@@ -20,7 +20,7 @@
 
 import "dart:io";
 
-import "package:klutter/src/cli/cli.dart";
+import "package:klutter/src/cli/library.dart";
 import "package:klutter/src/cli/task_service.dart" as service;
 import "package:klutter/src/common/exception.dart";
 import "package:klutter/src/common/shared.dart";
@@ -291,7 +291,7 @@ class _DummyTask extends Task {
     ScriptName scriptName = ScriptName.producer,
     TaskName taskName = TaskName.add,
     this.dependsOnList = const [],
-  }) : super(scriptName: scriptName, taskName: taskName);
+  }) : super(scriptName, taskName);
 
   List<Task> dependsOnList;
 
@@ -299,7 +299,7 @@ class _DummyTask extends Task {
   List<Task> dependsOn() => dependsOnList;
 
   @override
-  void Function() toBeExecuted({required String pathToRoot, required String? option}) => () { };
+  void toBeExecuted(String pathToRoot) { }
 }
 
 class _SelfDependingTask extends _DummyTask {

@@ -18,30 +18,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "package:klutter/src/cli/library.dart";
+import "dart:io";
+
+import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
 
-  test("Verify TaskNameParser", () {
+  final temp = Directory.systemTemp..createTempSync();
 
-    <String?, TaskName?>{
-      "add"                : TaskName.add,
-      " add "              : TaskName.add,
-      " init"              : TaskName.init,
-      "INIT"               : TaskName.init,
-      "install"            : TaskName.install,
-      "i n s t a l l"      : null,
-      "destroyAllHumans!"  : null,
-      null                 : null,
-      ""                   : null,
-      "   "                : null,
-    }.forEach((input, taskName) {
-      expect(input.toTaskNameOrNull, taskName,
-          reason: "Expected '$input' to be converted to '$taskName' ");
-    });
+  test("Verify exception is thrown if podspec file does not exist", () {
+    final folder = Directory("${temp.absolutePath}/ios_test1".normalize)
+      ..createSync();
 
+    expect(() => addFrameworkToPodspec(
+      pluginName: "some_plugin",
+      pathToIos: folder.absolutePath
+    ), throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Missing podspec file"))));
   });
 
+  test("Verify exception is thrown if addFramework fails", () {
+    final folder = Directory("${temp.absolutePath}/ios_test2".normalize)
+      ..createSync();
+
+    File("${folder.absolutePath}/some_plugin.podspec")
+        .createSync();
+
+    expect(() => addFrameworkToPodspec(
+        pluginName: "some_plugin",
+        pathToIos: folder.absolutePath
+    ), throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Failed to add Platform.framework to ios folder."))));
+  });
 
 }
