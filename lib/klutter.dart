@@ -20,7 +20,7 @@
 
 library klutter;
 
-export "src/cli/library.dart";
+export "src/cli/cli.dart";
 export "src/common/library.dart";
 export "src/consumer/android.dart";
 export "src/consumer/ios.dart";

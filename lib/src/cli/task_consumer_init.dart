@@ -23,7 +23,7 @@ import "../common/project.dart";
 import "../common/shared.dart";
 import "../consumer/android.dart";
 import "../consumer/ios.dart";
-import "library.dart";
+import "cli.dart";
 
 /// Task to prepare a Flutter project for using Klutter-made plugins.
 class ConsumerInit extends Task {

@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "library.dart";
+import "cli.dart";
 
 /// Object to store parsed user input.
 class Command {

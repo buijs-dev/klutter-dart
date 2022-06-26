@@ -26,7 +26,7 @@ import "../common/exception.dart";
 import "../common/project.dart";
 import "../common/shared.dart";
 import "../consumer/android.dart";
-import "library.dart";
+import "cli.dart";
 
 /// Tasks do perform project installation (code or artifact generation).
 class ProducerInstall extends Task {

@@ -20,7 +20,7 @@
 
 import "dart:io";
 
-import "package:klutter/src/cli/library.dart";
+import "package:klutter/src/cli/cli.dart";
 import "package:klutter/src/cli/task_service.dart" as service;
 import "package:klutter/src/common/exception.dart";
 import "package:klutter/src/common/shared.dart";

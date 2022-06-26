@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "package:klutter/src/cli/library.dart";
+import "package:klutter/src/cli/cli.dart";
 import "package:test/test.dart";
 
 void main() {

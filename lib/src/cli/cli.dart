@@ -67,14 +67,12 @@ export "task_producer_install.dart";
 export "task_result.dart";
 export "task_service.dart";
 
-
 ///
 Future<String> execute({
   required ScriptName script,
   required String pathToRoot,
   required List<String> arguments,
 }) async {
-
   /// Parse user input to a Command.
   final command = Command.from(
     task: arguments.join(),
@@ -94,7 +92,9 @@ Future<String> execute({
     |KLUTTER: Received invalid command.
     |
     |${service.printTasksAsCommands}
-    """.format.nok;
+    """
+        .format
+        .nok;
   }
 
   /// Process all the given tasks.
@@ -110,7 +110,9 @@ Future<String> execute({
       if (!result.isOk) {
         return """
           |KLUTTER: ${result.message}
-          |KLUTTER: Task '$s $t $o' finished unsuccessfully.""".format.nok;
+          |KLUTTER: Task '$s $t $o' finished unsuccessfully."""
+            .format
+            .nok;
       }
     }
 
@@ -120,11 +122,9 @@ Future<String> execute({
 
 /// Output log message to console.
 extension ColoredMessage on String {
-
   /// Log a green colored message.
   String get ok => "\x1B[32m${this}";
 
   /// Log a red colored message.
   String get nok => "\x1B[31m${this}";
-
 }

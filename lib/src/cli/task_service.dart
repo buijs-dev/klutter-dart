@@ -20,7 +20,7 @@
 
 import "../common/exception.dart";
 import "../common/shared.dart";
-import "library.dart";
+import "cli.dart";
 
 const _prefix = "|flutter pub run klutter:";
 

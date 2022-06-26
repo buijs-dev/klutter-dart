@@ -27,20 +27,19 @@ import "package:klutter/klutter.dart";
 
 /// Run tasks for a Producer project.
 Future<void> main(List<String> args) async {
-
   print("""
   ════════════════════════════════════════════
      KLUTTER (v0.1.0)                               
   ════════════════════════════════════════════
-  """.ok);
+  """
+      .ok);
 
   final pathToRoot = Directory.current.absolutePath;
-  final result =  await execute(
+  final result = await execute(
     script: ScriptName.producer,
     pathToRoot: pathToRoot,
     arguments: args,
   );
 
   print(result);
-
 }

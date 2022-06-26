@@ -25,7 +25,7 @@ import "../producer/gradle.dart";
 import "../producer/ios.dart";
 import "../producer/platform.dart";
 import "../producer/project.dart";
-import "library.dart";
+import "cli.dart";
 
 /// Task to run project initialization (setup).
 class ProducerInit extends Task {

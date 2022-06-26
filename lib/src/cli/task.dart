@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import "../common/exception.dart";
-import "library.dart";
+import "cli.dart";
 
 /// Interface to encapsulate CLI task functionality.
 abstract class Task {

@@ -22,7 +22,7 @@
 
 import "dart:io";
 
-import "package:klutter/src/cli/library.dart" as sut;
+import "package:klutter/src/cli/cli.dart" as sut;
 import "package:klutter/src/common/exception.dart";
 import "package:klutter/src/common/shared.dart";
 import "package:test/test.dart";
@@ -44,6 +44,17 @@ void main() {
   final consumerPlugin = Directory("${producerPlugin.absolute.path}/example".normalize);
 
   test("end-to-end test", () async {
+
+    /// Run a Klutter task without an existing Flutter project
+    final result = await sut.execute(
+      pathToRoot: producerPlugin.absolutePath,
+      script: sut.ScriptName.producer,
+      arguments: ["init"],
+    );
+
+    expect(result.contains("finished unsuccessfully"), true,
+      reason: "can't run a task without a project",
+    );
 
     /// Create Flutter plugin project.
     await createFlutterPlugin(

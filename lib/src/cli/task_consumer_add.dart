@@ -22,7 +22,7 @@ import "../common/exception.dart";
 import "../common/project.dart";
 import "../common/shared.dart";
 import "../consumer/android.dart";
-import "library.dart";
+import "cli.dart";
 
 /// Task to add a Klutter-made Flutter plugin to a Flutter project.
 class ConsumerAdd extends Task {
