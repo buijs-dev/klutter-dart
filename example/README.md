@@ -1,0 +1,2 @@
+- For installation instructions see [here](./../README.md).
+- For working with Klutter in the Kotlin Multiplatform module see [here](https://github.com/buijs-dev/klutter).
