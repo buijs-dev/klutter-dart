@@ -221,7 +221,6 @@ extension on File {
 
 /// The root/platform module containing the Kotlin Multiplatform sourcecode.
 class PlatformModule {
-
   /// Create a PlatformModule.
   const PlatformModule({
     required this.root,

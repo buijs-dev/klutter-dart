@@ -80,7 +80,6 @@ extension on String {
 }
 
 extension on Directory {
-
   /// Create build.gradle.kts file in the android folder.
   void get writeAndroidGradleFile {
     File("${absolute.path}/build.gradle.kts".normalize)
