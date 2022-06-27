@@ -22,9 +22,12 @@ import "dart:io";
 
 import "../common/config.dart";
 import "../common/exception.dart";
-import "../common/shared.dart";
+import "../common/project.dart";
+import "../common/utilities.dart";
 
 /// Overwrite the build.gradle file in the root/android folder.
+///
+/// {@category producer}
 void writeBuildGradleFile({
   required String pathToAndroid,
   required String packageName,
@@ -36,6 +39,8 @@ void writeBuildGradleFile({
       ..writeBuildGradleContent;
 
 /// Overwrite the method channel Kotlin Class in src/main/kotlin.
+///
+/// {@category producer}
 void writeAndroidPlugin({
   required String pathToAndroid,
   required String packageName,
@@ -45,6 +50,8 @@ void writeAndroidPlugin({
       ..writePluginContent;
 
 /// Create the android/klutter folder if it does not exist.
+///
+/// {@category producer}
 void writeKlutterGradleFile(String pathToAndroid) =>
     pathToAndroid.verifyExists.toKlutterFolder..writeAndroidGradleFile;
 
@@ -73,6 +80,8 @@ extension on String {
 }
 
 extension on Directory {
+
+  /// Create build.gradle.kts file in the android folder.
   void get writeAndroidGradleFile {
     File("${absolute.path}/build.gradle.kts".normalize)
       ..maybeCreate
@@ -88,7 +97,9 @@ class _Configuration {
   _Configuration(this.file);
 
   final FileSystemEntity file;
+
   late final String packageName;
+
   late final String version;
 
   /// Write the boilerplate code in

@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import "../common/project.dart";
-import "../common/shared.dart";
+import "../common/utilities.dart";
 import "../producer/android.dart";
 import "../producer/gradle.dart";
 import "../producer/ios.dart";
@@ -28,6 +28,8 @@ import "../producer/project.dart";
 import "cli.dart";
 
 /// Task to run project initialization (setup).
+///
+/// {@category producer}
 class ProducerInit extends Task {
   /// Create new Task based of the root folder.
   ProducerInit() : super(ScriptName.producer, TaskName.init);

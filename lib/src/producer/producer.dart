@@ -18,45 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "../common/exception.dart";
-import "../common/project.dart";
-import "../common/utilities.dart";
-import "../consumer/android.dart";
-import "cli.dart";
-
-/// Task to add a Klutter-made Flutter plugin to a Flutter project.
+/// The producer library contains everything required
+/// to create (produce) plugins with Klutter.
 ///
-/// {@category consumer}
-class ConsumerAdd extends Task {
-  /// Create new Task based of the root folder.
-  ConsumerAdd() : super(ScriptName.consumer, TaskName.add);
+/// {@category producer}
+library producer;
 
-  @override
-  void toBeExecuted(String pathToRoot) {
-    if (option == "") {
-      throw KlutterException(
-        "Name of Flutter plugin to add not specified.",
-      );
-    }
-
-    final location = findDependencyPath(
-      pathToRoot: pathToRoot,
-      pluginName: option,
-      pathToSDK: findFlutterSDK(
-        "$pathToRoot/android".normalize,
-      ),
-    );
-
-    registerPlugin(
-      pathToRoot: pathToRoot,
-      pluginName: ":klutter:$option",
-      pluginLocation: location,
-    );
-  }
-
-  @override
-  List<Task> dependsOn() => [ConsumerInit()];
-
-  @override
-  List<String> optionValues() => ["<name_of_plugin_to_add>"];
-}
+export "android.dart";
+export "gradle.dart";
+export "ios.dart";
+export "platform.dart";
+export "project.dart";

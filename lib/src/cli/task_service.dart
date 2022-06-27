@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import "../common/exception.dart";
-import "../common/shared.dart";
+import "../common/utilities.dart";
 import "cli.dart";
 
 const _prefix = "|flutter pub run klutter:";
@@ -27,6 +27,9 @@ const _prefix = "|flutter pub run klutter:";
 /// List of all [Task] objects.
 ///
 /// A task may contain one or more sub-task implementations.
+///
+/// {@category producer}
+/// {@category consumer}
 Set<Task> allTasks(
 
     /// Injectable Task List for testing purposes.

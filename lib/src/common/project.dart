@@ -21,9 +21,11 @@
 import "dart:io";
 
 import "exception.dart";
-import "shared.dart";
+import "utilities.dart";
 
 /// Create and/or append the .klutter-plugins file to register a Klutter plugin.
+///
+/// {@category consumer}
 void registerPlugin({
   required String pathToRoot,
   required String pluginName,
@@ -32,26 +34,59 @@ void registerPlugin({
     createRegistry(pathToRoot).append(pluginName, pluginLocation);
 
 /// Create registry file .klutter-plugins.
+///
+/// {@category consumer}
 File createRegistry(String pathToRoot) =>
     pathToRoot.verifyExists.toKlutterPlugins;
 
 /// Find package name in root/pubspec.yaml.
 ///
 /// Returns value of element flutter:plugin:platforms:android:package.
+///
+/// {@category consumer}
+/// {@category producer}
 String findPackageName(String pathToRoot) =>
     pathToRoot.verifyExists.toPubspecYaml.packageName;
 
 /// Find plugin name in root/pubspec.yaml.
 ///
 /// Returns value of element name.
+///
+/// {@category consumer}
+/// {@category producer}
 String findPluginName(String pathToRoot) =>
     pathToRoot.verifyExists.toPubspecYaml.pluginName;
 
 /// Find plugin name in root/pubspec.yaml.
 ///
 /// Returns value of element version.
+///
+/// {@category consumer}
+/// {@category producer}
 String findPluginVersion(String pathToRoot) =>
     pathToRoot.verifyExists.toPubspecYaml.pluginVersion;
+
+/// The plugin ClassName which is equal to the library name
+/// converted to camelcase + 'Plugin' postfix if [postfixWithPlugin] is set to true.
+///
+/// Example:
+/// Given [pluginName] 'super_awesome'
+/// will return SuperAwesomePlugin.
+///
+/// Example:
+/// Given [pluginName] 'super_awesome_plugin'
+/// will return SuperAwesomePlugin.
+///
+/// {@category consumer}
+/// {@category producer}
+String toPluginClassName(String pluginName, {bool postfixWithPlugin = false}) {
+  final className = pluginName
+      .split("_")
+      .map((e) => "${e[0].toUpperCase()}${e.substring(1, e.length)}")
+      .join();
+
+  return postfixWithPlugin ? className.postfixedWithPlugin : className;
+}
 
 /// Get the relative path of a plugin dependency.
 ///
@@ -82,6 +117,9 @@ String findPluginVersion(String pathToRoot) =>
 /// Will return absolute path: foo/awesome
 ///
 /// When the dependency is not local then the path to the flutter cache folder is returned.
+///
+/// {@category consumer}
+/// {@category producer}
 String findDependencyPath({
   required String pathToSDK,
   required String pathToRoot,

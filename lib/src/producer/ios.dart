@@ -21,9 +21,11 @@
 import "dart:io";
 
 import "../common/exception.dart";
-import "../common/shared.dart";
+import "../common/utilities.dart";
 
 /// Overwrite the build.gradle file in the root/android folder.
+///
+/// {@category producer}
 void createIosKlutterFolder(String pathToIos) => pathToIos.verifyExists
   ..createKlutterFolder
   ..createKlutterReadmeFile;
@@ -32,6 +34,8 @@ void createIosKlutterFolder(String pathToIos) => pathToIos.verifyExists
 /// fat-framework build by the platform module.
 ///
 /// The generated framework will be copied to the root/ios/Klutter folder.
+///
+/// {@category producer}
 void addFrameworkToPodspec({
   required String pathToIos,
   required String pluginName,

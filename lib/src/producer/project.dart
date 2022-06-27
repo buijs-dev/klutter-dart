@@ -20,11 +20,14 @@
 
 import "dart:io";
 
-import "../common/shared.dart";
+import "../common/project.dart";
+import "../common/utilities.dart";
 
 /// Generate the main.dart file in the root/example/lib folder.
 ///
 /// This generated main.dart file uses the example Klutter platform module.
+///
+/// {@category producer}
 void writeExampleMainDartFile({
   required String pathToExample,
   required String pluginName,

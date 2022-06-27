@@ -20,12 +20,14 @@
 
 import "../common/exception.dart";
 import "../common/project.dart";
-import "../common/shared.dart";
+import "../common/utilities.dart";
 import "../consumer/android.dart";
 import "../consumer/ios.dart";
 import "cli.dart";
 
 /// Task to prepare a Flutter project for using Klutter-made plugins.
+///
+/// {@category consumer}
 class ConsumerInit extends Task {
   /// Create new Task based of the root folder.
   ConsumerInit() : super(ScriptName.consumer, TaskName.init);

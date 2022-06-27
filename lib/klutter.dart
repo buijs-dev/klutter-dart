@@ -18,14 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/// The Klutter Framework makes it possible to write a Flutter plugin for both Android
+/// and iOS using [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
+///
+/// Instead of writing platform specific code twice in 2 languages (Swift + Kotlin),
+/// it can be written once in Kotlin and used as a Flutter plugin.
 library klutter;
 
 export "src/cli/cli.dart";
-export "src/common/library.dart";
-export "src/consumer/android.dart";
-export "src/consumer/ios.dart";
-export "src/producer/android.dart";
-export "src/producer/gradle.dart";
-export "src/producer/ios.dart";
-export "src/producer/platform.dart";
-export "src/producer/project.dart";
+export "src/common/common.dart";
+export "src/consumer/consumer.dart";
+export "src/producer/producer.dart";

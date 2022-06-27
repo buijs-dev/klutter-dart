@@ -24,11 +24,13 @@ import "package:dart_style/dart_style.dart";
 
 import "../common/exception.dart";
 import "../common/project.dart";
-import "../common/shared.dart";
+import "../common/utilities.dart";
 import "../consumer/android.dart";
 import "cli.dart";
 
 /// Tasks do perform project installation (code or artifact generation).
+///
+/// {@category producer}
 class ProducerInstall extends Task {
   /// Create new Task based of the root folder.
   ProducerInstall() : super(ScriptName.producer, TaskName.install);

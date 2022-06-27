@@ -1,4 +1,4 @@
-[<img src="./logo_animated.gif" width="200" border="5" alt="buijs software logo" />](https://github.com/buijs-dev)
+[<img src="https://github.com/buijs-dev/klutter-dart/blob/main/logo_animated.gif?raw=true" width="300" alt="buijs software logo" />](https://github.com/buijs-dev)
 
 # Klutter
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter-dart?color=black&logoColor=black&style=for-the-badge)](https://github.com/buijs-dev/klutter-dart/blob/main/LICENSE)

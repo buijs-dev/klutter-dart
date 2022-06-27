@@ -20,9 +20,7 @@
 
 import "dart:io";
 
-import "package:klutter/src/common/config.dart";
-import "package:klutter/src/common/exception.dart";
-import "package:klutter/src/common/shared.dart";
+import "package:klutter/src/common/common.dart";
 import "package:klutter/src/producer/android.dart";
 import "package:test/test.dart";
 

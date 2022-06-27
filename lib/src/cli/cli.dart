@@ -48,7 +48,7 @@
 /// - Option: <I>android</I>
 library cli;
 
-import "../common/shared.dart";
+import "../common/utilities.dart";
 import "command.dart";
 import "script.dart";
 import "task.dart";
@@ -67,7 +67,7 @@ export "task_producer_install.dart";
 export "task_result.dart";
 export "task_service.dart";
 
-///
+/// Main entrypoint for executing Klutter command line tasks.
 Future<String> execute({
   required ScriptName script,
   required String pathToRoot,

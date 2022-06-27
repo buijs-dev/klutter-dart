@@ -21,7 +21,7 @@
 import "dart:io";
 
 import "../common/config.dart";
-import "../common/shared.dart";
+import "../common/utilities.dart";
 
 /// Generate the settings.gradle.kts file in the root folder.
 ///
@@ -31,6 +31,9 @@ import "../common/shared.dart";
 ///
 /// The root/klutter/<plugin-name> module contains the platform module
 /// with the plugin implementation code.
+///
+/// {@category producer}
+/// {@category gradle}
 void writeRootSettingsGradleFile({
   required String pathToRoot,
   required String pluginName,
@@ -41,6 +44,9 @@ void writeRootSettingsGradleFile({
 /// Generate the build.gradle.kts file in the root folder.
 ///
 /// The build file applies the Klutter Gradle plugin.
+///
+/// {@category producer}
+/// {@category gradle}
 void writeRootBuildGradleFile({
   required String pathToRoot,
   required String pluginName,
@@ -48,7 +54,7 @@ void writeRootBuildGradleFile({
     pathToRoot.verifyExists.createRootBuildGradleFile
         .writeRootBuildGradleContent(pluginName);
 
-/// Generate the root/klutter folder.
+/// Generate the Kotlin Multiplatform module.
 ///
 /// The klutter folder contains 2 folders:
 /// - android
@@ -57,12 +63,14 @@ void writeRootBuildGradleFile({
 /// The android folder contains the .aar artifact.
 ///
 /// The <plugin-name> folder contains the Kotlin Multiplatform module.
+///
+/// {@category producer}
 void createPlatformModule({
   required String pathToRoot,
   required String pluginName,
   required String packageName,
 }) =>
-    _KlutterModule.fromRoot(
+    PlatformModule.fromRoot(
       pathToRoot: pathToRoot,
       pluginName: pluginName,
       packageName: packageName,
@@ -78,6 +86,9 @@ void createPlatformModule({
 /// Generate the build.gradle.kts file in the root folder.
 ///
 /// The build file applies the Klutter Gradle plugin.
+///
+/// {@category producer}
+/// {@category gradle}
 void writeGradleProperties(String pathToRoot) => pathToRoot
     .verifyExists.createRootGradlePropertiesFile.writeGradlePropertiesContent;
 
@@ -208,8 +219,11 @@ extension on File {
   }
 }
 
-class _KlutterModule {
-  _KlutterModule({
+/// The root/platform module containing the Kotlin Multiplatform sourcecode.
+class PlatformModule {
+
+  /// Create a PlatformModule.
+  const PlatformModule({
     required this.root,
     required this.pluginName,
     required this.packageName,
@@ -218,7 +232,8 @@ class _KlutterModule {
     required this.iosMain,
   });
 
-  factory _KlutterModule.fromRoot({
+  /// Create a PlatformModule based of a root path.
+  factory PlatformModule.fromRoot({
     required String pathToRoot,
     required String pluginName,
     required String packageName,
@@ -231,7 +246,7 @@ class _KlutterModule {
     final commonMain = root.resolveFolder("src/commonMain/$kotlinSource");
     final iosMain = root.resolveFolder("src/iosMain/$kotlinSource");
 
-    return _KlutterModule(
+    return PlatformModule(
       root: root,
       pluginName: pluginName,
       packageName: packageName,
@@ -259,12 +274,19 @@ class _KlutterModule {
   /// The root/platform/src/iosMain/kotlin/<organisation>/platform/ folder.
   final Directory iosMain;
 
+  /// Create the source folders:
+  /// - androidMain
+  /// - commonMain
+  /// - iosMain
   void get createPlatformSourceFolders {
     androidMain.maybeCreate;
     commonMain.maybeCreate;
     iosMain.maybeCreate;
   }
 
+  /// Create the build.gradle.kts file in the platform module.
+  ///
+  /// This build.gradle.kts file applies the Klutter Gradle plugin.
   void get createPlatformGradleFile {
     File("${root.absolute.path}/build.gradle.kts".normalize)
       ..maybeCreate
@@ -362,6 +384,11 @@ class _KlutterModule {
           .format);
   }
 
+  /// Create the AndroidManifest.xml file.
+  ///
+  /// Will create a new file if it does not exist
+  /// or overwrite the current AndroidManifest.xml
+  /// if it already exists.
   void get createAndroidManifest {
     root.resolveFile("src/androidMain/AndroidManifest.xml").normalizeToFile
       ..maybeCreate
@@ -374,6 +401,8 @@ class _KlutterModule {
       );
   }
 
+  /// Create Platform.kt (Kotlin) class file
+  /// in android package with example Kotlin code.
   void get createAndroidPlatformClass {
     androidMain.resolveFile("Platform.kt").normalizeToFile
       ..maybeCreate
@@ -387,6 +416,8 @@ class _KlutterModule {
           .format);
   }
 
+  /// Create Greeting.kt (Kotlin) class file
+  /// in common package with example Kotlin code.
   void get createCommonGreetingClass {
     commonMain.resolveFile("Greeting.kt").normalizeToFile
       ..maybeCreate
@@ -406,6 +437,8 @@ class _KlutterModule {
           .format);
   }
 
+  /// Create Platform.kt (Kotlin) class file
+  /// in common package with example Kotlin code.
   void get createCommonPlatformClass {
     commonMain.resolveFile("Platform.kt").normalizeToFile
       ..maybeCreate
@@ -418,6 +451,8 @@ class _KlutterModule {
           .format);
   }
 
+  /// Create Platform.kt (Kotlin) class file
+  /// in ios package with example Kotlin code.
   void get createIosPlatformClass {
     iosMain.resolveFile("Platform.kt").normalizeToFile
       ..maybeCreate

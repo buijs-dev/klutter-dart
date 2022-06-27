@@ -20,9 +20,7 @@
 
 import "dart:io";
 
-import "../common/config.dart";
-import "../common/exception.dart";
-import "../common/shared.dart";
+import "../common/common.dart";
 
 const _klutterPluginLoaderGradleFile = "klutter_plugin_loader.gradle.kts";
 
@@ -33,7 +31,7 @@ const _klutterPluginLoaderGradleFile = "klutter_plugin_loader.gradle.kts";
 /// - throws [KlutterException] if unsuccessful or
 /// - returns [String] path to Flutter SDK installation.
 ///
-/// {@category Consumer}
+/// {@category consumer}
 String findFlutterSDK(String pathToAndroid) =>
     pathToAndroid.verifyExists.toPropertiesFile.asProperties
         .property("flutter.sdk");
@@ -45,13 +43,15 @@ String findFlutterSDK(String pathToAndroid) =>
 /// - throws [KlutterException] if unsuccessful or
 /// - returns [String] path to Android SDK installation.
 ///
-/// {@category Consumer}
+/// {@category consumer}
 String findAndroidSDK(String pathToAndroid) =>
     pathToAndroid.verifyExists.toPropertiesFile.asProperties
         .property("sdk.dir");
 
 /// Generate a new gradle file in the flutter/tools/gradle folder
 /// which will apply Klutter plugins to a Flutter project.
+///
+/// {@category consumer}
 void writePluginLoaderGradleFile(String pathToFlutterSDK) => pathToFlutterSDK
     .verifyExists
     .createFlutterToolsFolder
@@ -66,10 +66,14 @@ void writePluginLoaderGradleFile(String pathToFlutterSDK) => pathToFlutterSDK
 /// - compileSdkVersion to [androidCompileSdk]
 /// - minSdkVersion to [androidMinSdk]
 /// - targetSdkVersion to [androidTargetSdk]
+///
+/// {@category consumer}
 void setAndroidSdkConstraints(String pathToAndroid) =>
     pathToAndroid.verifyExists.toBuildGradleFile.setAndroidSdkVersions;
 
 /// Add apply plugin line to android/settings.gradle file.
+///
+/// {@category consumer}
 void applyPluginLoader(String pathToAndroid) =>
     pathToAndroid.verifyExists.toSettingsGradleFile.appendSettingsGradle;
 

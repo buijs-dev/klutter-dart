@@ -18,10 +18,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/// The consumer library contains everything required
+/// to usage (consume) plugins created with Klutter.
 ///
-library cli;
+/// {@category consumer}
+library consumer;
 
-export "config.dart";
-export "exception.dart";
-export "project.dart";
-export "shared.dart";
+export "android.dart";
+export "ios.dart";

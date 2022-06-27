@@ -21,6 +21,7 @@
 /// List of available scripts.
 ///
 /// Tasks are accessible through scripts.
+///
 /// There are 2 scripts:
 /// - Consumer
 /// - Producer
@@ -34,6 +35,9 @@
 ///
 /// Tasks to be executed in a project that will use
 /// Klutter to create (produce) a new Flutter library.
+///
+/// {@category consumer}
+/// {@category producer}
 enum ScriptName {
   /// Script containing tasks for projects
   /// that use libraries created with Klutter.

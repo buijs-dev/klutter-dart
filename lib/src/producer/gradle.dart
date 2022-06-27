@@ -21,7 +21,7 @@
 import "dart:io";
 import "dart:isolate";
 
-import "../common/shared.dart";
+import "../common/utilities.dart";
 
 /// Copy Gradle files to root and root/android folders to enable the usage of Gradle.
 ///
@@ -31,6 +31,9 @@ import "../common/shared.dart";
 /// - gradle.properties
 /// - gradle/wrapper/gradle-wrapper.jar
 /// - gradle/wrapper/gradle-wrapper.properties
+///
+/// {@category producer}
+/// {@category gradle}
 class Gradle {
   /// Create a Gradle instance based of the Flutter project root folder.
   Gradle(this.pathToRoot);
@@ -147,6 +150,7 @@ extension on String {
 }
 
 extension on Directory {
+  /// Copy a Gradle file from lib/res folder to a project folder.
   void copyFiles(List<_GradleResource> resources) {
     for (final resource in resources) {
       final from = File(resource.pathToSource.verifyExists);
@@ -159,6 +163,8 @@ extension on Directory {
   }
 }
 
+/// Representation of a Gradle file which
+/// should be copied to a Klutter project.
 class _GradleResource {
   const _GradleResource({
     required this.pathToSource,

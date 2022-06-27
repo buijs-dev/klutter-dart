@@ -21,7 +21,7 @@
 import "dart:io";
 
 import "../common/exception.dart";
-import "../common/shared.dart";
+import "../common/utilities.dart";
 
 /// Add lines to the post_install block in the Podfile
 /// to exclude iphone simulator architectures.
@@ -52,6 +52,8 @@ import "../common/shared.dart";
 /// ```
 ///
 /// Throws [KlutterException] if adding exclusion lines has failed.
+///
+/// {@category consumer}
 void excludeArm64FromPodfile(String pathToIos) =>
     pathToIos.verifyExists.toPodfile.writeExclusionLines;
 
