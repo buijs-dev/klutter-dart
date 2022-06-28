@@ -45,12 +45,12 @@ flutter pub get
 ```
 
 # Usage
-#### What's the point?
+<b>What's the point?</b></br>
 Plugins build with the Klutter Framework work slightly different than regular plugins. 
 The following tasks help Flutter to locate Klutter plugins 
 and ensure compatibility between Flutter Android/IOS configuration and Klutter plugin Android/IOS configuration.
 
-#### Steps:
+<b>Steps:</b></br>
 1. Installation.
 3. Initialization.
 4. Add dependencies.
@@ -86,12 +86,12 @@ Finally Klutter plugins can be added by running the add command.
 flutter pub run klutter:consumer add=awesome_plugin 
 ```  
 
-#### Background
+<b>Background</b></br>
 The consumer init task will configure your Flutter project in:
-1. [ios](#ios)
-2. [android](#android)
+1. [IOS](#ios)
+2. [Android](#android)
 
-#### IOS
+<b>IOS</b></br>
 The Podfile has to be editted to be able to run the app on an iPhone simulator.
 Klutter will look for the following code block in the Podfile:
 
@@ -117,7 +117,7 @@ end
 ```
 
 
-#### Android
+<b>Android</b></br>
 The consumer init task will do the following for Android in your Flutter project:  
  1. Create a .klutter-plugins file in the root folder.  
  2. Create a new Gradle file in the flutter/packages/flutter_tools/gradle.  
@@ -133,11 +133,11 @@ This is then used by the Android Gradle file to find the plugin location
 and add the generated artifacts to your build.
 
 # Creation
-#### What's the point?
+<b>What's the point?</b></br>
 The starting point of a Klutter plugins is a regular Flutter plugin project. 
 The following steps describe how to create a Flutter plugin project and initialize Klutter in it.
 
-#### Steps:
+<b>Steps:</b></br>
 1. Create Flutter plugin project.
 2. [Installation](#Installation).
 3. Initialization.
