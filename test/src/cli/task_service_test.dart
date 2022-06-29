@@ -56,7 +56,7 @@ void main() {
 
       expect(
         tasks.getTask(ScriptName.producer, TaskName.install).toString(),
-        "Instance of Task: ScriptName.producer | TaskName.install | DependsOn: [Instance of Task: ScriptName.producer | TaskName.init | DependsOn: []]",
+        "Instance of Task: ScriptName.producer | TaskName.install | DependsOn: []",
       );
 
     });
@@ -121,8 +121,8 @@ void main() {
     test("Verify tasksOrEmptyList returns normalized list of requested Task and all dependents", () {
 
       const command = Command(
-        scriptName: ScriptName.producer,
-        taskName: TaskName.install,
+        scriptName: ScriptName.consumer,
+        taskName: TaskName.add,
         option: "platform",
       );
 
@@ -135,7 +135,7 @@ void main() {
       expect(tasks.first.taskName, TaskName.init);
 
       // Install should be the final task.
-      expect(tasks.last.taskName, TaskName.install);
+      expect(tasks.last.taskName, TaskName.add);
 
     });
 
