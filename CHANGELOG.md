@@ -1,3 +1,7 @@
+## 0.1.1
+* Producer Install task no longer depends on Init task.
+* Formatting fixes in documentation.
+
 ## 0.1.0
 
 * Uses Klutter Gradle v2022.r6.alpha.
