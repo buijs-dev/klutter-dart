@@ -59,9 +59,6 @@ class ProducerInstall extends Task {
   }
 
   @override
-  List<Task> dependsOn() => [ProducerInit()];
-
-  @override
   List<String> optionValues() => ["platform", "library"];
 }
 
