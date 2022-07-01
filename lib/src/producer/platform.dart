@@ -175,10 +175,6 @@ extension on File {
           |
           |}
           |
-          |tasks.register("clean", Delete::class) {
-          |    delete(rootProject.buildDir)
-          |}
-          |
           |tasks.register("klutterInstallPlatform", Exec::class) {
           |    commandLine("bash", "./gradlew", "clean", "build", "-p", "platform")
           |    finalizedBy("klutterCopyAarFile", "klutterCopyFramework")
@@ -375,6 +371,7 @@ class PlatformModule {
       |android {
       |    compileSdk = $androidCompileSdk
       |    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+      |    sourceSets["main"].kotlin { srcDirs("src/androidMain/kotlin") }
       |    defaultConfig {
       |        minSdk = $androidMinSdk
       |        targetSdk = $androidTargetSdk

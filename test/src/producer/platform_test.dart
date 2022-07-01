@@ -181,10 +181,6 @@ void main() {
           
           }
           
-          tasks.register("clean", Delete::class) {
-              delete(rootProject.buildDir)
-          }
-          
           tasks.register("klutterInstallPlatform", Exec::class) {
               commandLine("bash", "./gradlew", "clean", "build", "-p", "platform")
               finalizedBy("klutterCopyAarFile", "klutterCopyFramework")
@@ -254,10 +250,6 @@ void main() {
                   }
               }
           
-          }
-          
-          tasks.register("clean", Delete::class) {
-              delete(rootProject.buildDir)
           }
           
           tasks.register("klutterInstallPlatform", Exec::class) {
@@ -457,6 +449,7 @@ void main() {
       android {
           compileSdk = 31
           sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+          sourceSets["main"].kotlin { srcDirs("src/androidMain/kotlin") }
           defaultConfig {
               minSdk = 21
               targetSdk = 31

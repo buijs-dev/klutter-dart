@@ -25,17 +25,19 @@ Use this plugin if you want to:
 2. [Using plugins](#Usage)
 3. [Creating plugins](#Creation)
 
+For a step-by-step guide, see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
+
 # Installation
 <b>What's the point?</b></br>
 Plugins build with the Klutter Framework work slightly different than regular plugins. 
-The Klutter dev dependency is a requirement for both using and creating plugins with Klutter.
+The Klutter dependency is a requirement for both using and creating plugins with Klutter.
 
 <b>Steps:</b></br>
-Add the Klutter library to dev_dependencies in the pubspec.yaml:
+Add the Klutter library to dependencies in the pubspec.yaml:
 
 ```yaml  
-dev_dependencies:  
- klutter: ^0.1.0
+dependencies:  
+ klutter: ^0.1.2
  ```  
   
 Then run:  
@@ -55,7 +57,7 @@ and ensure compatibility between Flutter Android/IOS configuration and Klutter p
 3. Initialization.
 4. Add dependencies.
 
-Install Klutter as dev_dependency as described [here](#Installation).
+Install Klutter as dependency as described [here](#Installation).
 
 Initialize Klutter in your project by running:
 
@@ -153,7 +155,7 @@ and 'plugin_name' with your plugin name:
 flutter create --org com.example --template=plugin --platforms=android,ios plugin_name
 ```  
 
-Install the Klutter Framework as dev_dependency and then run:
+Install the Klutter Framework as dependency and then run:
 
 ```shell  
 flutter pub run klutter:producer init  

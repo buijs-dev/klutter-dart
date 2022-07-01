@@ -1,6 +1,6 @@
 name: klutter
 description: The Klutter Pub Plugin makes it possible to write a Flutter plugin for both Android and iOS using Kotlin only.
-version: 0.1.1
+version: 0.1.2
 homepage: https://github.com/buijs-dev/klutter-dart
 repository: https://github.com/buijs-dev/klutter-dart
 
