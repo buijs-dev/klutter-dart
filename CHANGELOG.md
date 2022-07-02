@@ -1,3 +1,6 @@
+## 0.1.3
+* Uses Klutter Gradle v2022.r6-7.alpha.
+
 ## 0.1.2
 * Uses Klutter Gradle v2022.r6-6.alpha.
 * Added adapter library with improved AdapterResponse class.
