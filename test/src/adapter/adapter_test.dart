@@ -23,4 +23,17 @@ import "package:test/test.dart";
 
 void main() {
 
+  test("Verify factory methods", () {
+    final ok = AdapterResponse.success("yay");
+    expect(ok.isSuccess(), true);
+    expect(ok.object, "yay");
+    ok.exception = Exception("nay");
+    ok.object = "pff";
+    expect(ok.isSuccess(), true);
+    expect(ok.object, "pff");
+
+    final nok = AdapterResponse<String>.failure(Exception("o shucks"));
+    expect(nok.isSuccess(), false);
+    expect(nok.exception.toString(), "Exception: o shucks");
+  });
 }
