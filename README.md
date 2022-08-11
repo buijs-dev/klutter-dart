@@ -1,10 +1,11 @@
-[<img src="https://github.com/buijs-dev/klutter-dart/blob/main/logo_animated.gif?raw=true" width="300" alt="buijs software logo" />](https://github.com/buijs-dev)
-
-# Klutter
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter-dart?color=black&logoColor=black&style=for-the-badge)](https://github.com/buijs-dev/klutter-dart/blob/main/LICENSE)
 [![pub](https://img.shields.io/pub/v/klutter?style=for-the-badge)](https://pub.dev/packages/klutter)
 [![codecov](https://img.shields.io/codecov/c/github/buijs-dev/klutter-dart?logo=codecov&style=for-the-badge)](https://codecov.io/gh/buijs-dev/klutter-dart)
 [![CodeScene Code Health](https://img.shields.io/badge/CODESCENE-10-brightgreen?style=for-the-badge)](https://codescene.io/projects/27237)
+
+<br>
+
+<img src="https://github.com/buijs-dev/klutter/blob/develop/.github/assets/metadata/icon/klutter_logo.png?raw=true" alt="buijs software logo" />
 
 The Klutter Framework makes it possible to write a Flutter plugin for both Android
 and iOS using [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
