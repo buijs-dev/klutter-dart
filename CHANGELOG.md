@@ -1,3 +1,13 @@
+## 0.2.0
+* Uses Klutter Gradle v2022.r6-8.alpha.
+* New project template uses Klutter DSL to apply Klutter dependencies.
+* Flutter generated files are removed from lib folder after klutter init.
+* Moved task klutterInstallPlatform from generated build.gradle.kts to Gradle plugin.
+* Renamed task klutterInstallPlatfrom to klutterBuild.
+* Moved task klutterCopyAarFile from generated build.gradle.kts to Gradle plugin.
+* Moved task klutterIosFramework from generated build.gradle.kts to Gradle plugin.
+* Added iosSimulatorArm64 to platform build.gradle.kts for running app on Mac M1/M2 devices.
+
 ## 0.1.3
 * Uses Klutter Gradle v2022.r6-7.alpha.
 

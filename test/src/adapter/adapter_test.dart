@@ -27,8 +27,9 @@ void main() {
     final ok = AdapterResponse.success("yay");
     expect(ok.isSuccess(), true);
     expect(ok.object, "yay");
-    ok.exception = Exception("nay");
-    ok.object = "pff";
+    ok
+      ..exception = Exception("nay")
+      ..object = "pff";
     expect(ok.isSuccess(), true);
     expect(ok.object, "pff");
 

@@ -55,6 +55,14 @@ extension FileUtil on FileSystemEntity {
     return this;
   }
 
+  /// Check if the Directory exists and then delete it.
+  FileSystemEntity get maybeDelete {
+    if(existsSync()) {
+      deleteSync(recursive: true);
+    }
+    return this;
+  }
+
   /// Return absolute path of current File or Folder as String.
   String get absolutePath => absolute.path;
 

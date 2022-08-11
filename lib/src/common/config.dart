@@ -1,5 +1,8 @@
+/// The version of the Klutter Pub Plugin.
+const klutterPubVersion = "0.1.4";
+
 /// The version of the Klutter Gradle Plugin.
-const klutterGradleVersion = "2022.r6-7.alpha";
+const klutterGradleVersion = "2022.r6-8.alpha";
 
 /// The minimum SDK version for Android.
 const androidMinSdk = 21;

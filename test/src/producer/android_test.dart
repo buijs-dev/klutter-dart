@@ -97,7 +97,7 @@ void main() {
             dependencies {
                 classpath 'com.android.tools.build:gradle:7.0.4'
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
-                classpath "dev.buijs.klutter:core:$klutterGradleVersion"
+                classpath "dev.buijs.klutter:kore:$klutterGradleVersion"
             }
         }
         
@@ -136,7 +136,7 @@ void main() {
         dependencies {
             runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
             implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-            implementation "dev.buijs.klutter:core:$klutterGradleVersion"
+            implementation "dev.buijs.klutter:kore:$klutterGradleVersion"
             implementation project(":klutter:example_plugin")
         }
         

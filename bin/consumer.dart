@@ -29,7 +29,7 @@ import "package:klutter/klutter.dart";
 Future<void> main(List<String> args) async {
   print("""
   ════════════════════════════════════════════
-     KLUTTER (v0.1.3)                               
+     KLUTTER (v$klutterPubVersion)                               
   ════════════════════════════════════════════
   """
       .ok);

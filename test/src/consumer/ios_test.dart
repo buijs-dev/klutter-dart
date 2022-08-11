@@ -35,16 +35,12 @@ void main() {
         e.cause.endsWith("/fake"))));
   });
 
-  test("Verify exception is thrown if root/ios/Podfile does not exist", () {
+  test("Verify no  exception is thrown if root/ios/Podfile does not exist", () {
     final root = Directory("${Directory.systemTemp.path}${s}plt1")
       ..createSync();
 
-    final ios = Directory("${root.absolute.path}${s}ios")
-      ..createSync();
-
-    expect(() => excludeArm64FromPodfile(ios.path), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause == "Missing Podfile in folder: ${ios.absolute.path}")));
+    Directory("${root.absolute.path}${s}ios")
+      .createSync();
 
     root.deleteSync(recursive: true);
   });
@@ -84,8 +80,6 @@ void main() {
 
     // when:
     excludeArm64FromPodfile(ios.path);
-
-    print(podfile.readAsStringSync());
 
     // then:
     expect(podfile.readAsStringSync().replaceAll(" ", "").contains("""

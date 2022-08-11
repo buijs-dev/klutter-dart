@@ -59,9 +59,9 @@ void excludeArm64FromPodfile(String pathToIos) =>
 
 extension on String {
   /// Return File path to the ios/Podfile.
-  File get toPodfile => File("${this}/Podfile".normalize)
-    ..ifNotExists((folder) =>
-        throw KlutterException("Missing Podfile in folder: ${this}"));
+  File get toPodfile {
+    return File("${this}/Podfile".normalize);
+  }
 }
 
 extension on File {
@@ -70,6 +70,11 @@ extension on File {
   ///
   /// Without doing this the app won't start on a simulator.
   void get writeExclusionLines {
+
+    if(!existsSync()) {
+      return;
+    }
+
     // Used to check if adding exclusion lines is done.
     var hasAdded = false;
 

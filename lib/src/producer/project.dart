@@ -32,22 +32,24 @@ void writeExampleMainDartFile({
   required String pathToExample,
   required String pluginName,
 }) =>
-    pathToExample.verifyExists.createMainDartFile.writeMainContent(pluginName);
+  Directory(pathToExample)
+      .maybeCreate
+      .createMainDartFile
+      .writeMainContent(pluginName);
 
-extension on String {
+extension on FileSystemEntity {
   /// Create main.dart file in the example/lib folder.
   File get createMainDartFile {
-    Directory("${this}/lib").normalizeToFolder.maybeCreate;
-    return File("${this}/lib/main.dart").normalizeToFile
+    Directory("$absolutePath/lib").normalizeToFolder.maybeCreate;
+    return File("$absolutePath/lib/main.dart").normalizeToFile
       ..ifNotExists((folder) => File(folder.absolutePath).createSync());
   }
 }
 
 extension on File {
-  /// Write the content of the the settings.gradle.kts of a Klutter plugin.
+  /// Write the content of the settings.gradle.kts of a Klutter plugin.
   void writeMainContent(String pluginName) {
     final className = toPluginClassName(pluginName);
-
     writeAsStringSync("""
           import 'package:flutter/material.dart';
           |import 'dart:async';
