@@ -6,7 +6,8 @@
 * Renamed task klutterInstallPlatfrom to klutterBuild.
 * Moved task klutterCopyAarFile from generated build.gradle.kts to Gradle plugin.
 * Moved task klutterIosFramework from generated build.gradle.kts to Gradle plugin.
-* Added iosSimulatorArm64 to platform build.gradle.kts for running app on Mac M1/M2 devices.
+* Changed platform build.gradle.kts to create an XCFramework instead of fat framework for iOS.
+* [Bugfix](https://github.com/buijs-dev/klutter/issues/4) App does not work on Mac M1.
 
 ## 0.1.3
 * Uses Klutter Gradle v2022.r6-7.alpha.
