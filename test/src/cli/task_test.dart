@@ -22,17 +22,14 @@ import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
-
   test("When a task fails with a KlutterException, it is caught", () {
     final result = _ExplodingTask().execute("");
     expect(result.isOk, false);
     expect(result.message, "BOOM!");
   });
-
 }
 
 class _ExplodingTask extends Task {
-
   _ExplodingTask() : super(ScriptName.producer, TaskName.add);
 
   @override
@@ -42,5 +39,4 @@ class _ExplodingTask extends Task {
   void toBeExecuted(String pathToRoot) {
     throw KlutterException("BOOM!");
   }
-
 }

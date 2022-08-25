@@ -22,13 +22,10 @@ import "package:klutter/src/cli/cli.dart";
 import "package:test/test.dart";
 
 void main() {
-
   test("When option is invalid then result is not ok", () {
     final task = ConsumerInit()..option = "windows";
     final result = task.execute("");
     expect(result.isOk, false);
     expect(result.message, "Invalid option value: 'windows'");
   });
-
-
 }

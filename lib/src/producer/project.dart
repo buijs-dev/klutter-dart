@@ -32,10 +32,10 @@ void writeExampleMainDartFile({
   required String pathToExample,
   required String pluginName,
 }) =>
-  Directory(pathToExample)
-      .maybeCreate
-      .createMainDartFile
-      .writeMainContent(pluginName);
+    Directory(pathToExample)
+        .maybeCreate
+        .createMainDartFile
+        .writeMainContent(pluginName);
 
 extension on FileSystemEntity {
   /// Create main.dart file in the example/lib folder.

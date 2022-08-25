@@ -25,11 +25,9 @@ import "package:klutter/src/producer/project.dart";
 import "package:test/test.dart";
 
 void main() {
-
   const pluginName = "impressive_dependency";
 
   test("Verify example/lib/main.dart is created if it does not exist", () {
-
     final example = Directory("${Directory.systemTemp.path}/wem1".normalize)
       ..createSync(recursive: true);
 
@@ -40,7 +38,9 @@ void main() {
       pluginName: pluginName,
     );
 
-    expect(mainDart.readAsStringSync().replaceAll(" ", ""), """
+    expect(
+        mainDart.readAsStringSync().replaceAll(" ", ""),
+        """
             import 'package:flutter/material.dart';
             import 'dart:async';
 
@@ -97,10 +97,9 @@ void main() {
                   ),
                 );
               }
-            }""".replaceAll(" ", ""));
+            }"""
+            .replaceAll(" ", ""));
 
     example.deleteSync(recursive: true);
-
   });
-
 }

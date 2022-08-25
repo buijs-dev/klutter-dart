@@ -22,7 +22,6 @@ import "package:klutter/src/adapter/adapter.dart";
 import "package:test/test.dart";
 
 void main() {
-
   test("Verify factory methods", () {
     final ok = AdapterResponse.success("yay");
     expect(ok.isSuccess(), true);

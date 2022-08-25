@@ -130,5 +130,4 @@ extension ColoredMessage on String {
 
   /// Default color (mostly whit(e/ish)).
   String get boring => "\x1B[49m${this}";
-
 }

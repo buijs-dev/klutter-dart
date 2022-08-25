@@ -174,8 +174,8 @@ extension on File {
           |    }
           |
           |}
-          |'''.format
-    );
+          |'''
+        .format);
   }
 
   /// Write the content of gradle.properties.

@@ -48,11 +48,10 @@ class ProducerInit extends Task {
 
 extension on String {
   void get setupRoot {
-
     Directory("${this}/lib".normalize)
-    // Delete folder and all children if they exist.
+      // Delete folder and all children if they exist.
       ..normalizeToFolder.maybeDelete
-    // Create a new empty lib folder.
+      // Create a new empty lib folder.
       ..maybeCreate;
 
     final name = findPluginName(this);

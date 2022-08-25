@@ -22,13 +22,11 @@ import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
-
   test("When command is invalid then no tasks are executed", () {
     execute(
-        script: ScriptName.consumer,
-        pathToRoot: "",
-        arguments: [],
+      script: ScriptName.consumer,
+      pathToRoot: "",
+      arguments: [],
     );
   });
-
 }

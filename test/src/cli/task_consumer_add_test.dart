@@ -22,12 +22,9 @@ import "package:klutter/src/cli/cli.dart";
 import "package:test/test.dart";
 
 void main() {
-
   test("ConsumerAdd fails when option is not set", () {
     final result = ConsumerAdd().execute("");
     expect(result.isOk, false);
     expect(result.message, "Name of Flutter plugin to add not specified.");
   });
-
-
 }

@@ -57,7 +57,7 @@ extension FileUtil on FileSystemEntity {
 
   /// Check if the Directory exists and then delete it.
   FileSystemEntity get maybeDelete {
-    if(existsSync()) {
+    if (existsSync()) {
       deleteSync(recursive: true);
     }
     return this;

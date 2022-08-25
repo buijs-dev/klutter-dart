@@ -25,24 +25,23 @@ import "package:klutter/src/producer/platform.dart";
 import "package:test/test.dart";
 
 void main() {
-
   final s = Platform.pathSeparator;
 
   const pluginName = "some_plugin";
 
   test("Verify exception is thrown if root does not exist", () {
-    expect(() => writeRootSettingsGradleFile(
-      pathToRoot: "fake",
-      pluginName: pluginName,
-    ), throwsA(predicate((e) =>
-        e is KlutterException //&&
-        // e.cause.startsWith("Path does not exist:") &&
-        // e.cause.endsWith("/fake")
-    )));
+    expect(
+        () => writeRootSettingsGradleFile(
+              pathToRoot: "fake",
+              pluginName: pluginName,
+            ),
+        throwsA(predicate((e) => e is KlutterException //&&
+            // e.cause.startsWith("Path does not exist:") &&
+            // e.cause.endsWith("/fake")
+            )));
   });
 
   test("Verify root/settings.gradle.kts is created if it does not exist", () {
-
     // Create root/android otherwise path does not exist exception is thrown
     final root = Directory("${Directory.systemTemp.path}${s}wsg1")
       ..createSync(recursive: true);
@@ -54,7 +53,9 @@ void main() {
       pluginName: pluginName,
     );
 
-    expect(settingsGradle.readAsStringSync().replaceAll(" ", ""), """
+    expect(
+        settingsGradle.readAsStringSync().replaceAll(" ", ""),
+        """
             // Copyright (c) 2021 - 2022 Buijs Software
             //
             // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -76,14 +77,13 @@ void main() {
             // SOFTWARE.
             include(":klutter:some_plugin")
             project(":klutter:some_plugin").projectDir = File("platform")
-            include(":android")""".replaceAll(" ", ""));
+            include(":android")"""
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify root/settings.gradle.kts is overwritten if it exists", () {
-
     // Create root/android otherwise path does not exist exception is thrown
     final root = Directory("${Directory.systemTemp.path}${s}wsg2")
       ..createSync(recursive: true);
@@ -96,7 +96,9 @@ void main() {
       pluginName: pluginName,
     );
 
-    expect(settingsGradle.readAsStringSync().replaceAll(" ", ""), """
+    expect(
+        settingsGradle.readAsStringSync().replaceAll(" ", ""),
+        """
             // Copyright (c) 2021 - 2022 Buijs Software
             //
             // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -118,24 +120,25 @@ void main() {
             // SOFTWARE.
             include(":klutter:some_plugin")
             project(":klutter:some_plugin").projectDir = File("platform")
-            include(":android")""".replaceAll(" ", ""));
+            include(":android")"""
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify exception is thrown if root does not exist", () {
-    expect(() => writeRootBuildGradleFile(
-      pathToRoot: "fake",
-      pluginName: "some_plugin",
-    ), throwsA(predicate((e) =>
-    e is KlutterException &&
-        e.cause.startsWith("Path does not exist:") &&
-        e.cause.endsWith("/fake"))));
+    expect(
+        () => writeRootBuildGradleFile(
+              pathToRoot: "fake",
+              pluginName: "some_plugin",
+            ),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist:") &&
+            e.cause.endsWith("/fake"))));
   });
 
   test("Verify root/build.gradle.kts is created if it does not exist", () {
-
     // Create root/android otherwise path does not exist exception is thrown
     final root = Directory("${Directory.systemTemp.path}${s}wsg1")
       ..createSync(recursive: true);
@@ -147,7 +150,9 @@ void main() {
       pluginName: "some_plugin",
     );
 
-    expect(buildGradle.readAsStringSync().replaceAll(" ", ""), """
+    expect(
+        buildGradle.readAsStringSync().replaceAll(" ", ""),
+        """
           buildscript {
               repositories {
                   gradlePluginPortal()
@@ -181,14 +186,13 @@ void main() {
               }
           
           }
-      """.replaceAll(" ", ""));
+      """
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify root/build.gradle.kts is overwritten if it exists", () {
-
     // Create root/android otherwise path does not exist exception is thrown
     final root = Directory("${Directory.systemTemp.path}${s}wsg1")
       ..createSync(recursive: true);
@@ -201,7 +205,9 @@ void main() {
       pluginName: "some_plugin",
     );
 
-    expect(buildGradle.readAsStringSync().replaceAll(" ", ""), """
+    expect(
+        buildGradle.readAsStringSync().replaceAll(" ", ""),
+        """
           buildscript {
               repositories {
                   gradlePluginPortal()
@@ -235,21 +241,22 @@ void main() {
               }
           
           }
-      """.replaceAll(" ", ""));
+      """
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify exception is thrown if root does not exist", () {
-    expect(() => writeGradleProperties("fake"), throwsA(predicate((e) =>
-    e is KlutterException &&
-        e.cause.startsWith("Path does not exist:") &&
-        e.cause.endsWith("/fake"))));
+    expect(
+        () => writeGradleProperties("fake"),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist:") &&
+            e.cause.endsWith("/fake"))));
   });
 
   test("Verify root/gradle.properties is created if it does not exist", () {
-
     // Create root/android otherwise path does not exist exception is thrown
     final root = Directory("${Directory.systemTemp.path}${s}wsg1")
       ..createSync(recursive: true);
@@ -258,7 +265,9 @@ void main() {
 
     writeGradleProperties(root.path);
 
-    expect(properties.readAsStringSync().replaceAll(" ", ""), """
+    expect(
+        properties.readAsStringSync().replaceAll(" ", ""),
+        """
        #Gradle
        org.gradle.jvmargs=-Xmx2048M -Dkotlin.daemon.jvm.options="-Xmx2048M"
         
@@ -270,14 +279,13 @@ void main() {
         
        #MPP
        kotlin.mpp.enableCInteropCommonization=true
-       kotlin.mpp.stability.nowarn=true""".replaceAll(" ", ""));
+       kotlin.mpp.stability.nowarn=true"""
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify root/gradle.properties is overwritten if it exists", () {
-
     // Create root/android otherwise path does not exist exception is thrown
     final root = Directory("${Directory.systemTemp.path}${s}wsg1")
       ..createSync(recursive: true);
@@ -287,7 +295,9 @@ void main() {
 
     writeGradleProperties(root.path);
 
-    expect(properties.readAsStringSync().replaceAll(" ", ""), """
+    expect(
+        properties.readAsStringSync().replaceAll(" ", ""),
+        """
        #Gradle
        org.gradle.jvmargs=-Xmx2048M -Dkotlin.daemon.jvm.options="-Xmx2048M"
         
@@ -299,36 +309,41 @@ void main() {
         
        #MPP
        kotlin.mpp.enableCInteropCommonization=true
-       kotlin.mpp.stability.nowarn=true""".replaceAll(" ", ""));
+       kotlin.mpp.stability.nowarn=true"""
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify a root/platform module is created", () {
-
     final root = Directory("${Directory.systemTemp.path}${s}wsg7")
       ..createSync(recursive: true);
 
     createPlatformModule(
-        pathToRoot: root.path,
-        pluginName: "nigulp",
-        packageName: "com.organisation.nigulp",
+      pathToRoot: root.path,
+      pluginName: "nigulp",
+      packageName: "com.organisation.nigulp",
     );
 
-    final platform =  Directory("${root.path}/platform".normalize);
+    final platform = Directory("${root.path}/platform".normalize);
 
-    expect(true, platform.existsSync(),
+    expect(
+      true,
+      platform.existsSync(),
       reason: "root/platform should be created",
     );
 
-    final platformBuildGradle = File("${platform.path}/build.gradle.kts".normalize);
+    final platformBuildGradle =
+        File("${platform.path}/build.gradle.kts".normalize);
 
-    expect(true, platformBuildGradle.existsSync(),
+    expect(
+      true,
+      platformBuildGradle.existsSync(),
       reason: "root/platform/build.gradle.kts should be created",
     );
 
-    expect("""
+    expect(
+      """
      import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
     
      plugins {
@@ -422,64 +437,97 @@ void main() {
               minSdk = 21
               targetSdk = 31
           }
-      }""".replaceAll(" ", ""),
+      }"""
+          .replaceAll(" ", ""),
       platformBuildGradle.readAsStringSync().replaceAll(" ", ""),
     );
 
-    final androidMain =  Directory("${platform.path}/src/androidMain/kotlin/com/organisation/nigulp/platform".normalize);
+    final androidMain = Directory(
+        "${platform.path}/src/androidMain/kotlin/com/organisation/nigulp/platform"
+            .normalize);
 
-    expect(true, androidMain.existsSync(),
-      reason: "root/klutter/nigulp/src/androidMain/kotlin/com/organisation/nigulp/platform should be created",
+    expect(
+      true,
+      androidMain.existsSync(),
+      reason:
+          "root/klutter/nigulp/src/androidMain/kotlin/com/organisation/nigulp/platform should be created",
     );
 
-    final commonMain =  Directory("${platform.path}/src/commonMain/kotlin/com/organisation/nigulp/platform".normalize);
+    final commonMain = Directory(
+        "${platform.path}/src/commonMain/kotlin/com/organisation/nigulp/platform"
+            .normalize);
 
-    expect(true, commonMain.existsSync(),
-      reason: "root/klutter/nigulp/src/commonMain/kotlin/com/organisation/nigulp/platform should be created",
+    expect(
+      true,
+      commonMain.existsSync(),
+      reason:
+          "root/klutter/nigulp/src/commonMain/kotlin/com/organisation/nigulp/platform should be created",
     );
 
-    final iosMain =  Directory("${platform.path}/src/iosMain/kotlin/com/organisation/nigulp/platform".normalize);
+    final iosMain = Directory(
+        "${platform.path}/src/iosMain/kotlin/com/organisation/nigulp/platform"
+            .normalize);
 
-    expect(true, iosMain.existsSync(),
-      reason: "root/klutter/nigulp/src/iosMain/kotlin/com/organisation/nigulp/platform should be created",
+    expect(
+      true,
+      iosMain.existsSync(),
+      reason:
+          "root/klutter/nigulp/src/iosMain/kotlin/com/organisation/nigulp/platform should be created",
     );
 
-    final androidManifest =  File("${platform.path}/src/androidMain/AndroidManifest.xml".normalize);
+    final androidManifest =
+        File("${platform.path}/src/androidMain/AndroidManifest.xml".normalize);
 
-    expect(true, androidManifest.existsSync(),
-      reason: "root/klutter/nigulp/src/androidMain/AndroidManifest.xml should be created",
+    expect(
+      true,
+      androidManifest.existsSync(),
+      reason:
+          "root/klutter/nigulp/src/androidMain/AndroidManifest.xml should be created",
     );
 
-    expect( """
+    expect(
+      """
         <?xml version="1.0" encoding="utf-8"?>
         <manifest package="com.organisation.nigulp.platform" />
-        """.replaceAll(" ", ""),
+        """
+          .replaceAll(" ", ""),
       androidManifest.readAsStringSync().replaceAll(" ", ""),
     );
 
-    final androidPlatformClass =  File("${androidMain.path}/Platform.kt".normalize);
+    final androidPlatformClass =
+        File("${androidMain.path}/Platform.kt".normalize);
 
-    expect(true, androidPlatformClass.existsSync(),
-      reason: "root/klutter/nigulp/src/androidMain/kotlin/com/organisation/nigulp/platform/Platform.kt should be created",
+    expect(
+      true,
+      androidPlatformClass.existsSync(),
+      reason:
+          "root/klutter/nigulp/src/androidMain/kotlin/com/organisation/nigulp/platform/Platform.kt should be created",
     );
 
-    expect(r"""
+    expect(
+      r"""
       package com.organisation.nigulp.platform
       
       actual class Platform actual constructor() {
           actual val platform: String = "Android ${android.os.Build.VERSION.SDK_INT}"
       }
-      """.replaceAll(" ", ""),
+      """
+          .replaceAll(" ", ""),
       androidPlatformClass.readAsStringSync().replaceAll(" ", ""),
     );
 
-    final commonGreetingClass =  File("${commonMain.path}/Greeting.kt".normalize);
+    final commonGreetingClass =
+        File("${commonMain.path}/Greeting.kt".normalize);
 
-    expect(true, commonGreetingClass.existsSync(),
-      reason: "root/klutter/nigulp/src/commonMain/kotlin/com/organisation/nigulp/platform/Greeting.kt should be created",
+    expect(
+      true,
+      commonGreetingClass.existsSync(),
+      reason:
+          "root/klutter/nigulp/src/commonMain/kotlin/com/organisation/nigulp/platform/Greeting.kt should be created",
     );
 
-    expect(r"""
+    expect(
+      r"""
       package com.organisation.nigulp.platform
       
       import dev.buijs.klutter.annotations.KlutterAdaptee
@@ -491,32 +539,43 @@ void main() {
              return "Hello, ${Platform().platform}!"
           }
       
-      }""".replaceAll(" ", ""),
+      }"""
+          .replaceAll(" ", ""),
       commonGreetingClass.readAsStringSync().replaceAll(" ", ""),
     );
 
-    final commonPlatformClass =  File("${commonMain.path}/Platform.kt".normalize);
+    final commonPlatformClass =
+        File("${commonMain.path}/Platform.kt".normalize);
 
-    expect(true, commonPlatformClass.existsSync(),
-      reason: "root/klutter/nigulp/src/commonMain/kotlin/com/organisation/nigulp/platform/Platform.kt should be created",
+    expect(
+      true,
+      commonPlatformClass.existsSync(),
+      reason:
+          "root/klutter/nigulp/src/commonMain/kotlin/com/organisation/nigulp/platform/Platform.kt should be created",
     );
 
-    expect("""
+    expect(
+      """
       package com.organisation.nigulp.platform
       
       expect class Platform() {
           val platform: String
-      }""".replaceAll(" ", ""),
+      }"""
+          .replaceAll(" ", ""),
       commonPlatformClass.readAsStringSync().replaceAll(" ", ""),
     );
 
-    final iosPlatformClass =  File("${iosMain.path}/Platform.kt".normalize);
+    final iosPlatformClass = File("${iosMain.path}/Platform.kt".normalize);
 
-    expect(true, iosPlatformClass.existsSync(),
-      reason: "root/klutter/nigulp/src/iosMain/kotlin/com/organisation/nigulp/platform/Platform.kt should be created",
+    expect(
+      true,
+      iosPlatformClass.existsSync(),
+      reason:
+          "root/klutter/nigulp/src/iosMain/kotlin/com/organisation/nigulp/platform/Platform.kt should be created",
     );
 
-    expect("""
+    expect(
+      """
       package com.organisation.nigulp.platform
       
       import platform.UIKit.UIDevice
@@ -524,12 +583,11 @@ void main() {
       actual class Platform actual constructor() {
           actual val platform: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
       }
-      """.replaceAll(" ", ""),
+      """
+          .replaceAll(" ", ""),
       iosPlatformClass.readAsStringSync().replaceAll(" ", ""),
     );
 
     root.deleteSync(recursive: true);
-
   });
-
 }

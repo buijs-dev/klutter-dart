@@ -25,26 +25,31 @@ import "package:klutter/src/consumer/android.dart";
 import "package:test/test.dart";
 
 void main() {
-
   final s = Platform.pathSeparator;
 
   test("Verify exception is thrown if root/android does not exist", () {
-    expect(() => findFlutterSDK("fake"), throwsA(predicate((e) =>
-    e is KlutterException &&
-        e.cause.startsWith("Path does not exist:") &&
-        e.cause.endsWith("/fake"))));
+    expect(
+        () => findFlutterSDK("fake"),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist:") &&
+            e.cause.endsWith("/fake"))));
   });
 
-  test("Verify exception is thrown if root/android/local.properties does not exist", () {
+  test(
+      "Verify exception is thrown if root/android/local.properties does not exist",
+      () {
     final root = Directory("${Directory.systemTemp.path}${s}plt1")
       ..createSync();
 
-    final android = Directory("${root.absolute.path}${s}android")
-      ..createSync();
+    final android = Directory("${root.absolute.path}${s}android")..createSync();
 
-    expect(() => findFlutterSDK(android.path), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause == "Missing local.properties file in folder: ${android.absolute.path}")));
+    expect(
+        () => findFlutterSDK(android.path),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause ==
+                "Missing local.properties file in folder: ${android.absolute.path}")));
 
     root.deleteSync(recursive: true);
   });
@@ -53,15 +58,17 @@ void main() {
     final root = Directory("${Directory.systemTemp.path}${s}plt2")
       ..createSync();
 
-    final android = Directory("${root.absolute.path}${s}android")
-      ..createSync();
+    final android = Directory("${root.absolute.path}${s}android")..createSync();
 
     File("${android.absolute.path}${s}local.properties").createSync();
 
     // An exception is thrown
-    expect(() => findFlutterSDK(android.path), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause == "Missing property 'flutter.sdk' in local.properties file.")));
+    expect(
+        () => findFlutterSDK(android.path),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause ==
+                "Missing property 'flutter.sdk' in local.properties file.")));
 
     root.deleteSync(recursive: true);
   });
@@ -70,8 +77,7 @@ void main() {
     final root = Directory("${Directory.systemTemp.path}${s}plt3")
       ..createSync();
 
-    final android = Directory("${root.absolute.path}${s}android")
-      ..createSync();
+    final android = Directory("${root.absolute.path}${s}android")..createSync();
 
     File("${android.absolute.path}${s}local.properties")
       ..createSync()
@@ -89,29 +95,31 @@ void main() {
   });
 
   test("Verify exception is thrown if root does not exist", () {
-    expect(() => writePluginLoaderGradleFile("fake"), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Path does not exist:") &&
-        e.cause.endsWith("/fake"))));
+    expect(
+        () => writePluginLoaderGradleFile("fake"),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist:") &&
+            e.cause.endsWith("/fake"))));
   });
 
   test("Verify a new Gradle file is created if it does not exist", () {
-
     final root = Directory("${Directory.systemTemp.path}${s}sgt1")
       ..createSync();
 
     final pluginLoader = File("${root.absolute.path}"
         "${s}packages${s}flutter_tools${s}gradle${s}klutter_plugin_loader.gradle.kts");
 
-    if(pluginLoader.existsSync()) {
+    if (pluginLoader.existsSync()) {
       pluginLoader.deleteSync();
       expect(pluginLoader.existsSync(), false, reason: "file should not exist");
     }
 
     writePluginLoaderGradleFile(root.path);
 
-    expect(pluginLoader.readAsStringSync().replaceAll(" ", ""),
-          r'''
+    expect(
+        pluginLoader.readAsStringSync().replaceAll(" ", ""),
+        r'''
             // Copyright (c) 2021 - 2022 Buijs Software
             //
             // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -157,14 +165,13 @@ void main() {
                 project(plugin[0]).projectDir = pluginDirectory
             
               }
-            }'''.replaceAll(" ", ""));
+            }'''
+            .replaceAll(" ", ""));
 
-      root.deleteSync(recursive: true);
-
+    root.deleteSync(recursive: true);
   });
 
   test("Verify content is overwritten if the Gradle file already exists", () {
-
     final root = Directory("${Directory.systemTemp.path}${s}sgt2")
       ..createSync(recursive: true);
 
@@ -177,7 +184,9 @@ void main() {
     writePluginLoaderGradleFile(root.path);
 
     // Content should be overwritten
-    expect(pluginLoader.readAsStringSync().replaceAll(" ", ""), r'''
+    expect(
+        pluginLoader.readAsStringSync().replaceAll(" ", ""),
+        r'''
             // Copyright (c) 2021 - 2022 Buijs Software
             //
             // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -223,51 +232,58 @@ void main() {
                 project(plugin[0]).projectDir = pluginDirectory
             
               }
-            }'''.replaceAll(" ", ""));
+            }'''
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
   });
 
   test("Verify exception is thrown if root/android does not exist", () {
-    expect(() => applyPluginLoader("fake"), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Path does not exist:") &&
-        e.cause.endsWith("/fake"))));
+    expect(
+        () => applyPluginLoader("fake"),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist:") &&
+            e.cause.endsWith("/fake"))));
   });
 
-  test("Verify exception is thrown if root/android/settings.gradle does not exist", () {
+  test(
+      "Verify exception is thrown if root/android/settings.gradle does not exist",
+      () {
     final root = Directory("${Directory.systemTemp.path}${s}apl1")
       ..createSync();
 
-    final android = Directory("${root.path}${s}android")
-      ..createSync();
+    final android = Directory("${root.path}${s}android")..createSync();
 
-    expect(() => applyPluginLoader(android.path), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.contains("Missing settings.gradle file in folder"))));
+    expect(
+        () => applyPluginLoader(android.path),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.contains("Missing settings.gradle file in folder"))));
 
     root.deleteSync(recursive: true);
   });
 
-  test("Verify exception is thrown if settings.gradle misses app_plugin_loader", () {
+  test("Verify exception is thrown if settings.gradle misses app_plugin_loader",
+      () {
     // Given an empty settings.gradle file
     final root = Directory("${Directory.systemTemp.path}${s}apl2")
       ..createSync();
     final android = Directory("${root.path}${s}android");
-    File("${android.absolute.path}${s}settings.gradle").createSync(recursive: true);
+    File("${android.absolute.path}${s}settings.gradle")
+        .createSync(recursive: true);
 
     // An exception is thrown
-    expect(() => applyPluginLoader(android.path), throwsA(predicate((e) =>
+    expect(
+        () => applyPluginLoader(android.path),
+        throwsA(predicate((e) =>
             e is KlutterException &&
-            e.cause.contains("Failed to apply Klutter plugin loader.")
-    )));
+            e.cause.contains("Failed to apply Klutter plugin loader."))));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify line is added to standard Flutter settings.gradle file", () {
-
     final root = Directory("${Directory.systemTemp.path}${s}apl3")
       ..createSync();
     final android = Directory("${root.path}${s}sgv2${s}android");
@@ -292,7 +308,9 @@ void main() {
     applyPluginLoader(android.path);
 
     // Then a new line applying the klutter_plugin_loader.gradle.kts is added.
-    expect(settingsGradle.readAsStringSync().replaceAll(" ", ""), r'''
+    expect(
+        settingsGradle.readAsStringSync().replaceAll(" ", ""),
+        r'''
         include ':app'
 
         def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
@@ -306,14 +324,13 @@ void main() {
         
         apply from: "\$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"
         apply from: "\$flutterSdkPath/packages/flutter_tools/gradle/klutter_plugin_loader.gradle.kts"
-    '''.replaceAll(" ", ""));
+    '''
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify line is added to customized settings.gradle file", () {
-
     final root = Directory("${Directory.systemTemp.path}${s}apl4")
       ..createSync();
 
@@ -329,35 +346,41 @@ void main() {
     applyPluginLoader(android.path);
 
     // Then a new line applying the klutter_plugin_loader.gradle.kts is added.
-    expect(settingsGradle.readAsStringSync().replaceAll(" ", ""), """
+    expect(
+        settingsGradle.readAsStringSync().replaceAll(" ", ""),
+        """
           include ':app'
           apply from: 'Users/foo/some/bar/folder/packages/flutter_tools/gradle/app_plugin_loader.gradle'
           apply from: 'Users/foo/some/bar/folder/packages/flutter_tools/gradle/klutter_plugin_loader.gradle.kts'
-        """.replaceAll(" ", ""));
+        """
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
   });
 
-  test("Verify min, compile and target SDK are updated in build.gradle file", () {
-
+  test("Verify min, compile and target SDK are updated in build.gradle file",
+      () {
     final root = Directory("${Directory.systemTemp.path}${s}apl5")
       ..createSync();
 
     final android = Directory("${root.path}${s}android");
 
-    File("${android.absolute.path}${s}build.gradle").createSync(recursive: true);
+    File("${android.absolute.path}${s}build.gradle")
+        .createSync(recursive: true);
 
     // An exception is thrown
-    expect(() => setAndroidSdkConstraints(android.path), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.contains("Failed to set 'compileSdkVersion' in the root/android/build.gradle file")
-    )));
+    expect(
+        () => setAndroidSdkConstraints(android.path),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.contains(
+                "Failed to set 'compileSdkVersion' in the root/android/build.gradle file"))));
 
     root.deleteSync(recursive: true);
   });
 
-  test("Verify min, compile and target SDK are updated in build.gradle file", () {
-
+  test("Verify min, compile and target SDK are updated in build.gradle file",
+      () {
     final root = Directory("${Directory.systemTemp.path}${s}apl5")
       ..createSync();
 
@@ -439,7 +462,9 @@ void main() {
     setAndroidSdkConstraints(android.path);
 
     // Then a new line applying the klutter_plugin_loader.gradle.kts is added.
-    expect(buildGradle.readAsStringSync().replaceAll(" ", ""), """
+    expect(
+        buildGradle.readAsStringSync().replaceAll(" ", ""),
+        """
          def localProperties = new Properties()
           def localPropertiesFile = rootProject.file('local.properties')
           if (localPropertiesFile.exists()) {
@@ -508,21 +533,26 @@ void main() {
           dependencies {
               implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
           }
-        """.replaceAll(" ", ""));
+        """
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
   });
 
-  test("Verify exception is thrown if root/android/app/build.gradle does not exist", () {
+  test(
+      "Verify exception is thrown if root/android/app/build.gradle does not exist",
+      () {
     final root = Directory("${Directory.systemTemp.path}${s}apl10")
       ..createSync();
 
     final android = Directory("${root.path}${s}android")..createSync();
 
-    expect(() => setAndroidSdkConstraints(android.absolute.path),
-        throwsA(predicate((e) => e is KlutterException && e.cause.startsWith("Missing build.gradle file in folder"))));
+    expect(
+        () => setAndroidSdkConstraints(android.absolute.path),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Missing build.gradle file in folder"))));
 
     root.deleteSync(recursive: true);
   });
-
 }

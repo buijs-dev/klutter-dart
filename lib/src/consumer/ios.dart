@@ -70,8 +70,7 @@ extension on File {
   ///
   /// Without doing this the app won't start on a simulator.
   void get writeExclusionLines {
-
-    if(!existsSync()) {
+    if (!existsSync()) {
       return;
     }
 
