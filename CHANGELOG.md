@@ -1,3 +1,6 @@
+## 0.2.1
+* Changed gradle plugin id to dev.buijs.klutter
+
 ## 0.2.0
 * Uses Klutter Gradle v2022.r6-8.alpha.
 * New project template uses Klutter DSL to apply Klutter dependencies.
