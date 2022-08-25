@@ -25,12 +25,13 @@ Use this plugin if you want to:
 1. [Installation](#Installation)
 2. [Using plugins](#Usage)
 3. [Creating plugins](#Creation)
+4. [FAQ!](#Faq!)
 
 For a step-by-step guide, see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
 
 # Installation
 <b>What's the point?</b></br>
-Plugins build with the Klutter Framework work slightly different than regular plugins. 
+Plugins build with the Klutter Framework work slightly different from regular plugins. 
 The Klutter dependency is a requirement for both using and creating plugins with Klutter.
 
 <b>Steps:</b></br>
@@ -49,14 +50,14 @@ flutter pub get
 
 # Usage
 <b>What's the point?</b></br>
-Plugins build with the Klutter Framework work slightly different than regular plugins. 
+Plugins build with the Klutter Framework work slightly different from regular plugins. 
 The following tasks help Flutter to locate Klutter plugins 
 and ensure compatibility between Flutter Android/IOS configuration and Klutter plugin Android/IOS configuration.
 
 <b>Steps:</b></br>
 1. Installation.
-3. Initialization.
-4. Add dependencies.
+2. Initialization.
+3. Add dependencies.
 
 Install Klutter as dependency as described [here](#Installation).
 
@@ -66,8 +67,8 @@ Initialize Klutter in your project by running:
 flutter pub run klutter:consumer init
 ```  
 
-The init task will setup Klutter for both Android and iOS.
-Alternatively you can setup Android and IOS separately.
+The init task will set up Klutter for both Android and iOS.
+Alternatively you can set up Android and IOS separately.
 
 Setup Android by running:  
   
@@ -81,7 +82,7 @@ Setup IOS by running:
 flutter pub run klutter:consumer init=ios
 ```  
 
-Finally Klutter plugins can be added by running the add command.
+Finally, Klutter plugins can be added by running the add command.
 
 <B>Example</B>:</br> Add the library 'awesome_plugin' to your project:
 
@@ -176,3 +177,33 @@ flutter pub run klutter:producer install=library
 
 Now test the plugin by following the steps outlined [here](#Usage) in the root/example project. 
 When done you can run the example project from the root/example/lib folder and see your first plugin in action!
+
+# Faq!
+1. [App won't start on...](#App%20won't%20start)
+
+## App won't start
+
+Make sure you have followed all the following steps:
+- flutter create <your_plugin_name> --org <your_organisation> --template=plugin --platforms=android,ios.
+- [klutter](https://pub.dev/packages/klutter) is added to the dependencies in your pubspec.yaml 
+(both the plugin and plugin/example for testing).
+- do flutter pub get in both root and root/example folder.
+- do flutter pub run klutter:producer init in the root folder.
+- do flutter pub run klutter:producer install=library in the root folder.
+- do flutter pub run klutter:producer install=platform in the root folder.
+- do flutter pub run klutter:consumer init in the root/example folder.
+- do flutter pub run klutter:consumer add=<your_plugin_name> in the root/example folder.
+
+### For Android emulator:
+There should be a .klutter-plugins file in the root/example folder containing an entry for your plugin.
+If not then do flutter pub run klutter:consumer add=<your_plugin_name> in the root/example folder again.
+
+There should be a platform.aar file in the root/android/klutter folder. If not then do flutter pub run
+klutter:producer install=platform from the root folder.
+
+### For iOS simulator:
+There should be a Platform.xcframework folder in root/ios/Klutter. If not then do flutter pub run
+klutter:producer install=platform from the root folder.
+
+If there's an error message saying unable to find plugin or similar then run pod update in the root/example/ios
+folder.

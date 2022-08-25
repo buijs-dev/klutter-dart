@@ -40,7 +40,7 @@ void main() {
       pluginName: pluginName,
     );
 
-    expect(mainDart.readAsStringSync().replaceAll(" ", ""), r"""
+    expect(mainDart.readAsStringSync().replaceAll(" ", ""), """
             import 'package:flutter/material.dart';
             import 'dart:async';
 
@@ -58,32 +58,30 @@ void main() {
             }
 
             class _MyAppState extends State<MyApp> {
-              String _platformVersion = 'Unknown';
+              String _greeting = 'Unknown';
 
               @override
               void initState() {
                 super.initState();
                 initPlatformState();
               }
-
+          
+              void _setState(String greeting) {
+                setState(()=> _greeting = greeting);
+              }
+          
               // Platform messages are asynchronous, so we initialize in an async method.
               Future<void> initPlatformState() async {
                 // Klutter generated Adapters don't throw exceptions but always return a
                 // response object. No need for try-catch here. Do or do not. There is no try.
-                await ImpressiveDependency.greeting.then((response) {
-                  String platformVersion = response.isSuccess()
-                      ? response.object
-                      : response.exception.toString();
-
-                  // If the widget was removed from the tree while the asynchronous platform
-                  // message was in flight, we want to discard the reply rather than calling
-                  // setState to update our non-existent appearance.
-                  if (!mounted) return;
-
-                  setState(() {
-                    _platformVersion = platformVersion;
-                  });
-                });
+                await ImpressiveDependency.greeting(this,
+                    onSuccess: _setState,
+                    onFailure: (exception) {
+                      // Here you should handle the exception which means
+                      // at the very least logging it.
+                      _setState("There shall be no greeting for now!");
+                    }
+                );
               }
 
               @override
@@ -94,7 +92,7 @@ void main() {
                       title: const Text('Plugin example app'),
                     ),
                     body: Center(
-                      child: Text('Running on: $_platformVersion'),
+                      child: Text(_greeting),
                     ),
                   ),
                 );

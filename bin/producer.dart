@@ -34,6 +34,8 @@ Future<void> main(List<String> args) async {
   """
       .ok);
 
+  print("This might take a while. Just a moment please...".boring);
+
   final pathToRoot = Directory.current.absolutePath;
   final result = await execute(
     script: ScriptName.producer,

@@ -88,7 +88,7 @@ extension on File {
       // This is done so the line is added at a fixed point in the podspec.
       if (line.replaceAll(" ", "").contains("$prefix.dependency'Flutter'")) {
         newLines.add(
-          """  $prefix.ios.vendored_frameworks = "Klutter/Platform.framework" """,
+          """  $prefix.ios.vendored_frameworks = "Klutter/Platform.xcframework" """,
         );
 
         hasAdded = true;

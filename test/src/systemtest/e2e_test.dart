@@ -226,7 +226,7 @@ void main() {
 
   });
 
-  tearDownAll(() => pathToRoot.deleteSync(recursive: true));
+ tearDownAll(() => pathToRoot.deleteSync(recursive: true));
 
 }
 

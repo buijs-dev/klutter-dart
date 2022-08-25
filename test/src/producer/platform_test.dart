@@ -213,7 +213,7 @@ void main() {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
                   classpath("dev.buijs.klutter:kore:$klutterGradleVersion")
-                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:$klutterGradleVersion")
+                  classpath("dev.buijs.klutter.klutter-gradle:$klutterGradleVersion")
               }
           }
           
@@ -269,9 +269,8 @@ void main() {
        android.useAndroidX=true
         
        #MPP
-       kotlin.mpp.enableGranularSourceSetsMetadata=true
-       kotlin.native.enableDependencyPropagation=false
-       kotlin.mpp.enableCInteropCommonization=true""".replaceAll(" ", ""));
+       kotlin.mpp.enableCInteropCommonization=true
+       kotlin.mpp.stability.nowarn=true""".replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
 
@@ -299,9 +298,8 @@ void main() {
        android.useAndroidX=true
         
        #MPP
-       kotlin.mpp.enableGranularSourceSetsMetadata=true
-       kotlin.native.enableDependencyPropagation=false
-       kotlin.mpp.enableCInteropCommonization=true""".replaceAll(" ", ""));
+       kotlin.mpp.enableCInteropCommonization=true
+       kotlin.mpp.stability.nowarn=true""".replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
 
@@ -348,18 +346,31 @@ void main() {
              name = "nigulp"
           }
           
-          dependencies {
-            implementation("annotations")
-          }
+          include("annotations")
           
       }
       
       kotlin {
-          val xcf = XCFramework("Platform")
-          ios { binaries.framework { xcf.add(this) } }
-          iosSimulatorArm64 { binaries.framework { xcf.add(this) } }
+  
           android()
-                
+      
+          val xcfName = "Platform"
+          val xcFramework = XCFramework(xcfName)
+      
+          ios { 
+             binaries.framework { 
+                  baseName = xcfName         
+                  xcFramework.add(this)
+              }
+          }
+      
+          iosSimulatorArm64 {
+              binaries.framework {
+                  baseName = xcfName
+                  xcFramework.add(this)
+              }
+          }    
+      
           sourceSets {
       
               val commonMain by getting {
