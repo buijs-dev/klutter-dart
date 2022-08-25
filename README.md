@@ -39,7 +39,7 @@ Add the Klutter library to dependencies in the pubspec.yaml:
 
 ```yaml  
 dependencies:  
- klutter: ^0.1.3
+ klutter: ^0.2.0
  ```  
   
 Then run:  
