@@ -164,7 +164,7 @@ void main() {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
                   classpath("dev.buijs.klutter:kore:$klutterGradleVersion")
-                  classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:$klutterGradleVersion")
+                  classpath("dev.buijs.klutter:klutter-gradle:$klutterGradleVersion")
               }
           }
           
@@ -219,7 +219,7 @@ void main() {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
                   classpath("dev.buijs.klutter:kore:$klutterGradleVersion")
-                  classpath("dev.buijs.klutter.klutter-gradle:$klutterGradleVersion")
+                  classpath("dev.buijs.klutter:klutter-gradle:$klutterGradleVersion")
               }
           }
           
