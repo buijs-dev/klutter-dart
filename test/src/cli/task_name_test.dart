@@ -22,26 +22,21 @@ import "package:klutter/src/cli/cli.dart";
 import "package:test/test.dart";
 
 void main() {
-
   test("Verify TaskNameParser", () {
-
     <String?, TaskName?>{
-      "add"                : TaskName.add,
-      " add "              : TaskName.add,
-      " init"              : TaskName.init,
-      "INIT"               : TaskName.init,
-      "install"            : TaskName.install,
-      "i n s t a l l"      : null,
-      "destroyAllHumans!"  : null,
-      null                 : null,
-      ""                   : null,
-      "   "                : null,
+      "add": TaskName.add,
+      " add ": TaskName.add,
+      " init": TaskName.init,
+      "INIT": TaskName.init,
+      "install": TaskName.install,
+      "i n s t a l l": null,
+      "destroyAllHumans!": null,
+      null: null,
+      "": null,
+      "   ": null,
     }.forEach((input, taskName) {
       expect(input.toTaskNameOrNull, taskName,
           reason: "Expected '$input' to be converted to '$taskName' ");
     });
-
   });
-
-
 }

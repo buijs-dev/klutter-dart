@@ -22,13 +22,13 @@ import "package:klutter/src/adapter/adapter.dart";
 import "package:test/test.dart";
 
 void main() {
-
   test("Verify factory methods", () {
     final ok = AdapterResponse.success("yay");
     expect(ok.isSuccess(), true);
     expect(ok.object, "yay");
-    ok.exception = Exception("nay");
-    ok.object = "pff";
+    ok
+      ..exception = Exception("nay")
+      ..object = "pff";
     expect(ok.isSuccess(), true);
     expect(ok.object, "pff");
 

@@ -52,7 +52,7 @@ class Command {
   }) {
     /// Regex to parse the CLI arguments.
     final taskRegex = RegExp(
-      r"^\s*(init|add|install)\s*=*\s*([^\s]+|$)",
+      r"^\s*(init|add|install)\s*=*\s*(\S+|$)",
     );
 
     final match = taskRegex.firstMatch(task);

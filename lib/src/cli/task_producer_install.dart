@@ -96,7 +96,7 @@ void _installPlatform(String pathToRoot) {
 
   final result = Process.runSync(
     "./gradlew",
-    ["klutterInstallPlatform"],
+    ["klutterBuild"],
     workingDirectory: pathToRoot,
     environment: {"ANDROID_SDK_ROOT": androidSdkLocation},
   );

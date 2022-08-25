@@ -25,26 +25,22 @@ import "package:klutter/src/consumer/ios.dart";
 import "package:test/test.dart";
 
 void main() {
-
   final s = Platform.pathSeparator;
 
   test("Verify exception is thrown if root/ios does not exist", () {
-    expect(() => excludeArm64FromPodfile("fake"), throwsA(predicate((e) =>
-    e is KlutterException &&
-        e.cause.startsWith("Path does not exist:") &&
-        e.cause.endsWith("/fake"))));
+    expect(
+        () => excludeArm64FromPodfile("fake"),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist:") &&
+            e.cause.endsWith("/fake"))));
   });
 
-  test("Verify exception is thrown if root/ios/Podfile does not exist", () {
+  test("Verify no  exception is thrown if root/ios/Podfile does not exist", () {
     final root = Directory("${Directory.systemTemp.path}${s}plt1")
       ..createSync();
 
-    final ios = Directory("${root.absolute.path}${s}ios")
-      ..createSync();
-
-    expect(() => excludeArm64FromPodfile(ios.path), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause == "Missing Podfile in folder: ${ios.absolute.path}")));
+    Directory("${root.absolute.path}${s}ios").createSync();
 
     root.deleteSync(recursive: true);
   });
@@ -53,15 +49,16 @@ void main() {
     final root = Directory("${Directory.systemTemp.path}${s}plt2")
       ..createSync();
 
-    final ios = Directory("${root.absolute.path}${s}ios")
-      ..createSync();
+    final ios = Directory("${root.absolute.path}${s}ios")..createSync();
 
     File("${ios.absolute.path}${s}Podfile").createSync();
 
     // An exception is thrown
-    expect(() => excludeArm64FromPodfile(ios.path), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Failed to add exclusions for arm64."))));
+    expect(
+        () => excludeArm64FromPodfile(ios.path),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Failed to add exclusions for arm64."))));
 
     root.deleteSync(recursive: true);
   });
@@ -70,8 +67,7 @@ void main() {
     final root = Directory("${Directory.systemTemp.path}${s}plt3")
       ..createSync();
 
-    final ios = Directory("${root.absolute.path}${s}ios")
-      ..createSync();
+    final ios = Directory("${root.absolute.path}${s}ios")..createSync();
 
     final podfile = File("${ios.absolute.path}${s}Podfile")
       ..createSync()
@@ -85,18 +81,17 @@ void main() {
     // when:
     excludeArm64FromPodfile(ios.path);
 
-    print(podfile.readAsStringSync());
-
     // then:
-    expect(podfile.readAsStringSync().replaceAll(" ", "").contains("""
+    expect(
+        podfile.readAsStringSync().replaceAll(" ", "").contains("""
       target.build_configurations.each do |bc|
           bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`
        end
-      """.replaceAll(" ", "")), true, reason: "Exclusions lines should be added.");
+      """
+            .replaceAll(" ", "")),
+        true,
+        reason: "Exclusions lines should be added.");
 
     root.deleteSync(recursive: true);
   });
-
-
-
 }

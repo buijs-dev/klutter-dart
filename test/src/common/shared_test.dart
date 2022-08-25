@@ -24,11 +24,11 @@ import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
-
   test("Verify verifyExists throws exception if File does not exist", () {
-    expect(() => File("BLABLA").verifyExists, throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Path does not exist"))));
+    expect(
+        () => File("BLABLA").verifyExists,
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist"))));
   });
-
 }

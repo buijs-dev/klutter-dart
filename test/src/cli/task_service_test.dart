@@ -26,14 +26,11 @@ import "package:klutter/src/common/common.dart";
 import "package:test/test.dart";
 
 void main() {
-
   final pathToRoot = Directory("${Directory.systemTemp.path}/tst1".normalize)
     ..maybeCreate;
 
   group("Test allTasks", () {
-
     test("Verify allTasks returns 4 tasks", () {
-
       final tasks = service.allTasks();
 
       // There should be 4 Tasks.
@@ -58,68 +55,57 @@ void main() {
         tasks.getTask(ScriptName.producer, TaskName.install).toString(),
         "Instance of Task: ScriptName.producer | TaskName.install | DependsOn: []",
       );
-
     });
 
-
-    test("Verify identical TaskNames are ignored when the ScriptName is different", () {
-
-      final dummy1 =  _DummyTask(
-          taskName: TaskName.install,
-          scriptName: ScriptName.consumer,
+    test(
+        "Verify identical TaskNames are ignored when the ScriptName is different",
+        () {
+      final dummy1 = _DummyTask(
+        taskName: TaskName.install,
+        scriptName: ScriptName.consumer,
       );
 
       final dummy2 = _DummyTask(
-          taskName: TaskName.install,
-          scriptName: ScriptName.producer,
-          dependsOnList: [dummy1],
+        taskName: TaskName.install,
+        scriptName: ScriptName.producer,
+        dependsOnList: [dummy1],
       );
 
-      final tasks = [
-        dummy1, dummy2
-      ];
+      final tasks = [dummy1, dummy2];
 
       expect(service.allTasks(tasks).length, 2);
-
     });
 
     test("Verify exception is thrown if duplicate tasks are found", () {
-
       final duplicateTasks = [
         ConsumerInit(),
         ConsumerInit(),
       ];
 
-      expect(() => service.allTasks(
-          duplicateTasks
-      ), throwsA(predicate((e) =>
-      e is KlutterException &&
-          e.cause.startsWith("TaskService configuration failure.") &&
-          e.cause.contains("Invalid or duplicate TaskName encountered."))));
-
+      expect(
+          () => service.allTasks(duplicateTasks),
+          throwsA(predicate((e) =>
+              e is KlutterException &&
+              e.cause.startsWith("TaskService configuration failure.") &&
+              e.cause.contains("Invalid or duplicate TaskName encountered."))));
     });
 
     test("Verify exception is thrown if tasks have circular dependencies", () {
+      final roundAndRoundWeGo = [_SelfDependingTask()];
 
-      final roundAndRoundWeGo = [
-        _SelfDependingTask()
-      ];
-
-      expect(() => service.allTasks(
-          roundAndRoundWeGo
-      ), throwsA(predicate((e) =>
-      e is KlutterException &&
-          e.cause.startsWith("TaskService configuration failure.") &&
-          e.cause.contains("Found circular dependency."))));
-
+      expect(
+          () => service.allTasks(roundAndRoundWeGo),
+          throwsA(predicate((e) =>
+              e is KlutterException &&
+              e.cause.startsWith("TaskService configuration failure.") &&
+              e.cause.contains("Found circular dependency."))));
     });
-
   });
 
   group("Test tasksOrEmptyList", () {
-
-    test("Verify tasksOrEmptyList returns normalized list of requested Task and all dependents", () {
-
+    test(
+        "Verify tasksOrEmptyList returns normalized list of requested Task and all dependents",
+        () {
       const command = Command(
         scriptName: ScriptName.consumer,
         taskName: TaskName.add,
@@ -136,20 +122,16 @@ void main() {
 
       // Install should be the final task.
       expect(tasks.last.taskName, TaskName.add);
-
     });
-
   });
 
   group("Test TaskComparator", () {
-
     test("When task1 depends on task2, then t2 has higher priority", () {
-
       final task2 = _DummyTask(
         taskName: TaskName.init,
       );
 
-      final task1 =  _DummyTask(
+      final task1 = _DummyTask(
         taskName: TaskName.install,
         dependsOnList: [task2],
       );
@@ -157,12 +139,10 @@ void main() {
       final tasks = [task1, task2]..sort(compareByDependsOn);
 
       expect(tasks.first, task2);
-
     });
 
     test("When task2 depends on task1, then t1 has higher priority", () {
-
-      final task1 =  _DummyTask(
+      final task1 = _DummyTask(
         taskName: TaskName.install,
       );
 
@@ -174,99 +154,74 @@ void main() {
       final tasks = [task1, task2]..sort(compareByDependsOn);
 
       expect(tasks.first, task1);
-
     });
 
     test("When both tasks depend on other tasks then t1 takes priority", () {
+      final taskNotInList = _DummyTask();
 
-      final taskNotInList =  _DummyTask();
+      final task1 = _DummyTask(
+          taskName: TaskName.install, dependsOnList: [taskNotInList]);
 
-      final task1 =  _DummyTask(
-          taskName: TaskName.install,
-          dependsOnList: [taskNotInList]
-      );
-
-      final task2 = _DummyTask(
-          taskName: TaskName.init,
-          dependsOnList: [taskNotInList]
-      );
+      final task2 =
+          _DummyTask(taskName: TaskName.init, dependsOnList: [taskNotInList]);
 
       final tasks = [task1, task2]..sort(compareByDependsOn);
       expect(tasks.first, task1);
 
       final reversed = [task2, task1]..sort(compareByDependsOn);
       expect(reversed.first, task2);
-
     });
 
     test("When both tasks depend on nothing then t1 takes priority", () {
+      final task1 = _DummyTask(taskName: TaskName.install, dependsOnList: []);
 
-      final task1 =  _DummyTask(
-          taskName: TaskName.install,
-          dependsOnList: []
-      );
-
-      final task2 = _DummyTask(
-          taskName: TaskName.init,
-          dependsOnList: []
-      );
+      final task2 = _DummyTask(taskName: TaskName.init, dependsOnList: []);
 
       final tasks = [task1, task2]..sort(compareByDependsOn);
       expect(tasks.first, task1);
 
       final reversed = [task2, task1]..sort(compareByDependsOn);
       expect(reversed.first, task2);
-
     });
 
-    test("When task1 depends on other tasks and task2 depends on nothing, then t2 takes priority", () {
+    test(
+        "When task1 depends on other tasks and task2 depends on nothing, then t2 takes priority",
+        () {
+      final taskNotInList = _DummyTask();
 
-      final taskNotInList =  _DummyTask();
+      final task1 = _DummyTask(
+          taskName: TaskName.install, dependsOnList: [taskNotInList]);
 
-      final task1 =  _DummyTask(
-          taskName: TaskName.install,
-          dependsOnList: [taskNotInList]
-      );
-
-      final task2 = _DummyTask(
-          taskName: TaskName.init,
-          dependsOnList: []
-      );
+      final task2 = _DummyTask(taskName: TaskName.init, dependsOnList: []);
 
       final tasks = [task1, task2]..sort(compareByDependsOn);
       expect(tasks.first, task2);
 
       final reversed = [task2, task1]..sort(compareByDependsOn);
       expect(reversed.first, task2);
-
     });
 
-    test("When task2 depends on other tasks and task1 depends on nothing, then t1 takes priority", () {
+    test(
+        "When task2 depends on other tasks and task1 depends on nothing, then t1 takes priority",
+        () {
+      final taskNotInList = _DummyTask();
 
-      final taskNotInList =  _DummyTask();
+      final task1 = _DummyTask(taskName: TaskName.install, dependsOnList: []);
 
-      final task1 =  _DummyTask(
-          taskName: TaskName.install,
-          dependsOnList: []
-      );
-
-      final task2 = _DummyTask(
-          taskName: TaskName.init,
-          dependsOnList: [taskNotInList]
-      );
+      final task2 =
+          _DummyTask(taskName: TaskName.init, dependsOnList: [taskNotInList]);
 
       final tasks = [task1, task2]..sort(compareByDependsOn);
       expect(tasks.first, task1);
 
       final reversed = [task2, task1]..sort(compareByDependsOn);
       expect(reversed.first, task1);
-
     });
 
-
     test("Verify printTasksAsCommands outputs a readable overview", () {
-
-      expect(printTasksAsCommands.replaceAll(" ", ""), """
+      expect(
+          printTasksAsCommands.replaceAll(" ", ""),
+          """
           The following commands are valid:
           flutter pub run klutter:consumer add=<name_of_plugin_to_add>
           flutter pub run klutter:consumer init
@@ -274,18 +229,15 @@ void main() {
           flutter pub run klutter:consumer init=ios
           flutter pub run klutter:producer init
           flutter pub run klutter:producer install=platform
-          flutter pub run klutter:producer install=library""".replaceAll(" ", ""));
-
+          flutter pub run klutter:producer install=library"""
+              .replaceAll(" ", ""));
     });
-
   });
 
   tearDownAll(() => pathToRoot.deleteSync(recursive: true));
-
 }
 
 class _DummyTask extends Task {
-
   _DummyTask({
     ScriptName scriptName = ScriptName.producer,
     TaskName taskName = TaskName.add,
@@ -298,20 +250,18 @@ class _DummyTask extends Task {
   List<Task> dependsOn() => dependsOnList;
 
   @override
-  void toBeExecuted(String pathToRoot) { }
+  void toBeExecuted(String pathToRoot) {}
 }
 
 class _SelfDependingTask extends _DummyTask {
-
-  _SelfDependingTask(): super();
+  _SelfDependingTask() : super();
 
   @override
   List<Task> dependsOn() => [_SelfDependingTask()];
 }
 
 extension on Set<Task> {
-  Task getTask(ScriptName scriptName, TaskName taskName) =>
-      firstWhere((task) {
+  Task getTask(ScriptName scriptName, TaskName taskName) => firstWhere((task) {
         return task.scriptName == scriptName && task.taskName == taskName;
       });
 }

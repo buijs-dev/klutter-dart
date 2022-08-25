@@ -22,11 +22,11 @@ import "package:klutter/src/common/exception.dart";
 import "package:test/test.dart";
 
 void main() {
-
   test("Verify exception toString returns a readable message", () {
-    expect(() => throw KlutterException("BOOM!"), throwsA(predicate((e) =>
-    e is KlutterException &&
-        e.toString() == "KlutterException with cause: 'BOOM!'")));
+    expect(
+        () => throw KlutterException("BOOM!"),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.toString() == "KlutterException with cause: 'BOOM!'")));
   });
-
 }

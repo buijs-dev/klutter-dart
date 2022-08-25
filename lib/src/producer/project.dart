@@ -32,22 +32,24 @@ void writeExampleMainDartFile({
   required String pathToExample,
   required String pluginName,
 }) =>
-    pathToExample.verifyExists.createMainDartFile.writeMainContent(pluginName);
+    Directory(pathToExample)
+        .maybeCreate
+        .createMainDartFile
+        .writeMainContent(pluginName);
 
-extension on String {
+extension on FileSystemEntity {
   /// Create main.dart file in the example/lib folder.
   File get createMainDartFile {
-    Directory("${this}/lib").normalizeToFolder.maybeCreate;
-    return File("${this}/lib/main.dart").normalizeToFile
+    Directory("$absolutePath/lib").normalizeToFolder.maybeCreate;
+    return File("$absolutePath/lib/main.dart").normalizeToFile
       ..ifNotExists((folder) => File(folder.absolutePath).createSync());
   }
 }
 
 extension on File {
-  /// Write the content of the the settings.gradle.kts of a Klutter plugin.
+  /// Write the content of the settings.gradle.kts of a Klutter plugin.
   void writeMainContent(String pluginName) {
     final className = toPluginClassName(pluginName);
-
     writeAsStringSync("""
           import 'package:flutter/material.dart';
           |import 'dart:async';
@@ -66,7 +68,7 @@ extension on File {
           |}
           |
           |class _MyAppState extends State<MyApp> {
-          |  String _platformVersion = 'Unknown';
+          |  String _greeting = 'Unknown';
           |
           |  @override
           |  void initState() {
@@ -74,24 +76,22 @@ extension on File {
           |    initPlatformState();
           |  }
           |
+          |  void _setState(String greeting) {
+          |    setState(()=> _greeting = greeting);
+          |  }
+          |
           |  // Platform messages are asynchronous, so we initialize in an async method.
           |  Future<void> initPlatformState() async {
           |    // Klutter generated Adapters don't throw exceptions but always return a
           |    // response object. No need for try-catch here. Do or do not. There is no try.
-          |    await $className.greeting.then((response) {
-          |      String platformVersion = response.isSuccess()
-          |          ? response.object
-          |          : response.exception.toString();
-          |
-          |      // If the widget was removed from the tree while the asynchronous platform
-          |      // message was in flight, we want to discard the reply rather than calling
-          |      // setState to update our non-existent appearance.
-          |      if (!mounted) return;
-          |
-          |     setState(() {
-          |        _platformVersion = platformVersion;
-          |     });
-          |    });
+          |    await $className.greeting(this,
+          |        onSuccess: _setState,
+          |        onFailure: (exception) {
+          |          // Here you should handle the exception which means
+          |          // at the very least logging it.
+          |          _setState("There shall be no greeting for now!");
+          |        }
+          |    );
           |  }
           |
           |  @override
@@ -102,7 +102,7 @@ extension on File {
           |          title: const Text('Plugin example app'),
           |        ),
           |        body: Center(
-          |          child: Text('Running on: \$_platformVersion'),
+          |          child: Text(_greeting),
           |        ),
           |      ),
           |    );

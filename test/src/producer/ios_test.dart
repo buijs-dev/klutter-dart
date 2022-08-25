@@ -24,17 +24,16 @@ import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
-
   final temp = Directory.systemTemp..createTempSync();
 
   test("Verify exception is thrown if podspec file does not exist", () {
     final folder = Directory("${temp.absolutePath}/ios_test1".normalize)
       ..createSync();
 
-    expect(() => addFrameworkToPodspec(
-      pluginName: "some_plugin",
-      pathToIos: folder.absolutePath
-    ), throwsA(predicate((e) =>
+    expect(
+        () => addFrameworkToPodspec(
+            pluginName: "some_plugin", pathToIos: folder.absolutePath),
+        throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Missing podspec file"))));
   });
@@ -43,15 +42,14 @@ void main() {
     final folder = Directory("${temp.absolutePath}/ios_test2".normalize)
       ..createSync();
 
-    File("${folder.absolutePath}/some_plugin.podspec")
-        .createSync();
+    File("${folder.absolutePath}/some_plugin.podspec").createSync();
 
-    expect(() => addFrameworkToPodspec(
-        pluginName: "some_plugin",
-        pathToIos: folder.absolutePath
-    ), throwsA(predicate((e) =>
+    expect(
+        () => addFrameworkToPodspec(
+            pluginName: "some_plugin", pathToIos: folder.absolutePath),
+        throwsA(predicate((e) =>
             e is KlutterException &&
-            e.cause.startsWith("Failed to add Platform.framework to ios folder."))));
+            e.cause.startsWith(
+                "Failed to add Platform.framework to ios folder."))));
   });
-
 }

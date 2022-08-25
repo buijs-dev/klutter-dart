@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import "dart:io";
+
 import "../common/project.dart";
 import "../common/utilities.dart";
 import "../producer/android.dart";
@@ -46,6 +48,12 @@ class ProducerInit extends Task {
 
 extension on String {
   void get setupRoot {
+    Directory("${this}/lib".normalize)
+      // Delete folder and all children if they exist.
+      ..normalizeToFolder.maybeDelete
+      // Create a new empty lib folder.
+      ..maybeCreate;
+
     final name = findPluginName(this);
     writeGradleProperties(this);
 

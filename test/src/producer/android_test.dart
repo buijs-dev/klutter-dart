@@ -25,25 +25,25 @@ import "package:klutter/src/producer/android.dart";
 import "package:test/test.dart";
 
 void main() {
-
   final s = Platform.pathSeparator;
 
   const pluginVersion = "1.0.0";
   const packageName = "dev.buijs.klutter.example_plugin";
 
   test("Verify exception is thrown if root/android does not exist", () {
-    expect(() => writeBuildGradleFile(
-      pluginVersion: pluginVersion,
-      packageName: packageName,
-      pathToAndroid: "fake"
-    ), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Path does not exist:") &&
-        e.cause.endsWith("/fake"))));
+    expect(
+        () => writeBuildGradleFile(
+            pluginVersion: pluginVersion,
+            packageName: packageName,
+            pathToAndroid: "fake"),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist:") &&
+            e.cause.endsWith("/fake"))));
   });
 
-  test("Verify exception is thrown if root/android/build.gradle does not exist", () {
-
+  test("Verify exception is thrown if root/android/build.gradle does not exist",
+      () {
     // Create root/android otherwise path does not exist exception is thrown
     final root = Directory("${Directory.systemTemp.path}${s}wbf1")
       ..createSync(recursive: true);
@@ -51,20 +51,20 @@ void main() {
     final android = Directory("${root.path}${s}android")
       ..createSync(recursive: true);
 
-    expect(() => writeBuildGradleFile(
-        pluginVersion: pluginVersion,
-        packageName: packageName,
-        pathToAndroid: android.path,
-    ), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Missing build.gradle file in folder:"))));
+    expect(
+        () => writeBuildGradleFile(
+              pluginVersion: pluginVersion,
+              packageName: packageName,
+              pathToAndroid: android.path,
+            ),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Missing build.gradle file in folder:"))));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify build.gradle content is overwritten", () {
-
     // Create root/android otherwise path does not exist exception is thrown
     final root = Directory("${Directory.systemTemp.path}${s}wbf2")
       ..createSync(recursive: true);
@@ -82,7 +82,9 @@ void main() {
       pathToAndroid: android.path,
     );
 
-    expect(buildGradle.readAsStringSync().replaceAll(" ", ""), '''
+    expect(
+        buildGradle.readAsStringSync().replaceAll(" ", ""),
+        '''
         group 'dev.buijs.klutter.example_plugin'
         version '1.0.0'
         
@@ -97,7 +99,7 @@ void main() {
             dependencies {
                 classpath 'com.android.tools.build:gradle:7.0.4'
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
-                classpath "dev.buijs.klutter:core:$klutterGradleVersion"
+                classpath "dev.buijs.klutter:kore:$klutterGradleVersion"
             }
         }
         
@@ -136,52 +138,53 @@ void main() {
         dependencies {
             runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
             implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-            implementation "dev.buijs.klutter:core:$klutterGradleVersion"
+            implementation "dev.buijs.klutter:kore:$klutterGradleVersion"
             implementation project(":klutter:example_plugin")
         }
         
         java {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
-        }'''.replaceAll(" ", "")
-    );
+        }'''
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify exception is thrown if root/android does not exist", () {
-    expect(() => writeAndroidPlugin(
-        packageName: packageName,
-        pathToAndroid: "fake"
-    ), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Path does not exist:") &&
-        e.cause.endsWith("/fake"))));
+    expect(
+        () =>
+            writeAndroidPlugin(packageName: packageName, pathToAndroid: "fake"),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist:") &&
+            e.cause.endsWith("/fake"))));
   });
 
-  test("Verify exception is thrown if root/android/src/main/kotlin does not exist", () {
-
-    final root =  Directory("${Directory.systemTemp.path}${s}wag1")
+  test(
+      "Verify exception is thrown if root/android/src/main/kotlin does not exist",
+      () {
+    final root = Directory("${Directory.systemTemp.path}${s}wag1")
       ..createSync(recursive: true);
 
     // Create root/android otherwise root/android path does not exist exception is thrown
     final android = Directory("${root.path}${s}android")
       ..createSync(recursive: true);
 
-    expect(() => writeAndroidPlugin(
-      packageName: packageName,
-      pathToAndroid: android.path,
-    ), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Missing src/main/kotlin folder in:"))));
+    expect(
+        () => writeAndroidPlugin(
+              packageName: packageName,
+              pathToAndroid: android.path,
+            ),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Missing src/main/kotlin folder in:"))));
 
     root.deleteSync(recursive: true);
   });
 
   test("Verify exception is thrown if plugin folder does not exist", () {
-
-    final root =  Directory("${Directory.systemTemp.path}${s}wag2")
+    final root = Directory("${Directory.systemTemp.path}${s}wag2")
       ..createSync(recursive: true);
 
     // Create root/android/src/main/kotlin otherwise
@@ -192,44 +195,43 @@ void main() {
     Directory("${android.path}/src/main/kotlin".replaceAll("/", s))
         .createSync(recursive: true);
 
-    expect(() => writeAndroidPlugin(
-      packageName: packageName,
-      pathToAndroid: android.path,
-    ), throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Missing Android plugin folder:"))));
+    expect(
+        () => writeAndroidPlugin(
+              packageName: packageName,
+              pathToAndroid: android.path,
+            ),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Missing Android plugin folder:"))));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify exception is thrown if plugin file does not exist", () {
-
-    final root =  Directory("${Directory.systemTemp.path}${s}wag3")
+    final root = Directory("${Directory.systemTemp.path}${s}wag3")
       ..createSync(recursive: true);
 
     final android = Directory("${root.path}${s}android")
       ..createSync(recursive: true);
 
-    Directory(
-        "${android.path}/src/main/kotlin/dev/buijs/klutter/example_plugin"
-            .replaceAll("/", s)
-    ).createSync(recursive: true);
+    Directory("${android.path}/src/main/kotlin/dev/buijs/klutter/example_plugin"
+            .replaceAll("/", s))
+        .createSync(recursive: true);
 
-    expect(() => writeAndroidPlugin(
-      packageName: packageName,
-      pathToAndroid: android.path,
-    ), throwsA(predicate((e) =>
-    e is KlutterException &&
-        e.cause.startsWith("Missing Android plugin file:"))));
+    expect(
+        () => writeAndroidPlugin(
+              packageName: packageName,
+              pathToAndroid: android.path,
+            ),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Missing Android plugin file:"))));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify plugin class content is overwritten", () {
-
-    final root =  Directory("${Directory.systemTemp.path}${s}wag4")
+    final root = Directory("${Directory.systemTemp.path}${s}wag4")
       ..createSync(recursive: true);
 
     final android = Directory("${root.path}${s}android")
@@ -245,7 +247,9 @@ void main() {
       pathToAndroid: android.path,
     );
 
-    expect(pluginClass.readAsStringSync().replaceAll(" ", ""), '''
+    expect(
+        pluginClass.readAsStringSync().replaceAll(" ", ""),
+        '''
         package dev.buijs.klutter.example_plugin
         
         import dev.buijs.klutter.template.Greeting
@@ -289,14 +293,12 @@ void main() {
           override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
             channel.setMethodCallHandler(null)
           }
-        }'''.replaceAll(" ", "")
-    );
-
+        }'''
+            .replaceAll(" ", ""));
   });
 
   test("Verify exception is thrown if plugin file does not exist", () {
-
-    final root =  Directory("${Directory.systemTemp.path}${s}wag3")
+    final root = Directory("${Directory.systemTemp.path}${s}wag3")
       ..createSync(recursive: true);
 
     final android = Directory("${root.path}${s}android")
@@ -306,25 +308,30 @@ void main() {
 
     final klutter = Directory("${android.path}/klutter".normalize);
 
-    expect(true, klutter.existsSync(),
+    expect(
+      true,
+      klutter.existsSync(),
       reason: "root/android/klutter should be created",
     );
 
-    final androidBuildGradle = File("${klutter.path}/build.gradle.kts".normalize);
+    final androidBuildGradle =
+        File("${klutter.path}/build.gradle.kts".normalize);
 
-    expect(true, androidBuildGradle.existsSync(),
+    expect(
+      true,
+      androidBuildGradle.existsSync(),
       reason: "root/android/klutter/build.gradle.kts should be created",
     );
 
-    expect("""
+    expect(
+      """
         configurations.maybeCreate("default")
         artifacts.add("default", file("platform.aar"))
-        """.replaceAll(" ", ""),
+        """
+          .replaceAll(" ", ""),
       androidBuildGradle.readAsStringSync().replaceAll(" ", ""),
     );
 
     root.deleteSync(recursive: true);
-
   });
-
 }

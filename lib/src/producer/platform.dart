@@ -110,7 +110,7 @@ extension on String {
 }
 
 extension on File {
-  /// Write the content of the the settings.gradle.kts of a Klutter plugin.
+  /// Write the content of the settings.gradle.kts of a Klutter plugin.
   void writeSettingsGradleContent(String pluginName) {
     writeAsStringSync('''
             // Copyright (c) 2021 - 2022 Buijs Software
@@ -138,7 +138,7 @@ extension on File {
         .format);
   }
 
-  /// Write the content of the the settings.gradle.kts of a Klutter plugin.
+  /// Write the content of the build.gradle.kts of a Klutter plugin.
   void writeRootBuildGradleContent(String pluginName) {
     writeAsStringSync('''
           buildscript {
@@ -151,8 +151,8 @@ extension on File {
           |    dependencies {
           |        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
           |        classpath("com.android.tools.build:gradle:7.0.4")
-          |        classpath("dev.buijs.klutter:core:$klutterGradleVersion")
-          |        classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:$klutterGradleVersion")
+          |        classpath("dev.buijs.klutter:kore:$klutterGradleVersion")
+          |        classpath("dev.buijs.klutter:klutter-gradle:$klutterGradleVersion")
           |    }
           |}
           |
@@ -174,24 +174,7 @@ extension on File {
           |    }
           |
           |}
-          |
-          |tasks.register("klutterInstallPlatform", Exec::class) {
-          |    commandLine("bash", "./gradlew", "clean", "build", "-p", "platform")
-          |    finalizedBy("klutterCopyAarFile", "klutterCopyFramework")
-          |}
-          |
-          |tasks.register("klutterCopyAarFile", Copy::class) {
-          |    from("platform/build/outputs/aar/$pluginName-release.aar")
-          |    into("android/klutter")
-          |    rename { fileName ->
-          |        fileName.replace("$pluginName-release", "platform")
-          |    }
-          |}
-          |
-          |tasks.register("klutterCopyFramework", Copy::class) {
-          |    from("platform/build/fat-framework/release")
-          |    into("ios/Klutter")
-          |}'''
+          |'''
         .format);
   }
 
@@ -208,9 +191,8 @@ extension on File {
         |android.useAndroidX=true
         | 
         |#MPP
-        |kotlin.mpp.enableGranularSourceSetsMetadata=true
-        |kotlin.native.enableDependencyPropagation=false
-        |kotlin.mpp.enableCInteropCommonization=true'''
+        |kotlin.mpp.enableCInteropCommonization=true
+        |kotlin.mpp.stability.nowarn=true'''
         .format);
   }
 }
@@ -286,11 +268,12 @@ class PlatformModule {
     File("${root.absolute.path}/build.gradle.kts".normalize)
       ..maybeCreate
       ..writeAsStringSync("""
-      plugins {
+      import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+      |
+      |plugins {
       |    id("com.android.library")
       |    id("dev.buijs.klutter.gradle")
       |    kotlin("multiplatform")
-      |    kotlin("native.cocoapods")
       |    kotlin("plugin.serialization") version "1.6.10"
       |}
       |
@@ -301,28 +284,37 @@ class PlatformModule {
       |    plugin { 
       |       name = "$pluginName"
       |    }
+      |
+      |    include("annotations")
+      |
       |}
-      |
+      |    
       |kotlin {
-      |    android()
-      |    iosX64()
-      |    iosArm64()
       |
-      |    cocoapods {
-      |        summary = "Some description for the Shared Module"
-      |        homepage = "Link to the Shared Module homepage"
-      |        ios.deploymentTarget = "14.1"
-      |        framework {
-      |            baseName = "Platform"
+      |    android()
+      |
+      |    val xcfName = "Platform"
+      |    val xcFramework = XCFramework(xcfName)
+      |
+      |    ios { 
+      |       binaries.framework { 
+      |            baseName = xcfName         
+      |            xcFramework.add(this)
       |        }
       |    }
-      |    
+      |
+      |    iosSimulatorArm64 {
+      |        binaries.framework {
+      |            baseName = xcfName
+      |            xcFramework.add(this)
+      |        }
+      |    }    
+      |
       |    sourceSets {
       |
       |        val commonMain by getting {
       |            dependencies {
-      |                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-      |                api("dev.buijs.klutter:annotations-kmp:$klutterGradleVersion")
+      |                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
       |            }
       |        }
       |
@@ -349,21 +341,14 @@ class PlatformModule {
       |            }
       |        }
       |
-      |        val iosX64Main by getting
-      |        val iosArm64Main by getting
-      |        val iosMain by creating {
-      |            dependsOn(commonMain)
-      |            iosX64Main.dependsOn(this)
-      |            iosArm64Main.dependsOn(this)
-      |            dependencies {}
+      |        val iosMain by getting
+      |        val iosSimulatorArm64Main by getting {
+      |           dependsOn(iosMain)
       |        }
-      |
-      |        val iosX64Test by getting
-      |        val iosArm64Test by getting
-      |        val iosTest by creating {
-      |            dependsOn(commonTest)
-      |            iosX64Test.dependsOn(this)
-      |            iosArm64Test.dependsOn(this)
+      |        
+      |        val iosTest by getting
+      |        val iosSimulatorArm64Test by getting {
+      |           dependsOn(iosTest)
       |        }
       |    }
       |}
@@ -420,7 +405,7 @@ class PlatformModule {
       ..writeAsStringSync("""
       package $packageName.platform
       |
-      |import dev.buijs.klutter.annotations.kmp.KlutterAdaptee
+      |import dev.buijs.klutter.annotations.KlutterAdaptee
       |
       |class Greeting {
       |

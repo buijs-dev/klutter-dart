@@ -22,7 +22,6 @@ import "package:klutter/src/cli/cli.dart";
 import "package:test/test.dart";
 
 void main() {
-
   test("When option is invalid then result is not ok", () {
     final task = ProducerInstall()..option = "nothing";
     final result = task.execute("");
@@ -36,5 +35,4 @@ void main() {
     expect(result.isOk, false);
     expect(result.message, "Missing option value for task 'install'");
   });
-
 }

@@ -127,4 +127,7 @@ extension ColoredMessage on String {
 
   /// Log a red colored message.
   String get nok => "\x1B[31m${this}";
+
+  /// Default color (mostly whit(e/ish)).
+  String get boring => "\x1B[49m${this}";
 }

@@ -29,10 +29,12 @@ import "package:klutter/klutter.dart";
 Future<void> main(List<String> args) async {
   print("""
   ════════════════════════════════════════════
-     KLUTTER (v0.1.3)                               
+     KLUTTER (v$klutterPubVersion)                               
   ════════════════════════════════════════════
   """
       .ok);
+
+  print("This might take a while. Just a moment please...".boring);
 
   final pathToRoot = Directory.current.absolutePath;
   final result = await execute(

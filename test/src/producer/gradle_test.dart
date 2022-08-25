@@ -25,61 +25,67 @@ import "package:klutter/src/producer/gradle.dart";
 import "package:test/test.dart";
 
 void main() {
-
   final s = Platform.pathSeparator;
 
   test("Verify exception is thrown if root does not exist", () {
-    expect(() => Gradle("fake").copyToRoot, throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Path does not exist:") &&
-        e.cause.endsWith("/fake"))));
+    expect(
+        () => Gradle("fake").copyToRoot,
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist:") &&
+            e.cause.endsWith("/fake"))));
   });
 
   test("Verify Gradle files are copied to the root folder", () async {
-
     final root = Directory("${Directory.systemTemp.path}${s}gradle10")
       ..createSync(recursive: true);
 
     await Gradle(root.path).copyToRoot;
 
     final properties = File("${root.path}/gradle.properties").normalizeToFile;
-    final wrapperJar = File("${root.path}/gradle/wrapper/gradle-wrapper.jar").normalizeToFile;
-    final wrapperProperties = File("${root.path}/gradle/wrapper/gradle-wrapper.properties").normalizeToFile;
+    final wrapperJar =
+        File("${root.path}/gradle/wrapper/gradle-wrapper.jar").normalizeToFile;
+    final wrapperProperties =
+        File("${root.path}/gradle/wrapper/gradle-wrapper.properties")
+            .normalizeToFile;
     final wrapperBat = File("${root.path}/gradlew").normalizeToFile;
     final wrapperShell = File("${root.path}/gradlew.bat").normalizeToFile;
 
-    expect(properties.existsSync(), true, reason: "gradle.properties should exist");
-    expect(wrapperJar.existsSync(), true, reason: "gradle-wrapper.jar should exist");
-    expect(wrapperProperties.existsSync(), true, reason: "gradle-wrapper.properties should exist");
+    expect(properties.existsSync(), true,
+        reason: "gradle.properties should exist");
+    expect(wrapperJar.existsSync(), true,
+        reason: "gradle-wrapper.jar should exist");
+    expect(wrapperProperties.existsSync(), true,
+        reason: "gradle-wrapper.properties should exist");
     expect(wrapperBat.existsSync(), true, reason: "gradlew should exist");
     expect(wrapperShell.existsSync(), true, reason: "gradlew.bat should exist");
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify exception is thrown if root does not exist", () {
-    expect(() => Gradle("fake").copyToAndroid, throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Path does not exist:") &&
-        e.cause.endsWith("/fake"))));
+    expect(
+        () => Gradle("fake").copyToAndroid,
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist:") &&
+            e.cause.endsWith("/fake"))));
   });
 
   test("Verify exception is thrown if root/android does not exist", () {
-
     final root = Directory("${Directory.systemTemp.path}${s}gradle20")
       ..createSync(recursive: true);
 
-    expect(() => Gradle(root.path).copyToAndroid, throwsA(predicate((e) =>
-        e is KlutterException &&
-        e.cause.startsWith("Path does not exist:"))));
+    expect(
+        () => Gradle(root.path).copyToAndroid,
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist:"))));
 
     root.deleteSync(recursive: true);
-
   });
 
   test("Verify Gradle files are copied to the root/android folder", () async {
-
     final root = Directory("${Directory.systemTemp.path}${s}gradle30")
       ..createSync(recursive: true);
 
@@ -88,20 +94,25 @@ void main() {
 
     await Gradle(root.path).copyToAndroid;
 
-    final properties = File("${android.path}/gradle.properties").normalizeToFile;
-    final wrapperJar = File("${android.path}/gradle/wrapper/gradle-wrapper.jar").normalizeToFile;
-    final wrapperProperties = File("${android.path}/gradle/wrapper/gradle-wrapper.properties").normalizeToFile;
+    final properties =
+        File("${android.path}/gradle.properties").normalizeToFile;
+    final wrapperJar = File("${android.path}/gradle/wrapper/gradle-wrapper.jar")
+        .normalizeToFile;
+    final wrapperProperties =
+        File("${android.path}/gradle/wrapper/gradle-wrapper.properties")
+            .normalizeToFile;
     final wrapperBat = File("${android.path}/gradlew").normalizeToFile;
     final wrapperShell = File("${android.path}/gradlew.bat").normalizeToFile;
 
-    expect(properties.existsSync(), true, reason: "gradle.properties should exist");
-    expect(wrapperJar.existsSync(), true, reason: "gradle-wrapper.jar should exist");
-    expect(wrapperProperties.existsSync(), true, reason: "gradle-wrapper.properties should exist");
+    expect(properties.existsSync(), true,
+        reason: "gradle.properties should exist");
+    expect(wrapperJar.existsSync(), true,
+        reason: "gradle-wrapper.jar should exist");
+    expect(wrapperProperties.existsSync(), true,
+        reason: "gradle-wrapper.properties should exist");
     expect(wrapperBat.existsSync(), true, reason: "gradlew should exist");
     expect(wrapperShell.existsSync(), true, reason: "gradlew.bat should exist");
 
     root.deleteSync(recursive: true);
-
   });
-
 }

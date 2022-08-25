@@ -1,3 +1,14 @@
+## 0.2.0
+* Uses Klutter Gradle v2022.r6-8.alpha.
+* New project template uses Klutter DSL to apply Klutter dependencies.
+* Flutter generated files are removed from lib folder after klutter init.
+* Moved task klutterInstallPlatform from generated build.gradle.kts to Gradle plugin.
+* Renamed task klutterInstallPlatfrom to klutterBuild.
+* Moved task klutterCopyAarFile from generated build.gradle.kts to Gradle plugin.
+* Moved task klutterIosFramework from generated build.gradle.kts to Gradle plugin.
+* Changed platform build.gradle.kts to create an XCFramework instead of fat framework for iOS.
+* [Bugfix](https://github.com/buijs-dev/klutter/issues/4) App does not work on Mac M1.
+
 ## 0.1.3
 * Uses Klutter Gradle v2022.r6-7.alpha.
 
