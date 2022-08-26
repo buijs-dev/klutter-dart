@@ -348,7 +348,7 @@ void main() {
     
      plugins {
           id("com.android.library")
-          id("dev.buijs.klutter")
+          id("dev.buijs.klutter.gradle")
           kotlin("multiplatform")
           kotlin("plugin.serialization") version "1.6.10"
       }

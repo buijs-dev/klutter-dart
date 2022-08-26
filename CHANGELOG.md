@@ -1,3 +1,6 @@
+## 0.2.2
+* Uses Klutter Gradle v2022.r6-9.alpha.
+
 ## 0.2.1
 * Changed gradle plugin id to dev.buijs.klutter
 
