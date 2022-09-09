@@ -1,3 +1,6 @@
+## 0.2.4
+* Documentation update to point-out the Android Studio and Intellij IDE plugins.
+
 ## 0.2.3
 * Uses Klutter Gradle v2022.r6-9.alpha.
 

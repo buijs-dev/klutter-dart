@@ -27,7 +27,9 @@ Use this plugin if you want to:
 3. [Creating plugins](#Creation)
 4. [FAQ!](#Faq!)
 
-For a step-by-step guide, see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
+- Easiest way to start a new project is with the [Intellij](https://buijs.dev/klutter-3/) or [Android Studio](https://buijs.dev/klutter-4/) plugin.
+  This plugin will create a new Flutter plugin and setup Klutter automatically.
+- For a step-by-step guide (doing everything manually), see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
 
 # Installation
 <b>What's the point?</b></br>
@@ -39,7 +41,7 @@ Add the Klutter library to dependencies in the pubspec.yaml:
 
 ```yaml  
 dependencies:  
- klutter: ^0.2.3
+ klutter: ^0.2.4
  ```  
   
 Then run:  

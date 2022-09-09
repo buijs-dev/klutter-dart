@@ -1,5 +1,5 @@
 /// The version of the Klutter Pub Plugin.
-const klutterPubVersion = "0.2.3";
+const klutterPubVersion = "0.2.4";
 
 /// The version of the Klutter Gradle Plugin.
 const klutterGradleVersion = "2022.r6-9.alpha";
