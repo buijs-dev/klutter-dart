@@ -207,5 +207,6 @@ klutter:producer install=platform from the root folder.
 There should be a Platform.xcframework folder in root/ios/Klutter. If not then do flutter pub run
 klutter:producer install=platform from the root folder.
 
-If there's an error message saying unable to find plugin or similar then run pod update in the root/example/ios
+If there's an error message saying unable to find plugin or similar then run pod update
+(or for Mac M1 users you might have to do: arch -x86_64 pod install) in the root/example/ios
 folder.
