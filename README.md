@@ -1,7 +1,9 @@
-[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter-dart?color=black&logoColor=black&style=for-the-badge)](https://github.com/buijs-dev/klutter-dart/blob/main/LICENSE)
-[![pub](https://img.shields.io/pub/v/klutter?style=for-the-badge)](https://pub.dev/packages/klutter)
-[![codecov](https://img.shields.io/codecov/c/github/buijs-dev/klutter-dart?logo=codecov&style=for-the-badge)](https://codecov.io/gh/buijs-dev/klutter-dart)
-[![CodeScene Code Health](https://img.shields.io/badge/CODESCENE-10-brightgreen?style=for-the-badge)](https://codescene.io/projects/27237)
+[![](https://img.shields.io/badge/Buijs-Software-blue)](https://pub.dev/publishers/buijs.dev/packages)
+[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter-dart?color=black&logoColor=black)](https://github.com/buijs-dev/klutter-dart/blob/main/LICENSE)
+[![pub](https://img.shields.io/pub/v/klutter)](https://pub.dev/packages/klutter)
+[![codecov](https://img.shields.io/codecov/c/github/buijs-dev/klutter-dart?logo=codecov)](https://codecov.io/gh/buijs-dev/klutter-dart)
+[![CodeScene Code Health](https://codescene.io/projects/27237/status-badges/code-health)](https://codescene.io/projects/27237)
+
 
 <br>
 
