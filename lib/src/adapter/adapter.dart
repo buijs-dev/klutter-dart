@@ -52,5 +52,5 @@ class AdapterResponse<T> {
   Exception get exception => _exception!;
 
   /// Returns true if the [_object] is not null.
-  bool isSuccess() => _object != null;
+  bool get isSuccess => _object != null;
 }
