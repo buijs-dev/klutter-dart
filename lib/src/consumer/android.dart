@@ -36,18 +36,6 @@ String findFlutterSDK(String pathToAndroid) =>
     pathToAndroid.verifyExists.toPropertiesFile.asProperties
         .property("flutter.sdk");
 
-/// Get the path to the local Android SDK installation
-/// as configured in the root-project/android/local.properties folder.
-///
-/// Either:
-/// - throws [KlutterException] if unsuccessful or
-/// - returns [String] path to Android SDK installation.
-///
-/// {@category consumer}
-String findAndroidSDK(String pathToAndroid) =>
-    pathToAndroid.verifyExists.toPropertiesFile.asProperties
-        .property("sdk.dir");
-
 /// Generate a new gradle file in the flutter/tools/gradle folder
 /// which will apply Klutter plugins to a Flutter project.
 ///
@@ -80,32 +68,32 @@ void applyPluginLoader(String pathToAndroid) =>
 extension on String {
   /// Create a path to the root-project/android/local.properties file.
   /// If the file does not exist throw a [KlutterException].
-  File get toPropertiesFile => File("${this}/local.properties").normalizeToFile
+  File get toPropertiesFile => File("$this/local.properties").normalizeToFile
     ..ifNotExists((_) => throw KlutterException(
-        "Missing local.properties file in folder: ${this}"));
+        "Missing local.properties file in folder: $this"));
 
   /// Create a path to the settings.gradle file.
   /// If the file does not exist throw a [KlutterException].
-  File get toSettingsGradleFile => File("${this}/settings.gradle".normalize)
+  File get toSettingsGradleFile => File("$this/settings.gradle".normalize)
     ..ifNotExists((_) => throw KlutterException(
-        "Missing settings.gradle file in folder: ${this}"));
+        "Missing settings.gradle file in folder: $this"));
 
   /// Create a path to the build.gradle file.
   /// If the file does not exist throw a [KlutterException].
-  File get toBuildGradleFile => File("${this}/build.gradle".normalize)
+  File get toBuildGradleFile => File("$this/build.gradle".normalize)
     ..ifNotExists((_) =>
-        throw KlutterException("Missing build.gradle file in folder: ${this}"));
+        throw KlutterException("Missing build.gradle file in folder: $this"));
 
   /// Create a path to the flutter/tools/gradle/klutter_plugin_loader.gradle.kts file.
   /// If the file does not exist create it.
   File get createPluginLoaderGradleFile =>
-      File("${this}/$_klutterPluginLoaderGradleFile").normalizeToFile
+      File("$this/$_klutterPluginLoaderGradleFile").normalizeToFile
         ..ifNotExists((file) => File(file.absolutePath).createSync());
 
   /// Create a path to flutter/tools/gradle folder.
   /// If the folder does not exist create it.
   Directory get createFlutterToolsFolder =>
-      Directory("${this}/packages/flutter_tools/gradle".normalize)
+      Directory("$this/packages/flutter_tools/gradle".normalize)
         ..ifNotExists((folder) =>
             Directory(folder.absolutePath).createSync(recursive: true));
 
