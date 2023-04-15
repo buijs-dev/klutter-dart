@@ -1,3 +1,8 @@
+## 0.3.0
+* Uses Klutter Gradle v2023.1.1.beta.
+* Add Flutter Engine XCFramework to be copied during project initialization.
+* Remove widgets in order to scope klutter-dart to dev_dependency (widgets are now found in [klutter-dart-ui](https://github.com/buijs-dev/klutter-dart-ui).
+
 ## 0.2.4
 * Documentation update to point-out the Android Studio and Intellij IDE plugins.
 
