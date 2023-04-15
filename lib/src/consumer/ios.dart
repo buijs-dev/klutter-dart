@@ -84,11 +84,11 @@ extension on File {
     final text = readAsStringSync();
     final containsAllLines = <bool>[];
 
-    for(final line in linesToAdd) {
+    for (final line in linesToAdd) {
       containsAllLines.add(text.contains(line));
     }
 
-    if(containsAllLines.every((hasLine) => hasLine)) {
+    if (containsAllLines.every((hasLine) => hasLine)) {
       return;
     }
 

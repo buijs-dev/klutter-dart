@@ -121,17 +121,22 @@ extension on String {
   }
 
   Future<void> addFlutterEngineXCFramework(String pathToIos) async {
-    await Isolate.resolvePackageUri(Uri.parse("package:klutter/res/FlutterEngine.xcframework")).then((source) {
-      if(source == null) {
+    await Isolate.resolvePackageUri(
+            Uri.parse("package:klutter/res/FlutterEngine.xcframework"))
+        .then((source) {
+      if (source == null) {
         throw KlutterException("FlutterEngine.xcframework does not exist.");
       }
 
       final pathFrom = Directory(source.path);
-      final pathTo = Directory("$pathToIos/Klutter/FlutterEngine.xcframework").maybeCreate;
-      final result = Process.runSync("cp", ["-R", pathFrom.absolutePath, pathTo.absolutePath],);
+      final pathTo =
+          Directory("$pathToIos/Klutter/FlutterEngine.xcframework").maybeCreate;
+      final result = Process.runSync(
+        "cp",
+        ["-R", pathFrom.absolutePath, pathTo.absolutePath],
+      );
       stdout.write(result.stdout);
       stderr.write(result.stderr);
     });
   }
-
 }
