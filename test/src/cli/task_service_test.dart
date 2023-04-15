@@ -30,11 +30,11 @@ void main() {
     ..maybeCreate;
 
   group("Test allTasks", () {
-    test("Verify allTasks returns 4 tasks", () {
+    test("Verify allTasks returns 3 tasks", () {
       final tasks = service.allTasks();
 
       // There should be 4 Tasks.
-      expect(tasks.length, 4);
+      expect(tasks.length, 3);
 
       expect(
         tasks.getTask(ScriptName.consumer, TaskName.add).toString(),
@@ -51,10 +51,6 @@ void main() {
         "Instance of Task: ScriptName.producer | TaskName.init | DependsOn: []",
       );
 
-      expect(
-        tasks.getTask(ScriptName.producer, TaskName.install).toString(),
-        "Instance of Task: ScriptName.producer | TaskName.install | DependsOn: []",
-      );
     });
 
     test(
@@ -227,9 +223,7 @@ void main() {
           flutter pub run klutter:consumer init
           flutter pub run klutter:consumer init=android
           flutter pub run klutter:consumer init=ios
-          flutter pub run klutter:producer init
-          flutter pub run klutter:producer install=platform
-          flutter pub run klutter:producer install=library"""
+          flutter pub run klutter:producer init"""
               .replaceAll(" ", ""));
     });
   });

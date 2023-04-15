@@ -42,7 +42,7 @@ The Klutter dependency is a requirement for both using and creating plugins with
 Add the Klutter library to dependencies in the pubspec.yaml:
 
 ```yaml  
-dependencies:  
+dev_dependencies:  
  klutter: ^0.3.0
  ```  
   
@@ -149,9 +149,8 @@ The following steps describe how to create a Flutter plugin project and initiali
 1. Create Flutter plugin project.
 2. [Installation](#Installation).
 3. Initialization.
-4. Build Platform module.
-5. Generate Dart code.
-6. Verify your plugin.
+4. Build Platform module and generate Dart code.
+5. Verify your plugin.
 
 Run the following to create a new Flutter plugin, 
 substituting 'org.example' with your organisation name 
@@ -170,13 +169,7 @@ flutter pub run klutter:producer init
 Build the platform module by running the following in the root folder (takes a few minutes!):
 
 ```shell
-flutter pub run klutter:producer install=platform 
-```
-
-Generate the plugin Dart code:
-
-```shell
-flutter pub run klutter:producer install=library  
+./gradlew clean build -p "platform"
 ```
 
 Now test the plugin by following the steps outlined [here](#Usage) in the root/example project. 
@@ -193,8 +186,7 @@ Make sure you have followed all the following steps:
 (both the plugin and plugin/example for testing).
 - do flutter pub get in both root and root/example folder.
 - do flutter pub run klutter:producer init in the root folder.
-- do flutter pub run klutter:producer install=library in the root folder.
-- do flutter pub run klutter:producer install=platform in the root folder.
+- do ./gradlew clean build -p "platform" in the root folder.
 - do flutter pub run klutter:consumer init in the root/example folder.
 - do flutter pub run klutter:consumer add=<your_plugin_name> in the root/example folder.
 
