@@ -58,7 +58,6 @@ export "command.dart";
 export "script.dart";
 export "task.dart";
 export "task_comparator.dart";
-export "task_comparator.dart";
 export "task_consumer_add.dart";
 export "task_consumer_init.dart";
 export "task_name.dart";
