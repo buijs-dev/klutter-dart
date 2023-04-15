@@ -88,6 +88,10 @@ void main() {
         group 'dev.buijs.klutter.example_plugin'
         version '1.0.0'
         
+        apply plugin: 'com.android.library'
+        apply plugin: 'dev.buijs.klutter'
+        apply plugin: 'kotlin-android'
+
         buildscript {
         
             repositories {
@@ -97,9 +101,10 @@ void main() {
             }
         
             dependencies {
+                classpath platform("dev.buijs.klutter:bom:$klutterGradleVersion")
+                classpath "dev.buijs.klutter:gradle"
                 classpath 'com.android.tools.build:gradle:7.0.4'
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
-                classpath "dev.buijs.klutter:kore:$klutterGradleVersion"
             }
         }
         
@@ -110,9 +115,6 @@ void main() {
                 maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
             }
         }
-        
-        apply plugin: 'com.android.library'
-        apply plugin: 'kotlin-android'
         
         android {
             compileSdkVersion 31
@@ -135,10 +137,16 @@ void main() {
             }
         }
         
+        klutter {
+            include("annotations")
+            include("kore")
+            include("kompose")
+            include("flutter-engine-android")
+        }
+        
         dependencies {
-            runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
+            runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
             implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-            implementation "dev.buijs.klutter:kore:$klutterGradleVersion"
             implementation project(":klutter:example_plugin")
         }
         

@@ -25,7 +25,6 @@
 /// it can be written once in Kotlin and used as a Flutter plugin.
 library klutter;
 
-export "src/adapter/adapter.dart";
 export "src/cli/cli.dart";
 export "src/common/common.dart";
 export "src/consumer/consumer.dart";

@@ -163,31 +163,11 @@ void main() {
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath("dev.buijs.klutter:kore:$klutterGradleVersion")
-                  classpath("dev.buijs.klutter:klutter-gradle:$klutterGradleVersion")
+                  classpath(platform("dev.buijs.klutter:bom:$klutterGradleVersion"))
+                  classpath("dev.buijs.klutter:gradle")
               }
           }
-          
-          repositories {
-              google()
-              gradlePluginPortal()
-              mavenCentral()
-              maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
-          }
-          
-          allprojects {
-              repositories {
-                  google()
-                  gradlePluginPortal()
-                  mavenCentral()
-                  maven {
-                      url = uri("https://repsy.io/mvn/buijs-dev/klutter")
-                  }
-              }
-          
-          }
-      """
-            .replaceAll(" ", ""));
+      """.replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
   });
@@ -218,31 +198,11 @@ void main() {
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath("dev.buijs.klutter:kore:$klutterGradleVersion")
-                  classpath("dev.buijs.klutter:klutter-gradle:$klutterGradleVersion")
+                  classpath(platform("dev.buijs.klutter:bom:$klutterGradleVersion"))
+                  classpath("dev.buijs.klutter:gradle")
               }
           }
-          
-          repositories {
-              google()
-              gradlePluginPortal()
-              mavenCentral()
-              maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
-          }
-          
-          allprojects {
-              repositories {
-                  google()
-                  gradlePluginPortal()
-                  mavenCentral()
-                  maven {
-                      url = uri("https://repsy.io/mvn/buijs-dev/klutter")
-                  }
-              }
-          
-          }
-      """
-            .replaceAll(" ", ""));
+      """.replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
   });
@@ -357,14 +317,21 @@ void main() {
       
       klutter {
           root = rootProject.rootDir
+          
           plugin { 
              name = "nigulp"
           }
           
-          include("annotations")
-          
+          include("bill-of-materials")
       }
       
+      ksp {
+          arg("klutterScanFolder", project.buildDir.absolutePath)
+          arg("klutterOutputFolder", project.projectDir.parentFile.absolutePath)
+          arg("klutterGenerateAdapters", "true")
+          arg("intelMac", "false") // Set to "true" if you're building on an Intel Mac!
+      }
+
       kotlin {
   
           android()
@@ -390,7 +357,8 @@ void main() {
       
               val commonMain by getting {
                   dependencies {
-                      implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                      implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
                   }
               }
       
@@ -400,13 +368,13 @@ void main() {
                       implementation(kotlin("test-annotations-common"))
                       implementation(kotlin("test-junit"))
                       implementation("junit:junit:4.13.2")
-                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
+                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
                   }
               }
       
               val androidMain by getting {
                   dependencies {
-                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
                   }
               }
       
@@ -437,8 +405,16 @@ void main() {
               minSdk = 21
               targetSdk = 31
           }
-      }"""
-          .replaceAll(" ", ""),
+      }
+      
+      tasks.build.get()
+        .setFinalizedBy(listOf(
+            tasks.getByName("assemblePlatformReleaseXCFramework"),
+            tasks.getByName("klutterCopyAarFile")))
+    
+      tasks.getByName("assemblePlatformReleaseXCFramework")
+          .setFinalizedBy(listOf(tasks.getByName("klutterCopyFramework")))
+      """.replaceAll(" ", ""),
       platformBuildGradle.readAsStringSync().replaceAll(" ", ""),
     );
 

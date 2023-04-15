@@ -146,7 +146,7 @@ extension on String {
   Directory get rootFolder => Directory(this);
 
   Directory get androidFolder =>
-      Directory("${this}/android".normalize)..absolutePath.verifyExists;
+      Directory("$this/android".normalize)..absolutePath.verifyExists;
 }
 
 extension on Directory {

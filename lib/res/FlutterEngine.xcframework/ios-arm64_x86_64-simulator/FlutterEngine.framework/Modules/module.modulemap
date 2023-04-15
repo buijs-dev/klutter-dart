@@ -1,0 +1,6 @@
+framework module FlutterEngine {
+    umbrella header "FlutterEngine.h"
+
+    export *
+    module * { export * }
+}

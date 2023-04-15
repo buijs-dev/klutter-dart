@@ -60,7 +60,7 @@ void excludeArm64FromPodfile(String pathToIos) =>
 extension on String {
   /// Return File path to the ios/Podfile.
   File get toPodfile {
-    return File("${this}/Podfile".normalize);
+    return File("$this/Podfile".normalize);
   }
 }
 
@@ -71,6 +71,24 @@ extension on File {
   /// Without doing this the app won't start on a simulator.
   void get writeExclusionLines {
     if (!existsSync()) {
+      return;
+    }
+
+    const linesToAdd = [
+      "             target.build_configurations.each do |bc|",
+      "               bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`",
+      "            end"
+    ];
+
+    // If lines are added then do NOT add them again.
+    final text = readAsStringSync();
+    final containsAllLines = <bool>[];
+
+    for(final line in linesToAdd) {
+      containsAllLines.add(text.contains(line));
+    }
+
+    if(containsAllLines.every((hasLine) => hasLine)) {
       return;
     }
 

@@ -44,15 +44,15 @@ void addFrameworkToPodspec({
 
 extension on String {
   void get createKlutterFolder {
-    Directory("${this}/Klutter").normalizeToFolder.maybeCreate;
+    Directory("$this/Klutter").normalizeToFolder.maybeCreate;
   }
 
   void get createKlutterReadmeFile {
-    File("${this}/Klutter/klutter.md").normalizeToFile.maybeCreate;
+    File("$this/Klutter/klutter.md").normalizeToFile.maybeCreate;
   }
 
   File toPodspec(String pluginName) =>
-      File("${this}/$pluginName.podspec").normalizeToFile
+      File("$this/$pluginName.podspec").normalizeToFile
         ..ifNotExists((file) {
           throw KlutterException("Missing podspec file: ${file.path}");
         });

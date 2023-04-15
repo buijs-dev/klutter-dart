@@ -95,17 +95,17 @@ void writeGradleProperties(String pathToRoot) => pathToRoot
 extension on String {
   /// Create a settings.gradle.kts in the root folder.
   File get createRootSettingsGradleFile =>
-      File("${this}/settings.gradle.kts").normalizeToFile
+      File("$this/settings.gradle.kts").normalizeToFile
         ..ifNotExists((folder) => File(folder.absolutePath).createSync());
 
   /// Create a build.gradle.kts in the root folder.
   File get createRootBuildGradleFile =>
-      File("${this}/build.gradle.kts").normalizeToFile
+      File("$this/build.gradle.kts").normalizeToFile
         ..ifNotExists((folder) => File(folder.absolutePath).createSync());
 
   /// Create a build.gradle.kts in the root folder.
   File get createRootGradlePropertiesFile =>
-      File("${this}/gradle.properties").normalizeToFile
+      File("$this/gradle.properties").normalizeToFile
         ..ifNotExists((folder) => File(folder.absolutePath).createSync());
 }
 
@@ -151,28 +151,9 @@ extension on File {
           |    dependencies {
           |        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
           |        classpath("com.android.tools.build:gradle:7.0.4")
-          |        classpath("dev.buijs.klutter:kore:$klutterGradleVersion")
-          |        classpath("dev.buijs.klutter:klutter-gradle:$klutterGradleVersion")
+          |        classpath(platform("dev.buijs.klutter:bom:$klutterGradleVersion"))
+          |        classpath("dev.buijs.klutter:gradle")
           |    }
-          |}
-          |
-          |repositories {
-          |    google()
-          |    gradlePluginPortal()
-          |    mavenCentral()
-          |    maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
-          |}
-          |
-          |allprojects {
-          |    repositories {
-          |        google()
-          |        gradlePluginPortal()
-          |        mavenCentral()
-          |        maven {
-          |            url = uri("https://repsy.io/mvn/buijs-dev/klutter")
-          |        }
-          |    }
-          |
           |}
           |'''
         .format);
@@ -281,14 +262,21 @@ class PlatformModule {
       |
       |klutter {
       |    root = rootProject.rootDir
+      |
       |    plugin { 
       |       name = "$pluginName"
       |    }
       |
-      |    include("annotations")
-      |
+      |    include("bill-of-materials")
       |}
       |    
+      |ksp {
+      |    arg("klutterScanFolder", project.buildDir.absolutePath)
+      |    arg("klutterOutputFolder", project.projectDir.parentFile.absolutePath)
+      |    arg("klutterGenerateAdapters", "true")
+      |    arg("intelMac", "false") // Set to "true" if you're building on an Intel Mac!
+      |}
+      |
       |kotlin {
       |
       |    android()
@@ -314,7 +302,8 @@ class PlatformModule {
       |
       |        val commonMain by getting {
       |            dependencies {
-      |                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+      |                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
       |            }
       |        }
       |
@@ -324,13 +313,13 @@ class PlatformModule {
       |                implementation(kotlin("test-annotations-common"))
       |                implementation(kotlin("test-junit"))
       |                implementation("junit:junit:4.13.2")
-      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
+      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
       |            }
       |        }
       |
       |        val androidMain by getting {
       |            dependencies {
-      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
       |            }
       |        }
       |
@@ -361,7 +350,16 @@ class PlatformModule {
       |        minSdk = $androidMinSdk
       |        targetSdk = $androidTargetSdk
       |    }
-      |}"""
+      |}
+      |
+      |tasks.build.get()
+      |    .setFinalizedBy(listOf(
+      |        tasks.getByName("assemblePlatformReleaseXCFramework"),
+      |        tasks.getByName("klutterCopyAarFile")))
+      |
+      |tasks.getByName("assemblePlatformReleaseXCFramework")
+      |    .setFinalizedBy(listOf(tasks.getByName("klutterCopyFramework")))
+      |"""
           .format);
   }
 

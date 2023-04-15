@@ -69,14 +69,14 @@ extension on String {
   /// Create a path to the src/main/kotlin folder.
   /// If the file does not exist throw a [KlutterException].
   Directory get toKotlinSourcePackage => Directory(
-      "${this}/src/main/kotlin".normalize)
+      "$this/src/main/kotlin".normalize)
     ..ifNotExists((_) =>
         throw KlutterException("Missing src/main/kotlin folder in: ${this}"));
 
   /// Create a path to the android/klutter folder.
   /// If the file does not exist then create it.
   Directory get toKlutterFolder =>
-      Directory("${this}/klutter".normalize)..maybeCreate;
+      Directory("$this/klutter".normalize)..maybeCreate;
 }
 
 extension on Directory {
@@ -183,6 +183,10 @@ class _Configuration {
         group '$packageName'
         |version '$version'
         |
+        |apply plugin: 'com.android.library'
+        |apply plugin: 'dev.buijs.klutter'
+        |apply plugin: 'kotlin-android'
+        |
         |buildscript {
         |
         |    repositories {
@@ -192,9 +196,10 @@ class _Configuration {
         |    }
         |
         |    dependencies {
+        |        classpath platform("dev.buijs.klutter:bom:$klutterGradleVersion")
+        |        classpath "dev.buijs.klutter:gradle"
         |        classpath 'com.android.tools.build:gradle:7.0.4'
         |        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
-        |        classpath "dev.buijs.klutter:kore:$klutterGradleVersion"
         |    }
         |}
         |
@@ -205,9 +210,6 @@ class _Configuration {
         |        maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
         |    }
         |}
-        |
-        |apply plugin: 'com.android.library'
-        |apply plugin: 'kotlin-android'
         |
         |android {
         |    compileSdkVersion $androidCompileSdk
@@ -230,10 +232,16 @@ class _Configuration {
         |    }
         |}
         |
+        |klutter {
+        |    include("annotations")
+        |    include("kore")
+        |    include("kompose")
+        |    include("flutter-engine-android")
+        |}
+        |
         |dependencies {
-        |    runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
+        |    runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
         |    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-        |    implementation "dev.buijs.klutter:kore:$klutterGradleVersion"
         |    implementation project(":klutter:${packageName.substring(1 + packageName.lastIndexOf("."))}")
         |}
         |

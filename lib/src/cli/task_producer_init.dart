@@ -19,9 +19,9 @@
 // SOFTWARE.
 
 import "dart:io";
+import "dart:isolate";
 
-import "../common/project.dart";
-import "../common/utilities.dart";
+import "../common/common.dart";
 import "../producer/android.dart";
 import "../producer/gradle.dart";
 import "../producer/ios.dart";
@@ -48,7 +48,7 @@ class ProducerInit extends Task {
 
 extension on String {
   void get setupRoot {
-    Directory("${this}/lib".normalize)
+    Directory("$this/lib".normalize)
       // Delete folder and all children if they exist.
       ..normalizeToFolder.maybeDelete
       // Create a new empty lib folder.
@@ -71,7 +71,7 @@ extension on String {
   void get setupAndroid {
     final packageName = findPackageName(this);
     final pluginVersion = findPluginVersion(this);
-    final pathToAndroid = "${this}/android".normalize;
+    final pathToAndroid = "$this/android".normalize;
 
     writeBuildGradleFile(
       pathToAndroid: pathToAndroid,
@@ -103,11 +103,13 @@ extension on String {
   }
 
   void get setupIOS {
-    createIosKlutterFolder("${this}/ios");
+    final pathToIos = "$this/ios";
+    createIosKlutterFolder(pathToIos);
     addFrameworkToPodspec(
-      pathToIos: "${this}/ios",
+      pathToIos: "$this/ios",
       pluginName: findPluginName(this),
     );
+    addFlutterEngineXCFramework(pathToIos);
   }
 
   Future<void> get addGradle async {
@@ -117,4 +119,19 @@ extension on String {
       gradle.copyToAndroid,
     ]);
   }
+
+  Future<void> addFlutterEngineXCFramework(String pathToIos) async {
+    await Isolate.resolvePackageUri(Uri.parse("package:klutter/res/FlutterEngine.xcframework")).then((source) {
+      if(source == null) {
+        throw KlutterException("FlutterEngine.xcframework does not exist.");
+      }
+
+      final pathFrom = Directory(source.path);
+      final pathTo = Directory("$pathToIos/Klutter/FlutterEngine.xcframework").maybeCreate;
+      final result = Process.runSync("cp", ["-R", pathFrom.absolutePath, pathTo.absolutePath],);
+      stdout.write(result.stdout);
+      stderr.write(result.stderr);
+    });
+  }
+
 }
