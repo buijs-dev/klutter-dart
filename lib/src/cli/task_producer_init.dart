@@ -72,11 +72,13 @@ extension on String {
     final packageName = findPackageName(this);
     final pluginVersion = findPluginVersion(this);
     final pathToAndroid = "$this/android".normalize;
+    final klutterBomVersion = findKlutterBomVersion(this);
 
     writeBuildGradleFile(
       pathToAndroid: pathToAndroid,
       packageName: packageName,
       pluginVersion: pluginVersion,
+      klutterBomVersion: klutterBomVersion
     );
 
     writeAndroidPlugin(
@@ -97,7 +99,7 @@ extension on String {
 
   void get setupExample {
     writeExampleMainDartFile(
-      pathToExample: "${this}/example".normalize,
+      pathToExample: "$this/example".normalize,
       pluginName: findPluginName(this),
     );
   }

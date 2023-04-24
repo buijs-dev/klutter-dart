@@ -158,6 +158,7 @@ void main() {
                   gradlePluginPortal()
                   google()
                   mavenCentral()
+                  mavenLocal()
                   maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
               }
               dependencies {
@@ -193,6 +194,7 @@ void main() {
                   gradlePluginPortal()
                   google()
                   mavenCentral()
+                  mavenLocal()
                   maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
               }
               dependencies {

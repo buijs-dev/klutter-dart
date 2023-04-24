@@ -66,6 +66,10 @@ String findPluginName(String pathToRoot) =>
 String findPluginVersion(String pathToRoot) =>
     pathToRoot.verifyExists.toPubspecYaml.pluginVersion;
 
+/// Find the version of klutter bill-of-materials in root/klutter.yaml or return null.
+String? findKlutterBomVersion(String pathToRoot) =>
+  pathToRoot.verifyExists.klutterBomVersionOrNull;
+
 /// The plugin ClassName which is equal to the library name
 /// converted to camelcase + 'Plugin' postfix if [postfixWithPlugin] is set to true.
 ///
@@ -159,13 +163,33 @@ String findDependencyPath({
 extension on String {
   /// Create a path to the root-project/.klutter-plugins file.
   /// If the file does not exist create it.
-  File get toKlutterPlugins => File("${this}/.klutter-plugins").normalizeToFile
+  File get toKlutterPlugins => File("$this/.klutter-plugins").normalizeToFile
     ..ifNotExists((file) => file.normalizeToFile.createSync());
 
   /// Create a path to the root-project/pubspec.yaml file.
-  File get toPubspecYaml => File("${this}/pubspec.yaml").normalizeToFile
+  File get toPubspecYaml => File("$this/pubspec.yaml").normalizeToFile
     ..ifNotExists((_) =>
-        throw KlutterException("Missing pubspec.yaml file in folder: ${this}"));
+        throw KlutterException("Missing pubspec.yaml file in folder: $this"));
+
+  String? get klutterBomVersionOrNull {
+    final file = File("$this/klutter.yaml").normalizeToFile;
+    if(!file.existsSync()) {
+      return null;
+    }
+
+    final possibleKlutterBomVersion = file.readAsLinesSync()
+        .map((line) => line.split(":"))
+        .where((line) => line.length == 2)
+        .firstWhere((line) => line[0] == "klutter-bom-version", orElse: () =>  []);
+
+    if(possibleKlutterBomVersion.length == 2) {
+      return possibleKlutterBomVersion[1];
+    }
+
+    return null;
+  }
+
+
 }
 
 extension on File {

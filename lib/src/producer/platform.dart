@@ -21,6 +21,7 @@
 import "dart:io";
 
 import "../common/config.dart";
+import "../common/project.dart";
 import "../common/utilities.dart";
 
 /// Generate the settings.gradle.kts file in the root folder.
@@ -52,7 +53,7 @@ void writeRootBuildGradleFile({
   required String pluginName,
 }) =>
     pathToRoot.verifyExists.createRootBuildGradleFile
-        .writeRootBuildGradleContent(pluginName);
+        .writeRootBuildGradleContent(pluginName, findKlutterBomVersion(pathToRoot) ?? klutterGradleVersion);
 
 /// Generate the Kotlin Multiplatform module.
 ///
@@ -139,19 +140,20 @@ extension on File {
   }
 
   /// Write the content of the build.gradle.kts of a Klutter plugin.
-  void writeRootBuildGradleContent(String pluginName) {
+  void writeRootBuildGradleContent(String pluginName, String klutterBomVersion) {
     writeAsStringSync('''
           buildscript {
           |    repositories {
           |        gradlePluginPortal()
           |        google()
           |        mavenCentral()
+          |        mavenLocal()
           |        maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
           |    }
           |    dependencies {
           |        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
           |        classpath("com.android.tools.build:gradle:7.0.4")
-          |        classpath(platform("dev.buijs.klutter:bom:$klutterGradleVersion"))
+          |        classpath(platform("dev.buijs.klutter:bom:$klutterBomVersion"))
           |        classpath("dev.buijs.klutter:gradle")
           |    }
           |}
