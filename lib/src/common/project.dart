@@ -186,7 +186,7 @@ extension on String {
         .firstWhere((line) => line[0].trim() == "bom-version", orElse: () =>  []);
 
     if(possibleKlutterBomVersion.length == 2) {
-      return possibleKlutterBomVersion[1].trim();
+      return possibleKlutterBomVersion[1].trim().replaceAll("'", "");
     }
 
     return null;
