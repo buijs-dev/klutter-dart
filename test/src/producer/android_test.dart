@@ -35,6 +35,7 @@ void main() {
         () => writeBuildGradleFile(
             pluginVersion: pluginVersion,
             packageName: packageName,
+            klutterBomVersion: "2023.1.1",
             pathToAndroid: "fake"),
         throwsA(predicate((e) =>
             e is KlutterException &&
@@ -56,6 +57,7 @@ void main() {
               pluginVersion: pluginVersion,
               packageName: packageName,
               pathToAndroid: android.path,
+          klutterBomVersion: "2023.1.1",
             ),
         throwsA(predicate((e) =>
             e is KlutterException &&
@@ -80,6 +82,7 @@ void main() {
       pluginVersion: pluginVersion,
       packageName: packageName,
       pathToAndroid: android.path,
+      klutterBomVersion: "2023.1.1",
     );
 
     expect(
@@ -102,7 +105,7 @@ void main() {
             }
         
             dependencies {
-                classpath platform("dev.buijs.klutter:bom:$klutterGradleVersion")
+                classpath platform("dev.buijs.klutter:bom:2023.1.1")
                 classpath "dev.buijs.klutter:gradle"
                 classpath 'com.android.tools.build:gradle:7.0.4'
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"

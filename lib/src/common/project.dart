@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -67,6 +67,9 @@ String findPluginVersion(String pathToRoot) =>
     pathToRoot.verifyExists.toPubspecYaml.pluginVersion;
 
 /// Find the version of klutter bill-of-materials in root/klutter.yaml or return null.
+///
+/// {@category consumer}
+/// {@category producer}
 String? findKlutterBomVersion(String pathToRoot) =>
   pathToRoot.verifyExists.klutterBomVersionOrNull;
 
@@ -180,10 +183,10 @@ extension on String {
     final possibleKlutterBomVersion = file.readAsLinesSync()
         .map((line) => line.split(":"))
         .where((line) => line.length == 2)
-        .firstWhere((line) => line[0] == "klutter-bom-version", orElse: () =>  []);
+        .firstWhere((line) => line[0].trim() == "bom-version", orElse: () =>  []);
 
     if(possibleKlutterBomVersion.length == 2) {
-      return possibleKlutterBomVersion[1];
+      return possibleKlutterBomVersion[1].trim();
     }
 
     return null;

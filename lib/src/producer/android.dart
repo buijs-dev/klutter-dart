@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,12 +32,12 @@ void writeBuildGradleFile({
   required String pathToAndroid,
   required String packageName,
   required String pluginVersion,
-  String? klutterBomVersion,
+  required String klutterBomVersion,
 }) =>
     pathToAndroid.verifyExists.toBuildGradleFile.configure
       ..packageName = packageName
       ..version = pluginVersion
-      ..klutterBomVersion = klutterBomVersion ?? klutterGradleVersion
+      ..klutterBomVersion = klutterBomVersion
       ..writeBuildGradleContent;
 
 /// Overwrite the method channel Kotlin Class in src/main/kotlin.

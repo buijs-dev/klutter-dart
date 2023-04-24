@@ -33,7 +33,7 @@ void main() {
     test("Verify allTasks returns 3 tasks", () {
       final tasks = service.allTasks();
 
-      // There should be 4 Tasks.
+      // There should be 3 Tasks.
       expect(tasks.length, 3);
 
       expect(
@@ -63,7 +63,6 @@ void main() {
 
       final dummy2 = _DummyTask(
         taskName: TaskName.install,
-        scriptName: ScriptName.producer,
         dependsOnList: [dummy1],
       );
 

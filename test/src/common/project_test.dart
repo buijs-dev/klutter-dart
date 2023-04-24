@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -146,6 +146,30 @@ void main() {
     expect(findPluginName(root.path), "super_awesome");
     expect(findPluginVersion(root.path), "0.0.1");
     expect(findPackageName(root.path), "com.example.super_awesome");
+  });
+
+  test("Verify findKlutterBomVersion", () {
+
+    // Verify klutterBomVersion is null if klutter.yaml File does not exist.
+    expect(findKlutterBomVersion(root.path), null);
+
+    // Verify klutterBomVersion is null if klutter.yaml File has no bom-version line.
+    File("${root.path}/klutter.yaml".normalize)
+      ..createSync()
+      ..writeAsStringSync("""
+            |other-version:9999.1.1
+      """
+          .format);
+    expect(findKlutterBomVersion(root.path), null);
+
+    // Verify correct klutterBomVersion is returned if found.
+    File("${root.path}/klutter.yaml".normalize)
+      ..createSync()
+      ..writeAsStringSync("""
+            |bom-version:9999.1.1
+      """
+          .format);
+    expect(findKlutterBomVersion(root.path), "9999.1.1");
   });
 
   test("Verify absolute path is returned for a local pubspec dependency", () {

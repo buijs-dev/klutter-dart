@@ -60,6 +60,7 @@ extension on String {
     writeRootBuildGradleFile(
       pathToRoot: this,
       pluginName: name,
+      klutterBomVersion: findKlutterBomVersion(this) ?? klutterGradleVersion
     );
 
     writeRootSettingsGradleFile(
@@ -72,7 +73,7 @@ extension on String {
     final packageName = findPackageName(this);
     final pluginVersion = findPluginVersion(this);
     final pathToAndroid = "$this/android".normalize;
-    final klutterBomVersion = findKlutterBomVersion(this);
+    final klutterBomVersion = findKlutterBomVersion(this) ?? klutterGradleVersion;
 
     writeBuildGradleFile(
       pathToAndroid: pathToAndroid,

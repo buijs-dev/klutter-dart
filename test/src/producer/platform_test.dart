@@ -129,9 +129,9 @@ void main() {
   test("Verify exception is thrown if root does not exist", () {
     expect(
         () => writeRootBuildGradleFile(
-              pathToRoot: "fake",
-              pluginName: "some_plugin",
-            ),
+          pathToRoot: "fake",
+          pluginName: "some_plugin",
+          klutterBomVersion: "2023.1.1",),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
@@ -148,6 +148,7 @@ void main() {
     writeRootBuildGradleFile(
       pathToRoot: root.path,
       pluginName: "some_plugin",
+      klutterBomVersion: "2023.1.1",
     );
 
     expect(
@@ -164,7 +165,7 @@ void main() {
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath(platform("dev.buijs.klutter:bom:$klutterGradleVersion"))
+                  classpath(platform("dev.buijs.klutter:bom:2023.1.1"))
                   classpath("dev.buijs.klutter:gradle")
               }
           }
@@ -184,6 +185,7 @@ void main() {
     writeRootBuildGradleFile(
       pathToRoot: root.path,
       pluginName: "some_plugin",
+      klutterBomVersion: "2023.1.1",
     );
 
     expect(
@@ -200,7 +202,7 @@ void main() {
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath(platform("dev.buijs.klutter:bom:$klutterGradleVersion"))
+                  classpath(platform("dev.buijs.klutter:bom:2023.1.1"))
                   classpath("dev.buijs.klutter:gradle")
               }
           }

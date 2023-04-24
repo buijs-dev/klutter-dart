@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
 import "dart:io";
 
 import "../common/config.dart";
-import "../common/project.dart";
 import "../common/utilities.dart";
 
 /// Generate the settings.gradle.kts file in the root folder.
@@ -51,9 +50,10 @@ void writeRootSettingsGradleFile({
 void writeRootBuildGradleFile({
   required String pathToRoot,
   required String pluginName,
+  required String klutterBomVersion,
 }) =>
     pathToRoot.verifyExists.createRootBuildGradleFile
-        .writeRootBuildGradleContent(pluginName, findKlutterBomVersion(pathToRoot) ?? klutterGradleVersion);
+        .writeRootBuildGradleContent(pluginName, klutterBomVersion);
 
 /// Generate the Kotlin Multiplatform module.
 ///
