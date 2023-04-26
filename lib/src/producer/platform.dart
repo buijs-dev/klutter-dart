@@ -405,8 +405,10 @@ class PlatformModule {
       ..writeAsStringSync("""
       package $packageName.platform
       |
+      |import dev.buijs.klutter.annotations.Controller
       |import dev.buijs.klutter.annotations.KlutterAdaptee
       |
+      |@Controller
       |class Greeting {
       |
       |    @KlutterAdaptee(name = "greeting")

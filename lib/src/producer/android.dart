@@ -204,7 +204,7 @@ class _Configuration {
         |        classpath platform("dev.buijs.klutter:bom:$klutterBomVersion")
         |        classpath "dev.buijs.klutter:gradle"
         |        classpath 'com.android.tools.build:gradle:7.0.4'
-        |        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
+        |        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         |    }
         |}
         |
@@ -247,7 +247,7 @@ class _Configuration {
         |
         |dependencies {
         |    runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
-        |    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
+        |    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
         |    implementation project(":klutter:${packageName.substring(1 + packageName.lastIndexOf("."))}")
         |}
         |

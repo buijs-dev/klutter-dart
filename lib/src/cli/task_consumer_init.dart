@@ -63,6 +63,7 @@ void _executeInitAndroid(String pathToRoot) {
   createRegistry(pathToRoot);
   applyPluginLoader(pathToAndroid);
   setAndroidSdkConstraints(app);
+  setKotlinVersionInBuildGradle(pathToAndroid);
 }
 
 void _executeInitIOS(String pathToRoot) {

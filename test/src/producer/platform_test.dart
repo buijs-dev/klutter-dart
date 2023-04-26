@@ -510,8 +510,10 @@ void main() {
       r"""
       package com.organisation.nigulp.platform
       
+      import dev.buijs.klutter.annotations.Controller
       import dev.buijs.klutter.annotations.KlutterAdaptee
       
+      @Controller
       class Greeting {
       
           @KlutterAdaptee(name = "greeting")

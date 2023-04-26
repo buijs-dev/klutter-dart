@@ -59,6 +59,21 @@ void writePluginLoaderGradleFile(String pathToFlutterSDK) => pathToFlutterSDK
 void setAndroidSdkConstraints(String pathToAndroid) =>
     pathToAndroid.verifyExists.toBuildGradleFile.setAndroidSdkVersions;
 
+/// Update the kotlin_version variable in root/android/build.gradle file to [kotlinVersion].
+/// 
+/// {@category consumer}
+void setKotlinVersionInBuildGradle(String pathToAndroid) {
+  final buildGradle = pathToAndroid.verifyExists.toBuildGradleFile;
+  final buildGradleText = buildGradle.readAsStringSync();
+  buildGradle
+    ..deleteSync()
+    ..createSync()
+    ..writeAsStringSync(
+        buildGradleText.replaceAll(
+            RegExp("ext.kotlin_version = '.+?'"),
+            "    ext.kotlin_version = '$kotlinVersion'"));
+}
+
 /// Add apply plugin line to android/settings.gradle file.
 ///
 /// {@category consumer}
