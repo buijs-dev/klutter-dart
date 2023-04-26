@@ -157,7 +157,7 @@ substituting 'org.example' with your organisation name
 and 'plugin_name' with your plugin name:
 
 ```shell  
-flutter create --org com.example --template=plugin --platforms=android,ios plugin_name
+flutter create --org com.example --template=plugin --platforms=android,ios -a kotlin -i swift plugin_name
 ```  
 
 Install the Klutter Framework as dependency and then run:
@@ -181,7 +181,7 @@ When done you can run the example project from the root/example/lib folder and s
 ## App won't start
 
 Make sure you have followed all the following steps:
-- flutter create <your_plugin_name> --org <your_organisation> --template=plugin --platforms=android,ios.
+- flutter create <your_plugin_name> --org <your_organisation> --template=plugin --platforms=android,ios -a kotlin -i swift.
 - [klutter](https://pub.dev/packages/klutter) is added to the dependencies in your pubspec.yaml 
 (both the plugin and plugin/example for testing).
 - do flutter pub get in both root and root/example folder.
