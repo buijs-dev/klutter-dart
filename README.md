@@ -177,9 +177,9 @@ When done you can run the example project from the root/example/lib folder and s
 
 # Faq!
 1. [App won't start on...](#App%20won't%20start)
+2. [Error No such module 'FlutterEngine'](#IOS%20missing%20FlutterEngine)
 
 ## App won't start
-
 Make sure you have followed all the following steps:
 - flutter create <your_plugin_name> --org <your_organisation> --template=plugin --platforms=android,ios -a kotlin -i swift.
 - [klutter](https://pub.dev/packages/klutter) is added to the dependencies in your pubspec.yaml 
@@ -194,13 +194,23 @@ Make sure you have followed all the following steps:
 There should be a .klutter-plugins file in the root/example folder containing an entry for your plugin.
 If not then do flutter pub run klutter:consumer add=<your_plugin_name> in the root/example folder again.
 
-There should be a platform.aar file in the root/android/klutter folder. If not then do flutter pub run
-klutter:producer install=platform from the root folder.
+There should be a platform.aar file in the root/android/klutter folder. 
+If not then do ./gradlew clean build -p "platform" from the root folder.
 
 ### For iOS simulator:
-There should be a Platform.xcframework folder in root/ios/Klutter. If not then do flutter pub run
-klutter:producer install=platform from the root folder.
+There should be a Platform.xcframework folder in root/ios/Klutter.
+If not then do ./gradlew clean build -p "platform" from the root folder.
 
 If there's an error message saying unable to find plugin or similar then run pod update
 (or for Mac M1 users you might have to do: arch -x86_64 pod install) in the root/example/ios
 folder.
+
+## IOS missing FlutterEngine
+In the root/ios/Klutter folder check for:
+- FlutterEngine.xcframework.
+
+If it is not present then run 'flutter pub run klutter:consumer init' in the root folder and check again.
+
+Next do the following:
+- do pod update in root/example/ios
+- do flutter pub get in root/example folder.
