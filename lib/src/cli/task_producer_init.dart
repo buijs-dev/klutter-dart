@@ -129,7 +129,7 @@ extension on String {
         .then((source) {
       final pathFrom = Directory(source!.path);
       final pathTo =
-          Directory("$pathToIos/Klutter/FlutterEngine.xcframework").maybeCreate;
+          Directory("$pathToIos/Klutter").maybeCreate;
       final result = Process.runSync(
         "cp",
         ["-R", pathFrom.absolutePath, pathTo.absolutePath],
