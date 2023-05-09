@@ -406,12 +406,12 @@ class PlatformModule {
       package $packageName.platform
       |
       |import dev.buijs.klutter.annotations.Controller
-      |import dev.buijs.klutter.annotations.KlutterAdaptee
+      |import dev.buijs.klutter.annotations.Event
       |
       |@Controller
       |class Greeting {
       |
-      |    @KlutterAdaptee(name = "greeting")
+      |    @Event(name = "greeting")
       |    fun greeting(): String {
       |       return "Hello, \${Platform().platform}!"
       |    }
