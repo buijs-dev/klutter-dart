@@ -4,6 +4,7 @@
 * Add Flutter Engine XCFramework to be copied during project initialization.
 * Remove widgets in order to scope klutter-dart to dev_dependency (widgets are now found in [klutter-dart-ui](https://github.com/buijs-dev/klutter-dart-ui).
 * Embedded gradle-wrapper bumped to version 7.2.
+* Removed consumer init ios task because no longer required.
 
 ## 0.2.4
 * Documentation update to point-out the Android Studio and Intellij IDE plugins.
