@@ -22,7 +22,6 @@ import "../common/exception.dart";
 import "../common/project.dart";
 import "../common/utilities.dart";
 import "../consumer/android.dart";
-import "../consumer/ios.dart";
 import "cli.dart";
 
 /// Task to prepare a Flutter project for using Klutter-made plugins.
@@ -36,14 +35,8 @@ class ConsumerInit extends Task {
   void toBeExecuted(String pathToRoot) {
     switch (option) {
       case "android":
-        _executeInitAndroid(pathToRoot);
-        break;
-      case "ios":
-        _executeInitIOS(pathToRoot);
-        break;
       case "":
         _executeInitAndroid(pathToRoot);
-        _executeInitIOS(pathToRoot);
         break;
       default:
         throw KlutterException("Invalid option value: '$option'");
@@ -51,7 +44,7 @@ class ConsumerInit extends Task {
   }
 
   @override
-  List<String> optionValues() => ["", "android", "ios"];
+  List<String> optionValues() => ["", "android"];
 }
 
 void _executeInitAndroid(String pathToRoot) {
@@ -64,8 +57,4 @@ void _executeInitAndroid(String pathToRoot) {
   applyPluginLoader(pathToAndroid);
   setAndroidSdkConstraints(app);
   setKotlinVersionInBuildGradle(pathToAndroid);
-}
-
-void _executeInitIOS(String pathToRoot) {
-  excludeArm64FromPodfile("$pathToRoot/ios".normalize);
 }

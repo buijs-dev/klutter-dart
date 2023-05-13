@@ -201,12 +201,6 @@ void main() {
       arguments: ["init"],
     );
 
-    var excludeArchsHasRun = podFile.readAsStringSync().contains(
-        "bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`");
-
-    expect(excludeArchsHasRun, true,
-        reason: "IOS init should have visited the ios Podfile.");
-
     final registry =
         File("${consumerPlugin.absolutePath}/.klutter-plugins".normalize);
 
@@ -227,17 +221,6 @@ void main() {
         reason:
             "add task should have added plugin name to the .klutter-plugins file");
 
-    /// Run only Android init, then iOS is skipped
-
-    // Delete the exclusion which is added by iOS init
-    podFile.writeAsStringSync(podFile.readAsStringSync().replaceAll(
-        "bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`", ""));
-
-    excludeArchsHasRun = podFile.readAsStringSync().contains(
-        "bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`");
-
-    expect(excludeArchsHasRun, false);
-
     // Delete the klutter-plugins file which is added by Android init
     registry.deleteSync();
     expect(registry.existsSync(), false);
@@ -248,8 +231,6 @@ void main() {
       arguments: ["init=android"],
     );
 
-    expect(excludeArchsHasRun, false,
-        reason: "IOS init should not have been executed");
     expect(registry.existsSync(), true,
         reason: "klutter-plugins file should be created");
 
@@ -258,11 +239,6 @@ void main() {
     // Delete the exclusion which is added by iOS init
     podFile.writeAsStringSync(podFile.readAsStringSync().replaceAll(
         "bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`", ""));
-
-    excludeArchsHasRun = podFile.readAsStringSync().contains(
-        "bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`");
-
-    expect(excludeArchsHasRun, false);
 
     // Delete the klutter-plugins file which is added by Android init
     registry.deleteSync();
@@ -274,11 +250,6 @@ void main() {
       arguments: ["init=ios"],
     );
 
-    excludeArchsHasRun = podFile.readAsStringSync().contains(
-        "bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`");
-
-    expect(excludeArchsHasRun, true,
-        reason: "IOS init should have been executed");
     expect(registry.existsSync(), false,
         reason: "Android init should not have been executed");
   });

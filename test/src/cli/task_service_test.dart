@@ -221,7 +221,6 @@ void main() {
           flutter pub run klutter:consumer add=<name_of_plugin_to_add>
           flutter pub run klutter:consumer init
           flutter pub run klutter:consumer init=android
-          flutter pub run klutter:consumer init=ios
           flutter pub run klutter:producer init"""
               .replaceAll(" ", ""));
     });
