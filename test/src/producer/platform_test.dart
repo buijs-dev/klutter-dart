@@ -393,7 +393,12 @@ void main() {
                   }
               }
       
-              val iosMain by getting
+              val iosMain by getting {
+                  dependencies {
+                      api("dev.buijs.klutter:flutter-engine:2023.1.1.beta")
+                  }
+              }
+              
               val iosSimulatorArm64Main by getting {
                   dependsOn(iosMain)
                   dependencies {
