@@ -140,7 +140,8 @@ extension on File {
   }
 
   /// Write the content of the build.gradle.kts of a Klutter plugin.
-  void writeRootBuildGradleContent(String pluginName, String klutterBomVersion) {
+  void writeRootBuildGradleContent(
+      String pluginName, String klutterBomVersion) {
     writeAsStringSync('''
           buildscript {
           |    repositories {
@@ -251,7 +252,8 @@ class PlatformModule {
     File("${root.absolute.path}/build.gradle.kts".normalize)
       ..maybeCreate
       ..writeAsStringSync("""
-      import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+      import dev.buijs.klutter.gradle.dsl.embedded
+      |import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
       |
       |plugins {
       |    id("com.android.library")
@@ -290,6 +292,7 @@ class PlatformModule {
       |       binaries.framework { 
       |            baseName = xcfName         
       |            xcFramework.add(this)
+      |            export("dev.buijs.klutter:flutter-engine:2023.1.1.beta")
       |        }
       |    }
       |
@@ -297,6 +300,7 @@ class PlatformModule {
       |        binaries.framework {
       |            baseName = xcfName
       |            xcFramework.add(this)
+      |            export("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2023.1.1.beta")
       |        }
       |    }    
       |
@@ -322,6 +326,7 @@ class PlatformModule {
       |        val androidMain by getting {
       |            dependencies {
       |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+      |                embedded("dev.buijs.klutter:flutter-engine-kmp-android:2023.1.1.beta")
       |            }
       |        }
       |
@@ -335,6 +340,9 @@ class PlatformModule {
       |        val iosMain by getting
       |        val iosSimulatorArm64Main by getting {
       |           dependsOn(iosMain)
+      |           dependencies {
+      |             api("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2023.1.1.beta")
+      |           }
       |        }
       |        
       |        val iosTest by getting

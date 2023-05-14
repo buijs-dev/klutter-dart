@@ -71,7 +71,7 @@ String findPluginVersion(String pathToRoot) =>
 /// {@category consumer}
 /// {@category producer}
 String? findKlutterBomVersion(String pathToRoot) =>
-  pathToRoot.verifyExists.klutterBomVersionOrNull;
+    pathToRoot.verifyExists.klutterBomVersionOrNull;
 
 /// The plugin ClassName which is equal to the library name
 /// converted to camelcase + 'Plugin' postfix if [postfixWithPlugin] is set to true.
@@ -176,23 +176,23 @@ extension on String {
 
   String? get klutterBomVersionOrNull {
     final file = File("$this/klutter.yaml").normalizeToFile;
-    if(!file.existsSync()) {
+    if (!file.existsSync()) {
       return null;
     }
 
-    final possibleKlutterBomVersion = file.readAsLinesSync()
+    final possibleKlutterBomVersion = file
+        .readAsLinesSync()
         .map((line) => line.split(":"))
         .where((line) => line.length == 2)
-        .firstWhere((line) => line[0].trim() == "bom-version", orElse: () =>  []);
+        .firstWhere((line) => line[0].trim() == "bom-version",
+            orElse: () => []);
 
-    if(possibleKlutterBomVersion.length == 2) {
+    if (possibleKlutterBomVersion.length == 2) {
       return possibleKlutterBomVersion[1].trim().replaceAll("'", "");
     }
 
     return null;
   }
-
-
 }
 
 extension on File {

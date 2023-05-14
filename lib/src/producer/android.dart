@@ -70,10 +70,10 @@ extension on String {
 
   /// Create a path to the src/main/kotlin folder.
   /// If the file does not exist throw a [KlutterException].
-  Directory get toKotlinSourcePackage => Directory(
-      "$this/src/main/kotlin".normalize)
-    ..ifNotExists((_) =>
-        throw KlutterException("Missing src/main/kotlin folder in: $this"));
+  Directory get toKotlinSourcePackage =>
+      Directory("$this/src/main/kotlin".normalize)
+        ..ifNotExists((_) =>
+            throw KlutterException("Missing src/main/kotlin folder in: $this"));
 
   /// Create a path to the android/klutter folder.
   /// If the file does not exist then create it.

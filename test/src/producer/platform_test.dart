@@ -308,6 +308,7 @@ void main() {
 
     expect(
       """
+     import dev.buijs.klutter.gradle.dsl.embedded
      import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
     
      plugins {
@@ -347,6 +348,7 @@ void main() {
              binaries.framework { 
                   baseName = xcfName         
                   xcFramework.add(this)
+                  export("dev.buijs.klutter:flutter-engine:2023.1.1.beta")
               }
           }
       
@@ -354,6 +356,7 @@ void main() {
               binaries.framework {
                   baseName = xcfName
                   xcFramework.add(this)
+                  export("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2023.1.1.beta")
               }
           }    
       
@@ -379,6 +382,7 @@ void main() {
               val androidMain by getting {
                   dependencies {
                       implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+                      embedded("dev.buijs.klutter:flutter-engine-kmp-android:2023.1.1.beta")
                   }
               }
       
@@ -392,6 +396,9 @@ void main() {
               val iosMain by getting
               val iosSimulatorArm64Main by getting {
                   dependsOn(iosMain)
+                  dependencies {
+                    api("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2023.1.1.beta")
+                  }
               }
       
               val iosTest by getting
