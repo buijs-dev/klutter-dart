@@ -243,7 +243,6 @@ class _Configuration {
         |    include("annotations")
         |    include("kore")
         |    include("kompose")
-        |    include("flutter-engine-android")
         |    include("embedded")
         |}
         |
