@@ -153,10 +153,13 @@ String findDependencyPath({
   /// Create an absolute path to a locally stored dependency.
   if (pathToPlugin != null) {
     final relativeToRoot = pathToPlugin.group(1)!;
-    return Directory(pathToRoot)
-        .resolveFolder(relativeToRoot)
-        .resolveFolder("android/klutter")
-        .path;
+
+    return "\$root${Platform.pathSeparator}${relativeToRoot.trim()}${Platform.pathSeparator}android${Platform.pathSeparator}klutter";
+
+    // return Directory(pathToRoot)
+    //     .resolveFolder(relativeToRoot)
+    //     .resolveFolder("android/klutter")
+    //     .path;
   }
 
   /// Create an absolute path to the the default pub-cache folder.

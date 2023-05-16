@@ -177,26 +177,30 @@ extension on File {
             |val flutterProjectRoot = rootProject.projectDir.parentFile
             |val pluginsFile = File("$flutterProjectRoot/.klutter-plugins")
             |if (pluginsFile.exists()) {
-            |  val plugins = pluginsFile.readLines().forEach { line ->
-            |    val plugin = line.split("=").also {
-            |      if(it.size != 2) throw GradleException("""
-            |        Invalid Klutter plugin config.
-            |        Check the .klutter-plugins file in the project root folder.
-            |        Required format is: ':klutter:libraryname=local/path/to/flutter/cache/library/artifacts/android'
-            |      """.trimIndent())
+            |    pluginsFile.readLines().forEach { line ->
+            |        val plugin = line.split("=").also {
+            |        if(it.size != 2) throw GradleException("""
+            |                Invalid Klutter plugin config.
+            |                Check the .klutter-plugins file in the project root folder.
+            |                Required format is: ':klutter:libraryname=local/path/to/flutter/cache/library/artifacts/android'
+            |                """.trimIndent())
+            |        }
+            |    
+            |        var pluginPath = plugin[1]
+            |        if(pluginPath.startsWith("${'$'}root")) {
+            |           pluginPath = pluginPath.replace("${'$'}root", "$flutterProjectRoot")
+            |        }
+            |           
+            |        val pluginDirectory = File(pluginPath).also {
+            |            if(!it.exists()) throw GradleException("""
+            |                Invalid path for Klutter plugin: '$it'.
+            |                Check the .klutter-plugins file in the project root folder.
+            |            """.trimIndent())
+            |        }
+            |
+            |        include(plugin[0])
+            |        project(plugin[0]).projectDir = pluginDirectory
             |    }
-            |
-            |    val pluginDirectory = File(plugin[1]).also {
-            |      if(!it.exists()) throw GradleException("""
-            |        Invalid path for Klutter plugin: '$it'.
-            |        Check the .klutter-plugins file in the project root folder.
-            |      """.trimIndent())
-            |    }
-            |
-            |    include(plugin[0])
-            |    project(plugin[0]).projectDir = pluginDirectory
-            |
-            |  }
             |}'''
         .format);
   }
