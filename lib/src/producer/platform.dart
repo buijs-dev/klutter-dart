@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -50,9 +50,10 @@ void writeRootSettingsGradleFile({
 void writeRootBuildGradleFile({
   required String pathToRoot,
   required String pluginName,
+  required String klutterBomVersion,
 }) =>
     pathToRoot.verifyExists.createRootBuildGradleFile
-        .writeRootBuildGradleContent(pluginName);
+        .writeRootBuildGradleContent(pluginName, klutterBomVersion);
 
 /// Generate the Kotlin Multiplatform module.
 ///
@@ -139,19 +140,21 @@ extension on File {
   }
 
   /// Write the content of the build.gradle.kts of a Klutter plugin.
-  void writeRootBuildGradleContent(String pluginName) {
+  void writeRootBuildGradleContent(
+      String pluginName, String klutterBomVersion) {
     writeAsStringSync('''
           buildscript {
           |    repositories {
           |        gradlePluginPortal()
           |        google()
           |        mavenCentral()
+          |        mavenLocal()
           |        maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
           |    }
           |    dependencies {
           |        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
           |        classpath("com.android.tools.build:gradle:7.0.4")
-          |        classpath(platform("dev.buijs.klutter:bom:$klutterGradleVersion"))
+          |        classpath(platform("dev.buijs.klutter:bom:$klutterBomVersion"))
           |        classpath("dev.buijs.klutter:gradle")
           |    }
           |}
@@ -249,7 +252,8 @@ class PlatformModule {
     File("${root.absolute.path}/build.gradle.kts".normalize)
       ..maybeCreate
       ..writeAsStringSync("""
-      import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+      import dev.buijs.klutter.gradle.dsl.embedded
+      |import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
       |
       |plugins {
       |    id("com.android.library")
@@ -288,6 +292,7 @@ class PlatformModule {
       |       binaries.framework { 
       |            baseName = xcfName         
       |            xcFramework.add(this)
+      |            export("dev.buijs.klutter:flutter-engine:2023.1.1.beta")
       |        }
       |    }
       |
@@ -295,6 +300,7 @@ class PlatformModule {
       |        binaries.framework {
       |            baseName = xcfName
       |            xcFramework.add(this)
+      |            export("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2023.1.1.beta")
       |        }
       |    }    
       |
@@ -320,6 +326,7 @@ class PlatformModule {
       |        val androidMain by getting {
       |            dependencies {
       |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+      |                embedded("dev.buijs.klutter:flutter-engine-kmp-android:2023.1.1.beta")
       |            }
       |        }
       |
@@ -330,9 +337,17 @@ class PlatformModule {
       |            }
       |        }
       |
-      |        val iosMain by getting
+      |        val iosMain by getting {
+      |            dependencies {
+      |                api("dev.buijs.klutter:flutter-engine:2023.1.1.beta")
+      |            }
+      |        }
+      |
       |        val iosSimulatorArm64Main by getting {
       |           dependsOn(iosMain)
+      |           dependencies {
+      |             api("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2023.1.1.beta")
+      |           }
       |        }
       |        
       |        val iosTest by getting
@@ -403,11 +418,13 @@ class PlatformModule {
       ..writeAsStringSync("""
       package $packageName.platform
       |
-      |import dev.buijs.klutter.annotations.KlutterAdaptee
+      |import dev.buijs.klutter.annotations.Controller
+      |import dev.buijs.klutter.annotations.Event
       |
+      |@Controller
       |class Greeting {
       |
-      |    @KlutterAdaptee(name = "greeting")
+      |    @Event(name = "greeting")
       |    fun greeting(): String {
       |       return "Hello, \${Platform().platform}!"
       |    }

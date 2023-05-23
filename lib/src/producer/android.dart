@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,10 +32,12 @@ void writeBuildGradleFile({
   required String pathToAndroid,
   required String packageName,
   required String pluginVersion,
+  required String klutterBomVersion,
 }) =>
     pathToAndroid.verifyExists.toBuildGradleFile.configure
       ..packageName = packageName
       ..version = pluginVersion
+      ..klutterBomVersion = klutterBomVersion
       ..writeBuildGradleContent;
 
 /// Overwrite the method channel Kotlin Class in src/main/kotlin.
@@ -62,16 +64,16 @@ extension on FileSystemEntity {
 extension on String {
   /// Create a path to the settings.gradle file.
   /// If the file does not exist throw a [KlutterException].
-  File get toBuildGradleFile => File("${this}/build.gradle".normalize)
+  File get toBuildGradleFile => File("$this/build.gradle".normalize)
     ..ifNotExists((_) =>
-        throw KlutterException("Missing build.gradle file in folder: ${this}"));
+        throw KlutterException("Missing build.gradle file in folder: $this"));
 
   /// Create a path to the src/main/kotlin folder.
   /// If the file does not exist throw a [KlutterException].
-  Directory get toKotlinSourcePackage => Directory(
-      "$this/src/main/kotlin".normalize)
-    ..ifNotExists((_) =>
-        throw KlutterException("Missing src/main/kotlin folder in: ${this}"));
+  Directory get toKotlinSourcePackage =>
+      Directory("$this/src/main/kotlin".normalize)
+        ..ifNotExists((_) =>
+            throw KlutterException("Missing src/main/kotlin folder in: $this"));
 
   /// Create a path to the android/klutter folder.
   /// If the file does not exist then create it.
@@ -100,6 +102,8 @@ class _Configuration {
   late final String packageName;
 
   late final String version;
+
+  late final String klutterBomVersion;
 
   /// Write the boilerplate code in
   /// root/android/src/main/kotlin/<package>/<PackageNamePlugin>.
@@ -192,14 +196,15 @@ class _Configuration {
         |    repositories {
         |        google()
         |        mavenCentral()
+        |        mavenLocal()
         |        maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
         |    }
         |
         |    dependencies {
-        |        classpath platform("dev.buijs.klutter:bom:$klutterGradleVersion")
+        |        classpath platform("dev.buijs.klutter:bom:$klutterBomVersion")
         |        classpath "dev.buijs.klutter:gradle"
         |        classpath 'com.android.tools.build:gradle:7.0.4'
-        |        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
+        |        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         |    }
         |}
         |
@@ -207,6 +212,7 @@ class _Configuration {
         |    repositories {
         |        google()
         |        mavenCentral()
+        |        mavenLocal()
         |        maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
         |    }
         |}
@@ -233,15 +239,16 @@ class _Configuration {
         |}
         |
         |klutter {
+        |    root = file("../")
         |    include("annotations")
         |    include("kore")
         |    include("kompose")
-        |    include("flutter-engine-android")
+        |    include("embedded")
         |}
         |
         |dependencies {
         |    runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
-        |    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
+        |    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         |    implementation project(":klutter:${packageName.substring(1 + packageName.lastIndexOf("."))}")
         |}
         |

@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -65,6 +65,13 @@ String findPluginName(String pathToRoot) =>
 /// {@category producer}
 String findPluginVersion(String pathToRoot) =>
     pathToRoot.verifyExists.toPubspecYaml.pluginVersion;
+
+/// Find the version of klutter bill-of-materials in root/klutter.yaml or return null.
+///
+/// {@category consumer}
+/// {@category producer}
+String? findKlutterBomVersion(String pathToRoot) =>
+    pathToRoot.verifyExists.klutterBomVersionOrNull;
 
 /// The plugin ClassName which is equal to the library name
 /// converted to camelcase + 'Plugin' postfix if [postfixWithPlugin] is set to true.
@@ -146,10 +153,13 @@ String findDependencyPath({
   /// Create an absolute path to a locally stored dependency.
   if (pathToPlugin != null) {
     final relativeToRoot = pathToPlugin.group(1)!;
-    return Directory(pathToRoot)
-        .resolveFolder(relativeToRoot)
-        .resolveFolder("android/klutter")
-        .path;
+
+    return "\$root${Platform.pathSeparator}${relativeToRoot.trim()}${Platform.pathSeparator}android${Platform.pathSeparator}klutter";
+
+    // return Directory(pathToRoot)
+    //     .resolveFolder(relativeToRoot)
+    //     .resolveFolder("android/klutter")
+    //     .path;
   }
 
   /// Create an absolute path to the the default pub-cache folder.
@@ -159,13 +169,33 @@ String findDependencyPath({
 extension on String {
   /// Create a path to the root-project/.klutter-plugins file.
   /// If the file does not exist create it.
-  File get toKlutterPlugins => File("${this}/.klutter-plugins").normalizeToFile
+  File get toKlutterPlugins => File("$this/.klutter-plugins").normalizeToFile
     ..ifNotExists((file) => file.normalizeToFile.createSync());
 
   /// Create a path to the root-project/pubspec.yaml file.
-  File get toPubspecYaml => File("${this}/pubspec.yaml").normalizeToFile
+  File get toPubspecYaml => File("$this/pubspec.yaml").normalizeToFile
     ..ifNotExists((_) =>
-        throw KlutterException("Missing pubspec.yaml file in folder: ${this}"));
+        throw KlutterException("Missing pubspec.yaml file in folder: $this"));
+
+  String? get klutterBomVersionOrNull {
+    final file = File("$this/klutter.yaml").normalizeToFile;
+    if (!file.existsSync()) {
+      return null;
+    }
+
+    final possibleKlutterBomVersion = file
+        .readAsLinesSync()
+        .map((line) => line.split(":"))
+        .where((line) => line.length == 2)
+        .firstWhere((line) => line[0].trim() == "bom-version",
+            orElse: () => []);
+
+    if (possibleKlutterBomVersion.length == 2) {
+      return possibleKlutterBomVersion[1].trim().replaceAll("'", "");
+    }
+
+    return null;
+  }
 }
 
 extension on File {

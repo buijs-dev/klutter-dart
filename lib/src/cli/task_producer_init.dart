@@ -19,7 +19,6 @@
 // SOFTWARE.
 
 import "dart:io";
-import "dart:isolate";
 
 import "../common/common.dart";
 import "../producer/android.dart";
@@ -58,9 +57,9 @@ extension on String {
     writeGradleProperties(this);
 
     writeRootBuildGradleFile(
-      pathToRoot: this,
-      pluginName: name,
-    );
+        pathToRoot: this,
+        pluginName: name,
+        klutterBomVersion: findKlutterBomVersion(this) ?? klutterGradleVersion);
 
     writeRootSettingsGradleFile(
       pathToRoot: this,
@@ -72,12 +71,14 @@ extension on String {
     final packageName = findPackageName(this);
     final pluginVersion = findPluginVersion(this);
     final pathToAndroid = "$this/android".normalize;
+    final klutterBomVersion =
+        findKlutterBomVersion(this) ?? klutterGradleVersion;
 
     writeBuildGradleFile(
-      pathToAndroid: pathToAndroid,
-      packageName: packageName,
-      pluginVersion: pluginVersion,
-    );
+        pathToAndroid: pathToAndroid,
+        packageName: packageName,
+        pluginVersion: pluginVersion,
+        klutterBomVersion: klutterBomVersion);
 
     writeAndroidPlugin(
       pathToAndroid: pathToAndroid,
@@ -97,7 +98,7 @@ extension on String {
 
   void get setupExample {
     writeExampleMainDartFile(
-      pathToExample: "${this}/example".normalize,
+      pathToExample: "$this/example".normalize,
       pluginName: findPluginName(this),
     );
   }
@@ -109,7 +110,6 @@ extension on String {
       pathToIos: "$this/ios",
       pluginName: findPluginName(this),
     );
-    addFlutterEngineXCFramework(pathToIos);
   }
 
   Future<void> get addGradle async {
@@ -118,25 +118,5 @@ extension on String {
       gradle.copyToRoot,
       gradle.copyToAndroid,
     ]);
-  }
-
-  Future<void> addFlutterEngineXCFramework(String pathToIos) async {
-    await Isolate.resolvePackageUri(
-            Uri.parse("package:klutter/res/FlutterEngine.xcframework"))
-        .then((source) {
-      if (source == null) {
-        throw KlutterException("FlutterEngine.xcframework does not exist.");
-      }
-
-      final pathFrom = Directory(source.path);
-      final pathTo =
-          Directory("$pathToIos/Klutter/FlutterEngine.xcframework").maybeCreate;
-      final result = Process.runSync(
-        "cp",
-        ["-R", pathFrom.absolutePath, pathTo.absolutePath],
-      );
-      stdout.write(result.stdout);
-      stderr.write(result.stderr);
-    });
   }
 }

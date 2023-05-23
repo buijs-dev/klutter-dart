@@ -42,7 +42,6 @@ void main() {
         mainDart.readAsStringSync().replaceAll(" ", ""),
         """
             import 'package:flutter/material.dart';
-            import 'dart:async';
 
             import 'package:impressive_dependency/impressive_dependency.dart';
 
@@ -58,29 +57,16 @@ void main() {
             }
 
             class _MyAppState extends State<MyApp> {
-              String _greeting = 'Unknown';
+              String _greeting = "There shall be no greeting for now!";
 
               @override
               void initState() {
                 super.initState();
-                initPlatformState();
-              }
-          
-              void _setState(String greeting) {
-                setState(()=> _greeting = greeting);
-              }
-          
-              // Platform messages are asynchronous, so we initialize in an async method.
-              Future<void> initPlatformState() async {
-                // Klutter generated Adapters don't throw exceptions but always return a
-                // response object. No need for try-catch here. Do or do not. There is no try.
-                await ImpressiveDependency.greeting(this,
-                    onSuccess: _setState,
-                    onFailure: (exception) {
-                      // Here you should handle the exception which means
-                      // at the very least logging it.
-                      _setState("There shall be no greeting for now!");
-                    }
+                greeting(
+                    state: this,
+                    onComplete: (_) => setState(() {}),
+                    onSuccess: (value) => _greeting = value,
+                    onFailure: (message) => _greeting = "He did not want to say Hi..."
                 );
               }
 

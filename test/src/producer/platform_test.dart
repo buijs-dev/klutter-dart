@@ -129,9 +129,9 @@ void main() {
   test("Verify exception is thrown if root does not exist", () {
     expect(
         () => writeRootBuildGradleFile(
-              pathToRoot: "fake",
-              pluginName: "some_plugin",
-            ),
+          pathToRoot: "fake",
+          pluginName: "some_plugin",
+          klutterBomVersion: "2023.1.1",),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
@@ -148,6 +148,7 @@ void main() {
     writeRootBuildGradleFile(
       pathToRoot: root.path,
       pluginName: "some_plugin",
+      klutterBomVersion: "2023.1.1",
     );
 
     expect(
@@ -158,12 +159,13 @@ void main() {
                   gradlePluginPortal()
                   google()
                   mavenCentral()
+                  mavenLocal()
                   maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
               }
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath(platform("dev.buijs.klutter:bom:$klutterGradleVersion"))
+                  classpath(platform("dev.buijs.klutter:bom:2023.1.1"))
                   classpath("dev.buijs.klutter:gradle")
               }
           }
@@ -183,6 +185,7 @@ void main() {
     writeRootBuildGradleFile(
       pathToRoot: root.path,
       pluginName: "some_plugin",
+      klutterBomVersion: "2023.1.1",
     );
 
     expect(
@@ -193,12 +196,13 @@ void main() {
                   gradlePluginPortal()
                   google()
                   mavenCentral()
+                  mavenLocal()
                   maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
               }
               dependencies {
                   classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
                   classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath(platform("dev.buijs.klutter:bom:$klutterGradleVersion"))
+                  classpath(platform("dev.buijs.klutter:bom:2023.1.1"))
                   classpath("dev.buijs.klutter:gradle")
               }
           }
@@ -304,6 +308,7 @@ void main() {
 
     expect(
       """
+     import dev.buijs.klutter.gradle.dsl.embedded
      import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
     
      plugins {
@@ -343,6 +348,7 @@ void main() {
              binaries.framework { 
                   baseName = xcfName         
                   xcFramework.add(this)
+                  export("dev.buijs.klutter:flutter-engine:2023.1.1.beta")
               }
           }
       
@@ -350,6 +356,7 @@ void main() {
               binaries.framework {
                   baseName = xcfName
                   xcFramework.add(this)
+                  export("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2023.1.1.beta")
               }
           }    
       
@@ -375,6 +382,7 @@ void main() {
               val androidMain by getting {
                   dependencies {
                       implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+                      embedded("dev.buijs.klutter:flutter-engine-kmp-android:2023.1.1.beta")
                   }
               }
       
@@ -385,9 +393,17 @@ void main() {
                   }
               }
       
-              val iosMain by getting
+              val iosMain by getting {
+                  dependencies {
+                      api("dev.buijs.klutter:flutter-engine:2023.1.1.beta")
+                  }
+              }
+              
               val iosSimulatorArm64Main by getting {
                   dependsOn(iosMain)
+                  dependencies {
+                    api("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2023.1.1.beta")
+                  }
               }
       
               val iosTest by getting
@@ -506,11 +522,13 @@ void main() {
       r"""
       package com.organisation.nigulp.platform
       
-      import dev.buijs.klutter.annotations.KlutterAdaptee
+      import dev.buijs.klutter.annotations.Controller
+      import dev.buijs.klutter.annotations.Event
       
+      @Controller
       class Greeting {
       
-          @KlutterAdaptee(name = "greeting")
+          @Event(name = "greeting")
           fun greeting(): String {
              return "Hello, ${Platform().platform}!"
           }

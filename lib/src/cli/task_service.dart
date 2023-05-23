@@ -41,7 +41,6 @@ Set<Task> allTasks(
         ConsumerAdd(),
         ConsumerInit(),
         ProducerInit(),
-        ProducerInstall(),
       ]
     ..verifyNoDuplicates
     ..verifyNoCircularDependencies;

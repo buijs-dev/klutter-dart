@@ -1,7 +1,11 @@
 ## 0.3.0
 * Uses Klutter Gradle v2023.1.1.beta.
-* Add Flutter Engine XCFramework to be copied during project initialization.
+* Removed producer install tasks because Klutter Gradle v2023.1.1.beta does the installation during gradle build.
 * Remove widgets in order to scope klutter-dart to dev_dependency (widgets are now found in [klutter-dart-ui](https://github.com/buijs-dev/klutter-dart-ui).
+* Embedded gradle-wrapper bumped to version 7.2.
+* Removed consumer init ios task because no longer required.
+* Consumer add uses $root variable in local paths in .klutter-plugins file.
+* Add logic to klutter_plugin_loaders.gradle.kts to replace $root variable with local path (backwards compatible).
 
 ## 0.2.4
 * Documentation update to point-out the Android Studio and Intellij IDE plugins.

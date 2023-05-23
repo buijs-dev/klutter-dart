@@ -29,4 +29,10 @@ void main() {
       arguments: [],
     );
   });
+
+  test("Verify colored messages", () {
+    expect("msg".ok, "\x1B[32mmsg");
+    expect("msg".nok, "\x1B[31mmsg");
+    expect("msg".boring, "\x1B[49mmsg");
+  });
 }

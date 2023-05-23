@@ -62,7 +62,6 @@ export "task_consumer_add.dart";
 export "task_consumer_init.dart";
 export "task_name.dart";
 export "task_producer_init.dart";
-export "task_producer_install.dart";
 export "task_result.dart";
 export "task_service.dart";
 
@@ -122,11 +121,11 @@ Future<String> execute({
 /// Output log message to console.
 extension ColoredMessage on String {
   /// Log a green colored message.
-  String get ok => "\x1B[32m${this}";
+  String get ok => "\x1B[32m$this";
 
   /// Log a red colored message.
-  String get nok => "\x1B[31m${this}";
+  String get nok => "\x1B[31m$this";
 
   /// Default color (mostly whit(e/ish)).
-  String get boring => "\x1B[49m${this}";
+  String get boring => "\x1B[49m$this";
 }
