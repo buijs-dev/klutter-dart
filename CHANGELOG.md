@@ -1,3 +1,8 @@
+## 1.0.0
+* Uses Klutter Gradle v2023.1.2.beta.
+* Uses klutter_ui 1.0.0.
+* Added support for windows development ([ticket](https://github.com/buijs-dev/klutter-dart/issues/3)).
+
 ## 0.3.0
 * Uses Klutter Gradle v2023.1.1.beta.
 * Removed producer install tasks because Klutter Gradle v2023.1.1.beta does the installation during gradle build.
