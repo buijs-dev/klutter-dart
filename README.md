@@ -203,3 +203,8 @@ If not then do ./gradlew clean build -p "platform" from the root folder.
 If there's an error message saying unable to find plugin or similar then run pod update
 (or for Mac M1 users you might have to do: arch -x86_64 pod install) in the root/example/ios
 folder.
+
+If there's an error message saying something similiar to '...example/ios/Pods/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh: Permission denied' 
+then try one of:
+- delete the Podfile.lock and run pod install in root/example/ios folder.
+- run pod deintegrate and then pod install in root/example/ios folder.
