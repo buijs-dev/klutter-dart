@@ -61,7 +61,7 @@ void main() {
     await createFlutterPlugin(
       organisation: organisation,
       pluginName: pluginName,
-      root: pathToRoot.absolute.path,
+      root: Directory(pathToRoot.absolutePath).normalizeToFolder.absolutePath,
     );
 
     expect(producerPlugin.existsSync(), true,

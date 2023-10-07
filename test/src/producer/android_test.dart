@@ -162,7 +162,7 @@ void main() {
         }'''
             .replaceAll(" ", ""));
 
-    root.delete(recursive: true);
+    //root.deleteSync(recursive: true);
   });
 
   test("Verify exception is thrown if root/android does not exist", () {
