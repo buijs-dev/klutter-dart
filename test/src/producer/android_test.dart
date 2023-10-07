@@ -40,7 +40,7 @@ void main() {
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
-            e.cause.endsWith("/fake"))));
+            e.cause.endsWith("fake"))));
   });
 
   test("Verify exception is thrown if root/android/build.gradle does not exist",
@@ -172,7 +172,7 @@ void main() {
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
-            e.cause.endsWith("/fake"))));
+            e.cause.endsWith("fake"))));
   });
 
   test(
@@ -192,7 +192,7 @@ void main() {
             ),
         throwsA(predicate((e) =>
             e is KlutterException &&
-            e.cause.startsWith("Missing src/main/kotlin folder in:"))));
+            e.cause.startsWith("Missing src${s}main${s}kotlin folder in:"))));
 
     root.deleteSync(recursive: true);
   });
@@ -206,7 +206,7 @@ void main() {
     final android = Directory("${root.path}${s}android")
       ..createSync(recursive: true);
 
-    Directory("${android.path}/src/main/kotlin".replaceAll("/", s))
+    Directory("${android.path}/src${s}main${s}kotlin".replaceAll("/", s))
         .createSync(recursive: true);
 
     expect(

@@ -33,14 +33,14 @@ void main() {
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
-            e.cause.endsWith("/fake"))));
+            e.cause.endsWith("fake"))));
   });
 
   test("Verify Gradle files are copied to the root folder", () async {
     final root = Directory("${Directory.systemTemp.path}${s}gradle10")
       ..createSync(recursive: true);
 
-    await Gradle(root.path).copyToRoot;
+    await Gradle(root.normalizeToFolder.absolutePath).copyToRoot;
 
     final properties = File("${root.path}/gradle.properties").normalizeToFile;
     final wrapperJar =
@@ -69,7 +69,7 @@ void main() {
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
-            e.cause.endsWith("/fake"))));
+            e.cause.endsWith("fake"))));
   });
 
   test("Verify exception is thrown if root/android does not exist", () {

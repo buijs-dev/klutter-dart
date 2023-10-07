@@ -45,7 +45,7 @@ void main() {
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
-            e.cause.endsWith("/fake"))));
+            e.cause.endsWith("fake"))));
   });
 
   test("Verify .klutter-plugins file is created if it does not exist", () {
@@ -208,7 +208,7 @@ void main() {
         pathToRoot: root.absolute.path,
         pluginName: "awesome_plugin");
 
-    expect(path.endsWith("android/klutter"), true);
+    expect(path.endsWith("android${s}klutter"), true);
     expect(path.contains("pub-cache"), false);
   });
 
@@ -244,7 +244,7 @@ void main() {
         pathToRoot: root.absolute.path,
         pluginName: "awesome_plugin");
 
-    expect(path.endsWith("awesome/android/klutter"), true);
+    expect(path.endsWith("awesome${s}android${s}klutter"), true);
     expect(path.contains("pub-cache"), false);
   });
 
@@ -279,9 +279,8 @@ void main() {
         pathToRoot: root.absolute.path,
         pluginName: "awesome_plugin");
 
-    expect(
-        "/foo/bar/.pub-cache/hosted/pub.dartlang.org/awesome_plugin/android/klutter",
-        path);
+    expect(path,
+        "${s}foo${s}bar$s.pub-cache${s}hosted${s}pub.dartlang.org${s}awesome_plugin${s}android${s}klutter");
   });
 
   tearDownAll(() => root.deleteSync(recursive: true));
