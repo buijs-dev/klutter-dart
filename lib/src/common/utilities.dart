@@ -67,11 +67,11 @@ extension FileUtil on FileSystemEntity {
   String get absolutePath => absolute.path;
 
   /// Return absolute path of current File or Directory with all
-  /// forward slashes ('/') replaced for the platform specific separator.
+  /// slashes ('/' or '\') replaced for the platform specific separator.
   File get normalizeToFile => File(_substitute);
 
   /// Return absolute path of current File or Directory with all
-  /// forward slashes ('/') replaced for the platform specific separator.
+  /// slashes ('/' or '\') replaced for the platform specific separator.
   Directory get normalizeToFolder => Directory(_substitute);
 
   /// Return a normalized path of this folder to the given filename.
@@ -85,9 +85,12 @@ extension FileUtil on FileSystemEntity {
   /// Convert a path String by removing all '..' and moving up a folder for each.
   String get _substitute {
     final normalized = <String>[];
+    final parts = absolute.path
+        .replaceAll(r"""\""", "/")
+        .split("/")
+      ..removeWhere((e) => e.isEmpty);
 
-    for (final part in absolute.path.split("/")
-      ..removeWhere((e) => e.isEmpty)) {
+    for (final part in parts) {
       if (part.trim() == "..") {
         normalized.removeLast();
       } else {
@@ -96,9 +99,16 @@ extension FileUtil on FileSystemEntity {
     }
 
     final path = normalized.join(Platform.pathSeparator);
-    return path.startsWith(Platform.pathSeparator)
-        ? path
-        : Platform.pathSeparator + path;
+
+    if(Platform.isWindows) {
+      return path;
+    }
+
+    if(path.startsWith(Platform.pathSeparator)) {
+      return path;
+    }
+
+    return Platform.pathSeparator + path;
   }
 }
 
