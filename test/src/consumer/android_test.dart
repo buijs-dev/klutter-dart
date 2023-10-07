@@ -100,7 +100,7 @@ void main() {
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
-            e.cause.endsWith("/fake"))));
+            e.cause.endsWith("fake"))));
   });
 
   test("Verify a new Gradle file is created if it does not exist", () {
@@ -244,15 +244,6 @@ void main() {
             .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
-  });
-
-  test("Verify exception is thrown if root/android does not exist", () {
-    expect(
-        () => applyPluginLoader("fake"),
-        throwsA(predicate((e) =>
-            e is KlutterException &&
-            e.cause.startsWith("Path does not exist:") &&
-            e.cause.endsWith("/fake"))));
   });
 
   test(

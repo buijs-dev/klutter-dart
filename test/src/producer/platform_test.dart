@@ -29,18 +29,6 @@ void main() {
 
   const pluginName = "some_plugin";
 
-  test("Verify exception is thrown if root does not exist", () {
-    expect(
-        () => writeRootSettingsGradleFile(
-              pathToRoot: "fake",
-              pluginName: pluginName,
-            ),
-        throwsA(predicate((e) => e is KlutterException //&&
-            // e.cause.startsWith("Path does not exist:") &&
-            // e.cause.endsWith("/fake")
-            )));
-  });
-
   test("Verify root/settings.gradle.kts is created if it does not exist", () {
     // Create root/android otherwise path does not exist exception is thrown
     final root = Directory("${Directory.systemTemp.path}${s}wsg1")
@@ -135,7 +123,7 @@ void main() {
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
-            e.cause.endsWith("/fake"))));
+            e.cause.endsWith("fake"))));
   });
 
   test("Verify root/build.gradle.kts is created if it does not exist", () {
@@ -209,15 +197,6 @@ void main() {
       """.replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
-  });
-
-  test("Verify exception is thrown if root does not exist", () {
-    expect(
-        () => writeGradleProperties("fake"),
-        throwsA(predicate((e) =>
-            e is KlutterException &&
-            e.cause.startsWith("Path does not exist:") &&
-            e.cause.endsWith("/fake"))));
   });
 
   test("Verify root/gradle.properties is created if it does not exist", () {

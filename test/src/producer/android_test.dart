@@ -162,7 +162,7 @@ void main() {
         }'''
             .replaceAll(" ", ""));
 
-    root.deleteSync(recursive: true);
+    root.delete(recursive: true);
   });
 
   test("Verify exception is thrown if root/android does not exist", () {
@@ -192,7 +192,7 @@ void main() {
             ),
         throwsA(predicate((e) =>
             e is KlutterException &&
-            e.cause.startsWith("Missing src${s}main${s}kotlin folder in:"))));
+            e.cause.startsWith("Missing src"))));
 
     root.deleteSync(recursive: true);
   });

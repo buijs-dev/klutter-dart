@@ -185,7 +185,9 @@ Future<_GradleResource> loadResource({
 }) =>
     Isolate.resolvePackageUri(uri).then((pathToSource) {
       return _GradleResource(
-        pathToSource: pathToSource!.path,
+        pathToSource: Platform.isWindows
+            ? pathToSource!.path.replaceFirst("/", "")
+            : pathToSource!.path,
         filename: filename,
         targetRelativeToRoot: targetRelativeToRoot,
       );
