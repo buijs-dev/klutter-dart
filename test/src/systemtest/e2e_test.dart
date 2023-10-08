@@ -187,7 +187,7 @@ void main() {
 
     final podFile =
         File("${consumerPlugin.absolutePath}/ios/Podfile".normalize);
-    expect(podFile.existsSync(), true, reason: "Podfile should exist");
+    expect(podFile.existsSync(), true, reason: "Podfile should exist: ${podFile.absolutePath}");
 
     /// Add Klutter as dev_dependency.
     await addKlutterAsDevDependency(

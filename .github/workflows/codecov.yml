@@ -17,6 +17,10 @@ jobs:
           channel: 'stable'
 
       # Get dependencies
+      - uses: actions/checkout@v1
+      - name: Install Cocoapods
+        run: gem install cocoapods
+
       - name: Install dependencies
         run: dart pub get
 
