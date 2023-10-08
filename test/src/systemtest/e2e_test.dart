@@ -273,6 +273,7 @@ Future<void> createFlutterPlugin({
             "--platforms=android,ios",
             pluginName,
           ],
+          runInShell: true,
           workingDirectory: root)
       .then((result) {
     stdout.write(result.stdout);
@@ -306,7 +307,8 @@ Future<void> addKlutterAsDevDependency({
     }
   }
 
-  await Process.run("flutter", ["pub", "get"], workingDirectory: root)
+  await Process.run("flutter", ["pub", "get"],
+      runInShell: true, workingDirectory: root)
       .then((result) {
     stdout.write(result.stdout);
     stderr.write(result.stderr);
