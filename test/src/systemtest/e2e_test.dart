@@ -185,6 +185,10 @@ void main() {
         reason:
             "Plugin should be created in: '${producerPlugin.absolute.path}'");
 
+    final podFile =
+        File("${consumerPlugin.absolutePath}/ios/Podfile".normalize);
+    expect(podFile.existsSync(), true, reason: "Podfile should exist");
+
     /// Add Klutter as dev_dependency.
     await addKlutterAsDevDependency(
       root: consumerPlugin.absolutePath,
@@ -231,29 +235,23 @@ void main() {
         reason: "klutter-plugins file should be created");
 
     /// Run only iOS init, then Android is skipped
-    if(!Platform.isWindows) {
-      final podFile =
-      File("${consumerPlugin.absolutePath}/ios/Podfile".normalize);
-      expect(podFile.existsSync(), true, reason: "Podfile should exist: ${podFile.absolutePath}");
 
-      // Delete the exclusion which is added by iOS init
-      podFile.writeAsStringSync(podFile.readAsStringSync().replaceAll(
-          "bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`", ""));
+    // Delete the exclusion which is added by iOS init
+    podFile.writeAsStringSync(podFile.readAsStringSync().replaceAll(
+        "bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`", ""));
 
-      // Delete the klutter-plugins file which is added by Android init
-      registry.deleteSync();
-      expect(registry.existsSync(), false);
+    // Delete the klutter-plugins file which is added by Android init
+    registry.deleteSync();
+    expect(registry.existsSync(), false);
 
-      await sut.execute(
-        pathToRoot: consumerPlugin.absolutePath,
-        script: sut.ScriptName.consumer,
-        arguments: ["init=ios"],
-      );
+    await sut.execute(
+      pathToRoot: consumerPlugin.absolutePath,
+      script: sut.ScriptName.consumer,
+      arguments: ["init=ios"],
+    );
 
-      expect(registry.existsSync(), false,
-          reason: "Android init should not have been executed");
-    }
-
+    expect(registry.existsSync(), false,
+        reason: "Android init should not have been executed");
   });
 
   tearDownAll(() => pathToRoot.deleteSync(recursive: true));

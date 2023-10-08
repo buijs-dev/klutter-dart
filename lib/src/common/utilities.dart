@@ -85,9 +85,7 @@ extension FileUtil on FileSystemEntity {
   /// Convert a path String by removing all '..' and moving up a folder for each.
   String get _substitute {
     final normalized = <String>[];
-    final parts = absolute.path
-        .replaceAll(r"""\""", "/")
-        .split("/")
+    final parts = absolute.path.replaceAll(r"""\""", "/").split("/")
       ..removeWhere((e) => e.isEmpty);
 
     for (final part in parts) {
@@ -100,11 +98,11 @@ extension FileUtil on FileSystemEntity {
 
     final path = normalized.join(Platform.pathSeparator);
 
-    if(Platform.isWindows) {
+    if (Platform.isWindows) {
       return path;
     }
 
-    if(path.startsWith(Platform.pathSeparator)) {
+    if (path.startsWith(Platform.pathSeparator)) {
       return path;
     }
 
