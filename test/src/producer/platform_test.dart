@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2022 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ void main() {
     expect(
         settingsGradle.readAsStringSync().replaceAll(" ", ""),
         """
-            // Copyright (c) 2021 - 2023 Buijs Software
+            // Copyright (c) 2021 - 2022 Buijs Software
             //
             // Permission is hereby granted, free of charge, to any person obtaining a copy
             // of this software and associated documentation files (the "Software"), to deal
@@ -87,7 +87,7 @@ void main() {
     expect(
         settingsGradle.readAsStringSync().replaceAll(" ", ""),
         """
-            // Copyright (c) 2021 - 2023 Buijs Software
+            // Copyright (c) 2021 - 2022 Buijs Software
             //
             // Permission is hereby granted, free of charge, to any person obtaining a copy
             // of this software and associated documentation files (the "Software"), to deal
@@ -119,7 +119,7 @@ void main() {
         () => writeRootBuildGradleFile(
           pathToRoot: "fake",
           pluginName: "some_plugin",
-          klutterBomVersion: "2023.3.1",),
+          klutterBomVersion: "2023.1.1",),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
@@ -136,7 +136,7 @@ void main() {
     writeRootBuildGradleFile(
       pathToRoot: root.path,
       pluginName: "some_plugin",
-      klutterBomVersion: "2023.3.1",
+      klutterBomVersion: "2023.1.1",
     );
 
     expect(
@@ -151,9 +151,9 @@ void main() {
                   maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
               }
               dependencies {
-                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
-                  classpath("com.android.tools.build:gradle:8.0.2")
-                  classpath(platform("dev.buijs.klutter:bom:2023.3.1"))
+                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
+                  classpath("com.android.tools.build:gradle:7.0.4")
+                  classpath(platform("dev.buijs.klutter:bom:2023.1.1"))
                   classpath("dev.buijs.klutter:gradle")
               }
           }
@@ -173,7 +173,7 @@ void main() {
     writeRootBuildGradleFile(
       pathToRoot: root.path,
       pluginName: "some_plugin",
-      klutterBomVersion: "2023.3.1",
+      klutterBomVersion: "2023.1.1",
     );
 
     expect(
@@ -188,9 +188,9 @@ void main() {
                   maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
               }
               dependencies {
-                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
-                  classpath("com.android.tools.build:gradle:8.0.2")
-                  classpath(platform("dev.buijs.klutter:bom:2023.3.1"))
+                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
+                  classpath("com.android.tools.build:gradle:7.0.4")
+                  classpath(platform("dev.buijs.klutter:bom:2023.1.1"))
                   classpath("dev.buijs.klutter:gradle")
               }
           }
@@ -262,7 +262,7 @@ void main() {
     final root = Directory("${Directory.systemTemp.path}${s}wsg7")
       ..createSync(recursive: true);
 
-    root.resolveFile("kradle.yaml")
+    final yaml = root.resolveFile("klutter.yaml")
       ..maybeCreate
       ..writeAsStringSync("flutter-version: '3.0.5.macos.arm64'")
     ;
@@ -314,9 +314,16 @@ void main() {
           include("bill-of-materials")
       }
       
+      ksp {
+          arg("klutterScanFolder", project.buildDir.absolutePath)
+          arg("klutterOutputFolder", project.projectDir.parentFile.absolutePath)
+          arg("klutterGenerateAdapters", "true")
+          arg("flutterVersion", "3.0.5.macos.arm64")
+          arg("intelMac", "false") // Set to "true" if you're building on an Intel Mac!
+      }
+
       kotlin {
   
-          jvmToolchain(17)
           android()
       
           val xcfName = "Platform"
@@ -343,7 +350,7 @@ void main() {
               val commonMain by getting {
                   dependencies {
                       implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
                   }
               }
       
@@ -392,15 +399,12 @@ void main() {
       }
       
       android {
-          namespace = "com.organisation.nigulp.platform"
+          compileSdk = 31
+          sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
           sourceSets["main"].kotlin { srcDirs("src/androidMain/kotlin") }
-          compileOptions {
-              sourceCompatibility = JavaVersion.VERSION_17
-              targetCompatibility = JavaVersion.VERSION_17
-          }
           defaultConfig {
-              compileSdk = 33
-              minSdk = 24
+              minSdk = 21
+              targetSdk = 31
           }
       }
       
@@ -446,6 +450,25 @@ void main() {
       iosMain.existsSync(),
       reason:
           "root/klutter/nigulp/src/iosMain/kotlin/com/organisation/nigulp/platform should be created",
+    );
+
+    final androidManifest =
+        File("${platform.path}/src/androidMain/AndroidManifest.xml".normalize);
+
+    expect(
+      true,
+      androidManifest.existsSync(),
+      reason:
+          "root/klutter/nigulp/src/androidMain/AndroidManifest.xml should be created",
+    );
+
+    expect(
+      """
+        <?xml version="1.0" encoding="utf-8"?>
+        <manifest package="com.organisation.nigulp.platform" />
+        """
+          .replaceAll(" ", ""),
+      androidManifest.readAsStringSync().replaceAll(" ", ""),
     );
 
     final androidPlatformClass =

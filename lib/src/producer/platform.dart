@@ -20,6 +20,7 @@
 
 import "dart:io";
 
+import "../../klutter.dart";
 import "../common/config.dart";
 import "../common/utilities.dart";
 
@@ -77,6 +78,7 @@ void createPlatformModule({
         packageName: packageName)
       ..createPlatformGradleFile
       ..createPlatformSourceFolders
+      ..createAndroidManifest
       ..createAndroidPlatformClass
       ..createCommonGreetingClass
       ..createCommonPlatformClass
@@ -112,7 +114,7 @@ extension on File {
   /// Write the content of the settings.gradle.kts of a Klutter plugin.
   void writeSettingsGradleContent(String pluginName) {
     writeAsStringSync('''
-            // Copyright (c) 2021 - 2023 Buijs Software
+            // Copyright (c) 2021 - 2022 Buijs Software
             |//
             |// Permission is hereby granted, free of charge, to any person obtaining a copy
             |// of this software and associated documentation files (the "Software"), to deal
@@ -150,8 +152,8 @@ extension on File {
           |        maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
           |    }
           |    dependencies {
-          |        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
-          |        classpath("com.android.tools.build:gradle:8.0.2")
+          |        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
+          |        classpath("com.android.tools.build:gradle:7.0.4")
           |        classpath(platform("dev.buijs.klutter:bom:$klutterBomVersion"))
           |        classpath("dev.buijs.klutter:gradle")
           |    }
@@ -233,6 +235,29 @@ class PlatformModule {
   /// The root/platform/src/iosMain/kotlin/<organisation>/platform/ folder.
   final Directory iosMain;
 
+  /// Get the path to the cached Flutter SDK installation
+  /// as configured in the root-project/klutter.yaml File.
+  ///
+  /// Either:
+  /// - throws [KlutterException] if unsuccessful or
+  /// - returns [String] path to Flutter SDK installation.
+  ///
+  /// {@category producer}
+  String get findFlutterSDK =>
+      root
+          .resolveFile("/../klutter.yaml".normalize)
+          .readAsLinesSync()
+          .map((line) {
+        if (line.contains("flutter-version:")) {
+          final start = line.indexOf("'") + 1;
+          final end = line.lastIndexOf("'");
+          return line.substring(start, end);
+        } else {
+          return null;
+        }
+      }).firstWhere((line) => line != null) ??
+      "";
+
   /// Create the source folders:
   /// - androidMain
   /// - commonMain
@@ -271,10 +296,17 @@ class PlatformModule {
       |
       |    include("bill-of-materials")
       |}
+      |    
+      |ksp {
+      |    arg("klutterScanFolder", project.buildDir.absolutePath)
+      |    arg("klutterOutputFolder", project.projectDir.parentFile.absolutePath)
+      |    arg("klutterGenerateAdapters", "true")
+      |    arg("flutterVersion", "$findFlutterSDK")
+      |    arg("intelMac", "false") // Set to "true" if you're building on an Intel Mac!
+      |}
       |
       |kotlin {
       |
-      |    jvmToolchain(17)
       |    android()
       |
       |    val xcfName = "Platform"
@@ -301,7 +333,7 @@ class PlatformModule {
       |        val commonMain by getting {
       |            dependencies {
       |                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
       |            }
       |        }
       |
@@ -350,15 +382,12 @@ class PlatformModule {
       |}
       |
       |android {
-      |    namespace = "$packageName.platform"
+      |    compileSdk = $androidCompileSdk
+      |    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
       |    sourceSets["main"].kotlin { srcDirs("src/androidMain/kotlin") }
-      |    compileOptions {
-      |        sourceCompatibility = JavaVersion.VERSION_17
-      |        targetCompatibility = JavaVersion.VERSION_17
-      |    }
       |    defaultConfig {
-      |        compileSdk = $androidCompileSdk
       |        minSdk = $androidMinSdk
+      |        targetSdk = $androidTargetSdk
       |    }
       |}
       |
@@ -371,6 +400,23 @@ class PlatformModule {
       |    .setFinalizedBy(listOf(tasks.getByName("klutterCopyFramework")))
       |"""
           .format);
+  }
+
+  /// Create the AndroidManifest.xml file.
+  ///
+  /// Will create a new file if it does not exist
+  /// or overwrite the current AndroidManifest.xml
+  /// if it already exists.
+  void get createAndroidManifest {
+    root.resolveFile("src/androidMain/AndroidManifest.xml").normalizeToFile
+      ..maybeCreate
+      ..writeAsStringSync(
+        """
+        <?xml version="1.0" encoding="utf-8"?>
+        |<manifest package="$packageName.platform" />
+        """
+            .format,
+      );
   }
 
   /// Create Platform.kt (Kotlin) class file
