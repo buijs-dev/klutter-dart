@@ -315,4 +315,9 @@ Future<void> addKlutterAsDevDependency({
     stdout.write(result.stdout);
     stderr.write(result.stderr);
   });
+
+  File("$root/klutter.yaml".normalize)
+    ..maybeCreate
+    ..writeAsStringSync("flutter-version: '3.0.5.${Platform.isWindows ? "windows" : "macos"}.x64'")
+  ;
 }

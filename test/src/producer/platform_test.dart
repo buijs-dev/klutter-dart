@@ -262,6 +262,11 @@ void main() {
     final root = Directory("${Directory.systemTemp.path}${s}wsg7")
       ..createSync(recursive: true);
 
+    final yaml = root.resolveFile("klutter.yaml")
+      ..maybeCreate
+      ..writeAsStringSync("flutter-version: '3.0.5.macos.arm64'")
+    ;
+
     createPlatformModule(
       pathToRoot: root.path,
       pluginName: "nigulp",
@@ -313,6 +318,7 @@ void main() {
           arg("klutterScanFolder", project.buildDir.absolutePath)
           arg("klutterOutputFolder", project.projectDir.parentFile.absolutePath)
           arg("klutterGenerateAdapters", "true")
+          arg("flutterVersion", "3.0.5.macos.arm64")
           arg("intelMac", "false") // Set to "true" if you're building on an Intel Mac!
       }
 
