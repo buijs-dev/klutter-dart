@@ -1,5 +1,5 @@
 ## 1.0.1
-* Bump SDK constraints to >=2.18.0 <4.0.0.
+* Bump SDK constraints to >=2.17.6 <4.0.0.
 * Uses Klutter Gradle v2023.3.1.beta.
 * Uses klutter_ui 1.0.1.
 
