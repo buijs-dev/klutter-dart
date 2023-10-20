@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2022 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
 import "dart:io";
 
 import "../common/common.dart";
-import "../consumer/android.dart";
 import "../producer/android.dart";
 import "../producer/gradle.dart";
 import "../producer/ios.dart";
@@ -40,11 +39,11 @@ class ProducerInit extends Task {
 
   @override
   Future<void> toBeExecuted(String pathToRoot) async {
-    final validBomVersionOrNull = options[ScriptOption.bom]?.verifyBomVersion;
+    final validBomVersionOrNull = options[ScriptOption.bom]!.verifyBomVersion;
 
     if (validBomVersionOrNull == null) {
       throw KlutterException(
-          "Invalid BOM version (example of correct version: $klutterGradleVersion): $validBomVersionOrNull");
+          "Invalid BOM version (example of correct version: $klutterGradleVersion): $this");
     }
 
     final flutterVersion =
@@ -52,21 +51,20 @@ class ProducerInit extends Task {
 
     if (flutterVersion == null) {
       throw KlutterException(
-          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $flutterVersion");
+          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $this");
     }
 
     final producer = _Producer(
         pathToRoot: pathToRoot,
         bomVersion: validBomVersionOrNull,
-        flutterVersion: flutterVersion);
-    await producer.addGradle;
-    await producer.addKradle;
-    producer
+        flutterVersion: flutterVersion)
       ..setupRoot
       ..setupAndroid
       ..setupIOS
       ..setupPlatform
       ..setupExample;
+    await producer.addGradle;
+    await producer.addKradle;
   }
 
   @override
@@ -118,10 +116,8 @@ extension on _Producer {
     final packageName = findPackageName(pathToRoot);
     final pluginVersion = findPluginVersion(pathToRoot);
     final pathToAndroid = "$pathToRoot/android".normalize;
-    final pluginName = findPluginName(pathToRoot);
 
     writeBuildGradleFile(
-        pluginName: pluginName,
         pathToAndroid: pathToAndroid,
         packageName: packageName,
         pluginVersion: pluginVersion,
@@ -130,12 +126,9 @@ extension on _Producer {
     writeAndroidPlugin(
       pathToAndroid: pathToAndroid,
       packageName: packageName,
-      pluginName: pluginName,
     );
 
     writeKlutterGradleFile(pathToAndroid);
-    setGradleWrapperVersion(pathToAndroid: pathToAndroid);
-    deleteRootAndroidManifestFile(pathToAndroid: pathToAndroid);
   }
 
   void get setupPlatform {
@@ -147,26 +140,10 @@ extension on _Producer {
   }
 
   void get setupExample {
-    final packageName = findPackageName(pathToRoot);
-    final pluginName = findPluginName(pathToRoot);
-    final pathToAndroid = "$pathToRoot/example/android".normalize;
-
     writeExampleMainDartFile(
       pathToExample: "$pathToRoot/example".normalize,
-      pluginName: pluginName,
+      pluginName: findPluginName(pathToRoot),
     );
-
-    writeAndroidAppBuildGradleFile(
-        pathToAndroid: pathToAndroid,
-        packageName: packageName,
-        pluginName: pluginName);
-
-    writeAndroidBuildGradleFile(
-        pathToAndroid: pathToAndroid,
-        packageName: packageName,
-        pluginName: pluginName);
-
-    setGradleWrapperVersion(pathToAndroid: pathToAndroid);
   }
 
   void get setupIOS {

@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2022 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,26 +35,29 @@ class GetFlutterSDK extends Task {
 
   @override
   Future<void> toBeExecuted(String pathToRoot) async {
+    final skip = Platform.environment["GET_FLUTTER_SDK_SKIP"] != null;
+    if (skip) {
+      return;
+    }
+
     final flutterVersion = options[ScriptOption.flutter]?.verifyFlutterVersion;
 
     if (flutterVersion == null) {
       throw KlutterException(
-          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $flutterVersion");
+          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $this");
     }
 
     OperatingSystem? platform;
 
     if (flutterVersion.os != null) {
-      platform = flutterVersion.os;
+      platform = flutterVersion.os!;
     } else if (Platform.isWindows) {
       platform = OperatingSystem.windows;
     } else if (Platform.isMacOS) {
       platform = OperatingSystem.macos;
     } else if (Platform.isLinux) {
       platform = OperatingSystem.linux;
-    }
-
-    if (platform == null) {
+    } else {
       throw KlutterException(
           "Current OS is not supported (supported: macos, windows or linux): ${Platform.operatingSystem}");
     }
@@ -77,13 +80,6 @@ class GetFlutterSDK extends Task {
       if (url == null) {
         throw KlutterException(
             "Failed to determine download URL for Flutter SDK: $flutterVersion $platform $arch");
-      }
-
-      final skip = Platform.environment["GET_FLUTTER_SDK_SKIP"] != null ||
-          options[ScriptOption.dryRun] == "true";
-
-      if (skip) {
-        return;
       }
 
       final zip = cachedSDK.resolveFile("flutter.zip")

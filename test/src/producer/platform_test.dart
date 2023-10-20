@@ -319,7 +319,6 @@ void main() {
           arg("klutterOutputFolder", project.projectDir.parentFile.absolutePath)
           arg("klutterGenerateAdapters", "true")
           arg("flutterVersion", "3.0.5.macos.arm64")
-          arg("intelMac", "false") // Set to "true" if you're building on an Intel Mac!
       }
 
       kotlin {
