@@ -101,7 +101,7 @@ void main() {
 void createConfigYaml({
   required String root,
 }) {
-  Directory(root).resolveFile("klutter.yaml")
+  Directory(root).resolveFile("kradle.yaml")
     ..createSync()
     ..writeAsStringSync("""
     bom-version:9999.1.1

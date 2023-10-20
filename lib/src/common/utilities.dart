@@ -170,3 +170,21 @@ extension StringUtil on String {
     }
   }
 }
+
+/// Download a File.
+Future<void> download(String endpoint, File target) async {
+  final client = HttpClient();
+  final request = await client.getUrl(Uri.parse(endpoint));
+  final response = await request.close();
+  await response.pipe(target.openWrite());
+}
+
+/// Unzip a File.
+Future<void> unzip(File zip, Directory target) async {
+  await Process.run(
+    "tar",
+    ["-xf", zip.absolutePath, "-p"],
+    runInShell: true,
+    workingDirectory: target.absolutePath,
+  );
+}

@@ -32,24 +32,16 @@ abstract class Task {
   /// The script the task belongs to.
   final ScriptName scriptName;
 
-  /// The option value which configures the task.
-  String? _option;
-
-  /// Set option to be used for executing the task.
-  set option(String? option) {
-    _option = option;
-  }
-
-  /// Get the option value.
-  String get option => (_option ?? "").trim().toLowerCase();
+  /// The options which configures the task.
+  Map<ScriptOption, String> options = const {};
 
   /// Task logic implemented by the child class which will be executed.
-  void toBeExecuted(String pathToRoot);
+  Future<void> toBeExecuted(String pathToRoot);
 
   /// Execute the task.
-  TaskResult execute(String pathToRoot) {
+  Future<TaskResult> execute(String pathToRoot) async {
     try {
-      toBeExecuted(pathToRoot);
+      await toBeExecuted(pathToRoot);
       return const TaskResult(isOk: true);
     } on KlutterException catch (e) {
       return TaskResult(isOk: false, message: e.cause);
@@ -59,8 +51,8 @@ abstract class Task {
   /// List of tasks that should be run before executing this task.
   List<Task> dependsOn() => [];
 
-  /// List of options that can be passed to configure this task.
-  List<String> optionValues() => [];
+  /// Output list of example commands to use this Task.
+  List<String> exampleCommands() => [];
 
   @override
   String toString() {

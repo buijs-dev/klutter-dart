@@ -18,13 +18,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "../common/exception.dart";
 import "../common/project.dart";
 import "../common/utilities.dart";
 import "../consumer/android.dart";
 import "cli.dart";
 
-/// Task to prepare a Flutter project for using Klutter-made plugins.
+/// Task to prepare a Flutter project for using Klutter plugins.
 ///
 /// {@category consumer}
 class ConsumerInit extends Task {
@@ -32,19 +31,12 @@ class ConsumerInit extends Task {
   ConsumerInit() : super(ScriptName.consumer, TaskName.init);
 
   @override
-  void toBeExecuted(String pathToRoot) {
-    switch (option) {
-      case "android":
-      case "":
-        _executeInitAndroid(pathToRoot);
-        break;
-      default:
-        throw KlutterException("Invalid option value: '$option'");
-    }
+  Future<void> toBeExecuted(String pathToRoot) async {
+    _executeInitAndroid(pathToRoot);
   }
 
   @override
-  List<String> optionValues() => ["", "android"];
+  List<String> exampleCommands() => ["consumer init"];
 }
 
 void _executeInitAndroid(String pathToRoot) {

@@ -262,7 +262,7 @@ void main() {
     final root = Directory("${Directory.systemTemp.path}${s}wsg7")
       ..createSync(recursive: true);
 
-    final yaml = root.resolveFile("klutter.yaml")
+    root.resolveFile("kradle.yaml")
       ..maybeCreate
       ..writeAsStringSync("flutter-version: '3.0.5.macos.arm64'")
     ;

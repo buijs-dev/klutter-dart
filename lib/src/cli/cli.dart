@@ -50,17 +50,16 @@ library cli;
 
 import "../common/utilities.dart";
 import "command.dart";
-import "script.dart";
+import "input.dart";
 import "task.dart";
 import "task_service.dart" as service;
 
 export "command.dart";
-export "script.dart";
+export "input.dart";
 export "task.dart";
 export "task_comparator.dart";
 export "task_consumer_add.dart";
 export "task_consumer_init.dart";
-export "task_name.dart";
 export "task_producer_init.dart";
 export "task_result.dart";
 export "task_service.dart";
@@ -73,7 +72,7 @@ Future<String> execute({
 }) async {
   /// Parse user input to a Command.
   final command = Command.from(
-    task: arguments.join(),
+    arguments: arguments,
     script: script,
   );
 
@@ -99,22 +98,26 @@ Future<String> execute({
   else {
     final s = command!.scriptName.name;
     final t = command.taskName.name;
-    final o = command.option;
+    var o = "";
+
+    command.options.forEach((key, value) {
+      o += " ${key.name}=$value";
+    });
 
     for (final task in tasks) {
-      final result = task.execute(pathToRoot);
+      final result = await task.execute(pathToRoot);
 
       /// Stop executing tasks when one has failed.
       if (!result.isOk) {
         return """
           |KLUTTER: ${result.message}
-          |KLUTTER: Task '$s $t $o' finished unsuccessfully."""
+          |KLUTTER: Task '$s $t$o' finished unsuccessfully."""
             .format
             .nok;
       }
     }
 
-    return "KLUTTER: Task '$s $t $o' finished successful.".format.ok;
+    return "KLUTTER: Task '$s $t$o' finished successful.".format.ok;
   }
 }
 

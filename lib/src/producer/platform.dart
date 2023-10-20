@@ -20,7 +20,6 @@
 
 import "dart:io";
 
-import "../../klutter.dart";
 import "../common/config.dart";
 import "../common/utilities.dart";
 
@@ -236,16 +235,14 @@ class PlatformModule {
   final Directory iosMain;
 
   /// Get the path to the cached Flutter SDK installation
-  /// as configured in the root-project/klutter.yaml File.
+  /// as configured in the root-project/kradle.yaml File.
   ///
-  /// Either:
-  /// - throws [KlutterException] if unsuccessful or
-  /// - returns [String] path to Flutter SDK installation.
+  /// Returns [String] path to Flutter SDK installation or blank if not found.
   ///
   /// {@category producer}
   String get findFlutterSDK =>
       root
-          .resolveFile("/../klutter.yaml".normalize)
+          .resolveFile("/../kradle.yaml".normalize)
           .readAsLinesSync()
           .map((line) {
         if (line.contains("flutter-version:")) {
@@ -302,7 +299,6 @@ class PlatformModule {
       |    arg("klutterOutputFolder", project.projectDir.parentFile.absolutePath)
       |    arg("klutterGenerateAdapters", "true")
       |    arg("flutterVersion", "$findFlutterSDK")
-      |    arg("intelMac", "false") // Set to "true" if you're building on an Intel Mac!
       |}
       |
       |kotlin {

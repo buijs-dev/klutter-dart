@@ -150,11 +150,11 @@ void main() {
 
   test("Verify findKlutterBomVersion", () {
 
-    // Verify klutterBomVersion is null if klutter.yaml File does not exist.
+    // Verify klutterBomVersion is null if kradle.yaml File does not exist.
     expect(findKlutterBomVersion(root.path), null);
 
-    // Verify klutterBomVersion is null if klutter.yaml File has no bom-version line.
-    File("${root.path}/klutter.yaml".normalize)
+    // Verify klutterBomVersion is null if kradle.yaml File has no bom-version line.
+    File("${root.path}/kradle.yaml".normalize)
       ..createSync()
       ..writeAsStringSync("""
             |other-version:9999.1.1
@@ -163,7 +163,7 @@ void main() {
     expect(findKlutterBomVersion(root.path), null);
 
     // Verify correct klutterBomVersion is returned if found.
-    File("${root.path}/klutter.yaml".normalize)
+    File("${root.path}/kradle.yaml".normalize)
       ..createSync()
       ..writeAsStringSync("""
             |bom-version:9999.1.1
