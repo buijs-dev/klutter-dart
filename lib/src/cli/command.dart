@@ -142,7 +142,7 @@ class Command {
           return null;
         }
 
-        final version = option[1].verifyFlutterVersion;
+        final version = option[1].verifyFlutterVersion?.version;
 
         if (version == null) {
           return null;

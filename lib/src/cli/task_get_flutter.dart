@@ -40,45 +40,46 @@ class GetFlutterSDK extends Task {
       return;
     }
 
-    final validFlutterVersionOrNull =
-        options[ScriptOption.flutter]?.verifyFlutterVersion;
+    final flutterVersion = options[ScriptOption.flutter]?.verifyFlutterVersion;
 
-    if (validFlutterVersionOrNull == null) {
+    if (flutterVersion == null) {
       throw KlutterException(
           "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $this");
     }
 
-    _OperatingSystem? platform;
+    OperatingSystem? platform;
 
-    if (Platform.isWindows) {
-      platform = _OperatingSystem.windows;
+    if (flutterVersion.os != null) {
+      platform = flutterVersion.os!;
+    } else if (Platform.isWindows) {
+      platform = OperatingSystem.windows;
     } else if (Platform.isMacOS) {
-      platform = _OperatingSystem.macos;
+      platform = OperatingSystem.macos;
     } else if (Platform.isLinux) {
-      platform = _OperatingSystem.linux;
+      platform = OperatingSystem.linux;
     } else {
       throw KlutterException(
           "Current OS is not supported (supported: macos, windows or linux): ${Platform.operatingSystem}");
     }
 
     final cache = defaultKradleCacheFolder..maybeCreate;
-    final arch = Abi.current().toString().contains("arm")
-        ? _Architecture.arm64
-        : _Architecture.x64;
+    final arch = flutterVersion.arch ??
+        (Abi.current().toString().contains("arm")
+            ? Architecture.arm64
+            : Architecture.x64);
     final prettyPrintedSdk =
-        "$validFlutterVersionOrNull.${platform.name}.${arch.name}"
-            .toLowerCase();
+        "${flutterVersion.version}.${platform.name}.${arch.name}".toLowerCase();
     final cachedSDK = cache.resolveFolder(prettyPrintedSdk);
 
     if (!cachedSDK.resolveFolder("flutter").existsSync()) {
       cachedSDK.createSync();
       final dist = _FlutterDistribution(
-          version: validFlutterVersionOrNull, os: platform, arch: arch);
+          version: flutterVersion.version, os: platform, arch: arch);
       final url = _compatibleFlutterVersions[dist];
 
       if (url == null) {
         throw KlutterException(
-            "Failed to determine download URL for Flutter SDK: $validFlutterVersionOrNull $platform $arch");
+            "Failed to determine download URL for Flutter SDK: $flutterVersion $platform $arch");
       }
 
       final zip = cachedSDK.resolveFile("flutter.zip")
@@ -170,8 +171,8 @@ class _FlutterDistribution {
     required this.arch,
   });
   final String version;
-  final _OperatingSystem os;
-  final _Architecture arch;
+  final OperatingSystem os;
+  final Architecture arch;
 
   bool operator ==(Object other) {
     if (other is! _FlutterDistribution) {
@@ -197,38 +198,48 @@ class _FlutterDistribution {
   int get hashCode => version.hashCode + os.index + arch.index;
 }
 
-enum _OperatingSystem {
+/// The operating system compatible with Klutter.
+enum OperatingSystem {
+  /// Microsoft Windows.
   windows,
+
+  /// Apple Mac OS.
   macos,
+
+  /// Our favorite penguin.
   linux;
 }
 
-enum _Architecture {
+/// The CPU instruction set.
+enum Architecture {
+  /// AMD/Intel.
   x64,
+
+  /// ARM based architecture (Apple M2).
   arm64,
 }
 
 MapEntry<_FlutterDistribution, String> _windows(String path, String version) =>
     MapEntry(
         _FlutterDistribution(
-            os: _OperatingSystem.windows,
-            arch: _Architecture.x64,
+            os: OperatingSystem.windows,
+            arch: Architecture.x64,
             version: version),
         path);
 
 MapEntry<_FlutterDistribution, String> _linux(String path, String version) =>
     MapEntry(
         _FlutterDistribution(
-            os: _OperatingSystem.linux,
-            arch: _Architecture.x64,
+            os: OperatingSystem.linux,
+            arch: Architecture.x64,
             version: version),
         path);
 
 MapEntry<_FlutterDistribution, String> _macosX64(String path, String version) =>
     MapEntry(
         _FlutterDistribution(
-            os: _OperatingSystem.macos,
-            arch: _Architecture.x64,
+            os: OperatingSystem.macos,
+            arch: Architecture.x64,
             version: version),
         path);
 
@@ -236,7 +247,7 @@ MapEntry<_FlutterDistribution, String> _macosArm64(
         String path, String version) =>
     MapEntry(
         _FlutterDistribution(
-            os: _OperatingSystem.macos,
-            arch: _Architecture.arm64,
+            os: OperatingSystem.macos,
+            arch: Architecture.arm64,
             version: version),
         path);

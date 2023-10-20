@@ -1,3 +1,5 @@
+import "../cli/task_get_flutter.dart";
+
 /// The version of the Klutter Pub Plugin.
 const klutterPubVersion = "2.0.0";
 
@@ -46,11 +48,36 @@ extension VersionVerifier on String {
   /// Examples:
   /// - 3.10.6
   /// - 2.16.77
-  String? get verifyFlutterVersion {
+  VerifiedFlutterVersion? get verifyFlutterVersion {
     if (supportedFlutterVersions.contains(this)) {
-      return this;
-    } else {
-      return null;
+      return VerifiedFlutterVersion(this);
     }
+
+    for (final os in OperatingSystem.values) {
+      for (final arch in Architecture.values) {
+        for (final version in supportedFlutterVersions) {
+          if (this == "$version.${os.name}.${arch.name}") {
+            return VerifiedFlutterVersion(version, os: os, arch: arch);
+          }
+        }
+      }
+    }
+
+    return null;
   }
+}
+
+/// Wrapper for [VersionVerifier.verifyFlutterVersion] result.
+class VerifiedFlutterVersion {
+  /// Construct a new instance of [VerifiedFlutterVersion].
+  const VerifiedFlutterVersion(this.version, {this.os, this.arch});
+
+  /// The Flutter version in format major.minor.patch.
+  final String version;
+
+  /// The OperatingSystem extracted from the version String.
+  final OperatingSystem? os;
+
+  /// The Architecture extracted from the version String.
+  final Architecture? arch;
 }

@@ -46,10 +46,10 @@ class ProducerInit extends Task {
           "Invalid BOM version (example of correct version: $klutterGradleVersion): $this");
     }
 
-    final validFlutterVersionOrNull =
-        options[ScriptOption.flutter]?.verifyFlutterVersion;
+    final flutterVersion =
+        options[ScriptOption.flutter]?.verifyFlutterVersion?.version;
 
-    if (validFlutterVersionOrNull == null) {
+    if (flutterVersion == null) {
       throw KlutterException(
           "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $this");
     }
@@ -57,7 +57,7 @@ class ProducerInit extends Task {
     final producer = _Producer(
         pathToRoot: pathToRoot,
         bomVersion: validBomVersionOrNull,
-        flutterVersion: validFlutterVersionOrNull)
+        flutterVersion: flutterVersion)
       ..setupRoot
       ..setupAndroid
       ..setupIOS
