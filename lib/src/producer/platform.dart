@@ -20,7 +20,6 @@
 
 import "dart:io";
 
-import "../../klutter.dart";
 import "../common/config.dart";
 import "../common/utilities.dart";
 
@@ -235,29 +234,6 @@ class PlatformModule {
   /// The root/platform/src/iosMain/kotlin/<organisation>/platform/ folder.
   final Directory iosMain;
 
-  /// Get the path to the cached Flutter SDK installation
-  /// as configured in the root-project/klutter.yaml File.
-  ///
-  /// Either:
-  /// - throws [KlutterException] if unsuccessful or
-  /// - returns [String] path to Flutter SDK installation.
-  ///
-  /// {@category producer}
-  String get findFlutterSDK =>
-      root
-          .resolveFile("/../klutter.yaml".normalize)
-          .readAsLinesSync()
-          .map((line) {
-        if (line.contains("flutter-version:")) {
-          final start = line.indexOf("'") + 1;
-          final end = line.lastIndexOf("'");
-          return line.substring(start, end);
-        } else {
-          return null;
-        }
-      }).firstWhere((line) => line != null) ??
-      "";
-
   /// Create the source folders:
   /// - androidMain
   /// - commonMain
@@ -295,14 +271,6 @@ class PlatformModule {
       |    }
       |
       |    include("bill-of-materials")
-      |}
-      |    
-      |ksp {
-      |    arg("klutterScanFolder", project.buildDir.absolutePath)
-      |    arg("klutterOutputFolder", project.projectDir.parentFile.absolutePath)
-      |    arg("klutterGenerateAdapters", "true")
-      |    arg("flutterVersion", "$findFlutterSDK")
-      |    arg("intelMac", "false") // Set to "true" if you're building on an Intel Mac!
       |}
       |
       |kotlin {

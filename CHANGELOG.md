@@ -1,7 +1,10 @@
-## 1.0.1
+## 2.0.0
+* Copies kradle-wrapper distribution to new project.
+* Uses kradle.yaml instead of klutter.yaml.
 * Bump SDK constraints to >=2.17.6 <4.0.0.
 * Uses Klutter Gradle v2023.3.1.beta.
 * Uses klutter_ui 1.0.1.
+* Removed deprecated TaskName install.
 
 ## 1.0.0
 * Uses Klutter Gradle v2023.1.2.beta.
