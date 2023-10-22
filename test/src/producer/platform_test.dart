@@ -314,13 +314,6 @@ void main() {
           include("bill-of-materials")
       }
       
-      ksp {
-          arg("klutterScanFolder", project.buildDir.absolutePath)
-          arg("klutterOutputFolder", project.projectDir.parentFile.absolutePath)
-          arg("klutterGenerateAdapters", "true")
-          arg("flutterVersion", "3.0.5.macos.arm64")
-      }
-
       kotlin {
   
           android()

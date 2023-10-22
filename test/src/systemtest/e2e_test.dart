@@ -184,18 +184,18 @@ void main() {
         arguments: ["init"],
       );
 
-      final registry =
-          File("${consumerPlugin.absolutePath}/.klutter-plugins".normalize);
-
-      expect(registry.existsSync(), true,
-          reason: "klutter-plugins file should be created");
-
       /// Add plugin to consumer project.
       await sut.execute(
         pathToRoot: consumerPlugin.absolutePath,
         script: sut.ScriptName.consumer,
         arguments: ["add", "lib=$pluginName"],
       );
+
+      final registry =
+      File("${consumerPlugin.absolutePath}/.klutter-plugins".normalize);
+
+      expect(registry.existsSync(), true,
+          reason: "klutter-plugins file should be created");
 
       final registryContainsPlugin =
           registry.readAsStringSync().contains(pluginName);

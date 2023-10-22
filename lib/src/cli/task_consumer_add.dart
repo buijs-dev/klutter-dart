@@ -49,7 +49,7 @@ class ConsumerAdd extends Task {
 
     registerPlugin(
       pathToRoot: pathToRoot,
-      pluginName: ":klutter:$options",
+      pluginName: ":klutter:${options[ScriptOption.lib]}",
       pluginLocation: location,
     );
   }

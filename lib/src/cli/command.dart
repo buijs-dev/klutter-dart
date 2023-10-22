@@ -54,11 +54,13 @@ class Command {
       return null;
     }
 
-    final taskName = arguments.removeAt(0).toTaskNameOrNull;
+    final taskName = arguments.first.toTaskNameOrNull;
 
     if (taskName == null) {
       return null;
     }
+
+    final args = arguments.sublist(1, arguments.length);
 
     if (script == ScriptName.consumer) {
       if (taskName == TaskName.init) {
@@ -70,11 +72,11 @@ class Command {
       }
 
       if (taskName == TaskName.add) {
-        if (arguments.length != 1) {
+        if (args.length != 1) {
           return null;
         }
 
-        final option = arguments.first.split("=");
+        final option = args.first.split("=");
 
         if (option.length != 2) {
           return null;
@@ -93,13 +95,13 @@ class Command {
 
     if (script == ScriptName.producer) {
       if (taskName == TaskName.init) {
-        if (arguments.length > 2) {
+        if (args.length > 2) {
           return null;
         }
 
         final options = <ScriptOption, String>{};
 
-        for (final arg in arguments) {
+        for (final arg in args) {
           final option = arg.split("=");
 
           if (option.length != 2) {
@@ -128,11 +130,11 @@ class Command {
       }
 
       if (taskName == TaskName.get) {
-        if (arguments.length != 1) {
+        if (args.length != 1) {
           return null;
         }
 
-        final option = arguments.first.split("=");
+        final option = args.first.split("=");
 
         if (option.length != 2) {
           return null;

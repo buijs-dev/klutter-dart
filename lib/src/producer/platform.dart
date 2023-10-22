@@ -234,27 +234,6 @@ class PlatformModule {
   /// The root/platform/src/iosMain/kotlin/<organisation>/platform/ folder.
   final Directory iosMain;
 
-  /// Get the path to the cached Flutter SDK installation
-  /// as configured in the root-project/kradle.yaml File.
-  ///
-  /// Returns [String] path to Flutter SDK installation or blank if not found.
-  ///
-  /// {@category producer}
-  String get findFlutterSDK =>
-      root
-          .resolveFile("/../kradle.yaml".normalize)
-          .readAsLinesSync()
-          .map((line) {
-        if (line.contains("flutter-version:")) {
-          final start = line.indexOf("'") + 1;
-          final end = line.lastIndexOf("'");
-          return line.substring(start, end);
-        } else {
-          return null;
-        }
-      }).firstWhere((line) => line != null) ??
-      "";
-
   /// Create the source folders:
   /// - androidMain
   /// - commonMain
@@ -292,13 +271,6 @@ class PlatformModule {
       |    }
       |
       |    include("bill-of-materials")
-      |}
-      |    
-      |ksp {
-      |    arg("klutterScanFolder", project.buildDir.absolutePath)
-      |    arg("klutterOutputFolder", project.projectDir.parentFile.absolutePath)
-      |    arg("klutterGenerateAdapters", "true")
-      |    arg("flutterVersion", "$findFlutterSDK")
       |}
       |
       |kotlin {
