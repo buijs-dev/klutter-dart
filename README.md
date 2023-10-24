@@ -29,7 +29,7 @@ Use this plugin if you want to:
 3. [Creating plugins](#Creation)
 4. [FAQ!](#Faq!)
 
-- Easiest way to start a new project is with the [Intellij](https://buijs.dev/klutter-3/) or [Android Studio](https://buijs.dev/klutter-4/) plugin.
+- Start a new project by using the [Intellij](https://buijs.dev/klutter-3/) or [Android Studio](https://buijs.dev/klutter-4/) plugin.
   This plugin will create a new Flutter plugin and setup Klutter automatically.
 - For a step-by-step guide (doing everything manually), see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
 
@@ -44,7 +44,8 @@ Add the Klutter library to dependencies in the pubspec.yaml:
 ```yaml  
 dev_dependencies:  
  klutter: ^2.0.0
-  
+```
+
 Then run:  
   
 ```shell  
@@ -71,26 +72,12 @@ flutter pub run klutter:consumer init
 ```  
 
 The init task will set up Klutter for both Android and iOS.
-Alternatively you can set up Android and IOS separately.
-
-Setup Android by running:  
-  
-```shell  
-flutter pub run klutter:consumer init=android
-```  
-
-Setup IOS by running:
-
-```shell  
-flutter pub run klutter:consumer init=ios
-```  
-
-Finally, Klutter plugins can be added by running the add command.
+Klutter plugins can be added by running the add command.
 
 <B>Example</B>:</br> Add the library 'awesome_plugin' to your project:
 
 ```shell  
-flutter pub run klutter:consumer add=awesome_plugin 
+flutter pub run klutter:consumer add lib=awesome_plugin 
 ```  
 
 <b>Background</b></br>
@@ -165,7 +152,7 @@ Install the Klutter Framework as dependency and then run:
 flutter pub run klutter:producer init  
 ```  
 
-Build the platform module by running the following in the root folder (takes a few minutes!):
+Build the platform module by running the following in the root folder (takes a few minutes):
 
 ```shell
 ./gradlew clean build -p "platform"
@@ -186,7 +173,7 @@ Make sure you have followed all the following steps:
 - do flutter pub run klutter:producer init in the root folder.
 - do ./gradlew clean build -p "platform" in the root folder.
 - do flutter pub run klutter:consumer init in the root/example folder.
-- do flutter pub run klutter:consumer add=<your_plugin_name> in the root/example folder.
+- do flutter pub run klutter:consumer add lib=<your_plugin_name> in the root/example folder.
 
 ### For Android emulator:
 There should be a .klutter-plugins file in the root/example folder containing an entry for your plugin.
