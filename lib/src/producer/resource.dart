@@ -34,7 +34,7 @@ extension ResourceCopy on Directory {
       ).maybeCreate;
       final to = pathTo.resolveFile(resource.filename);
       from.copySync(to.absolutePath);
-      Process.runSync("chmod", runInShell: true, ["+x", to.absolutePath]);
+      Process.runSync("chmod", runInShell: true, ["755", to.absolutePath]);
     }
   }
 }
