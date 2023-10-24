@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2022 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ extension ResourceCopy on Directory {
       ).maybeCreate;
       final to = pathTo.resolveFile(resource.filename);
       from.copySync(to.absolutePath);
-      Process.runSync("chmod", runInShell: true, ["755", to.absolutePath]);
+      Process.runSync("chmod", runInShell: true, ["+x", to.absolutePath]);
     }
   }
 }
@@ -64,11 +64,10 @@ Future<LocalResource> loadResource({
   required Uri uri,
   required String filename,
   required String targetRelativeToRoot,
-  required bool isWindows,
 }) =>
     Isolate.resolvePackageUri(uri).then((pathToSource) {
       return LocalResource(
-        pathToSource: isWindows
+        pathToSource: Platform.isWindows
             ? pathToSource!.path.replaceFirst("/", "")
             : pathToSource!.path,
         filename: filename,
