@@ -32,8 +32,9 @@ extension ResourceCopy on Directory {
       final pathTo = Directory(
         "$absolutePath/${resource.targetRelativeToRoot}".normalize,
       ).maybeCreate;
-
-      from.copySync(pathTo.resolveFile(resource.filename).absolutePath);
+      final to = pathTo.resolveFile(resource.filename);
+      from.copySync(to.absolutePath);
+      Process.runSync("chmod", runInShell: true, ["+x", to.absolutePath]);
     }
   }
 }
