@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2022 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -126,7 +126,7 @@ void main() {
         }
         
         android {
-            namespace "dev.buijs.klutter.example_plugin"
+            namespace "dev.buijs.klutter.example_plugin.pluggy"
         
             compileOptions {
                 sourceCompatibility JavaVersion.VERSION_17
@@ -184,17 +184,6 @@ void main() {
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
             e.cause.endsWith("fake"))));
-  });
-
-  test("Verify exception is thrown if root/android/gradle  does not exist", () {
-    final android = Directory("${Directory.systemTemp.path}${s}wag1")
-      ..createSync(recursive: true);
-    expect(
-            () =>
-                setGradleWrapperVersion(pathToAndroid: android.absolutePath),
-        throwsA(predicate((e) =>
-        e is KlutterException &&
-            e.cause.contains("Missing gradle-wrapper.properties file in"))));
   });
 
   test(

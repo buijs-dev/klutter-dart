@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2022 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -92,20 +92,6 @@ void writeAndroidAppBuildGradleFile({
   );
 }
 
-/// Overwrite the build.gradle File in android.
-///
-/// {@category consumer}
-void writeAndroidBuildGradleFile({
-  required String pathToAndroid,
-  required String packageName,
-  required String pluginName,
-}) {
-  pathToAndroid.verifyExists.toBuildGradleFile.writeBuildGradleContent(
-    packageName: packageName,
-    pluginName: pluginName,
-  );
-}
-
 extension on String {
   /// Create a path to the root-project/android/local.properties file.
   /// If the file does not exist throw a [KlutterException].
@@ -128,8 +114,8 @@ extension on String {
   /// Create a path to the app/build.gradle file.
   /// If the file does not exist throw a [KlutterException].
   File get toAppBuildGradleFile => File("$this/app/build.gradle".normalize)
-    ..ifNotExists((_) => throw KlutterException(
-        "Missing app/build.gradle file in folder: $this"));
+    ..ifNotExists((_) =>
+    throw KlutterException("Missing app/build.gradle file in folder: $this"));
 
   /// Create a path to the flutter/tools/gradle/klutter_plugin_loader.gradle.kts file.
   /// If the file does not exist create it.
@@ -184,7 +170,7 @@ extension on File {
   /// the Klutter made plugins in a Flutter project.
   void get writeGradleContent {
     writeAsStringSync(r'''
-            // Copyright (c) 2021 - 2023 Buijs Software
+            // Copyright (c) 2021 - 2022 Buijs Software
             |//
             |// Permission is hereby granted, free of charge, to any person obtaining a copy
             |// of this software and associated documentation files (the "Software"), to deal
@@ -237,49 +223,10 @@ extension on File {
         .format);
   }
 
-  void writeBuildGradleContent({
-    required String packageName,
-    required String pluginName,
-  }) {
-    writeAsStringSync(r'''
-buildscript {
-|    repositories {
-|        google()
-|        mavenCentral()
-|    }
-|
-|    dependencies {
-|        classpath 'com.android.tools.build:gradle:8.0.2'
-|        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
-|    }
-|}
-|
-|allprojects {
-|    repositories {
-|        google()
-|        mavenCentral()
-|    }
-|}
-|
-|rootProject.buildDir = '../build'
-|subprojects {
-|    project.buildDir = "${rootProject.buildDir}/${project.name}"
-|}
-|subprojects {
-|    project.evaluationDependsOn(':app')
-|}
-|
-|tasks.register("clean", Delete) {
-|    delete rootProject.buildDir
-|}
-|'''
-        .format);
-  }
-
   void writeAppBuildGradleContent({
     required String packageName,
     required String pluginName,
-  }) {
+}) {
     writeAsStringSync('''
 def localProperties = new Properties()
 |def localPropertiesFile = rootProject.file('local.properties')
@@ -309,7 +256,7 @@ def localProperties = new Properties()
 |apply from: "\$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 |
 |android {
-|    namespace "${packageName}_example"
+|    namespace "$packageName.$pluginName"
 |    ndkVersion flutter.ndkVersion
 |
 |    compileOptions {
@@ -355,8 +302,7 @@ def localProperties = new Properties()
 |
 |kotlin {
 |    jvmToolchain(17)
-|}'''
-        .format);
+|}'''.format);
   }
 
   /// Add the following line to the settings.gradle file if not present:

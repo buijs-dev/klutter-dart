@@ -151,8 +151,8 @@ extension on File {
           |        maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
           |    }
           |    dependencies {
-          |        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
-          |        classpath("com.android.tools.build:gradle:7.0.4")
+          |        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
+          |        classpath("com.android.tools.build:gradle:8.0.2")
           |        classpath(platform("dev.buijs.klutter:bom:$klutterBomVersion"))
           |        classpath("dev.buijs.klutter:gradle")
           |    }
@@ -275,6 +275,7 @@ class PlatformModule {
       |
       |kotlin {
       |
+      |    jvmToolchain(17)
       |    android()
       |
       |    val xcfName = "Platform"
@@ -301,7 +302,7 @@ class PlatformModule {
       |        val commonMain by getting {
       |            dependencies {
       |                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
       |            }
       |        }
       |
@@ -350,12 +351,15 @@ class PlatformModule {
       |}
       |
       |android {
-      |    compileSdk = $androidCompileSdk
-      |    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+      |    namespace = "$packageName.$pluginName.platform"
       |    sourceSets["main"].kotlin { srcDirs("src/androidMain/kotlin") }
+      |    compileOptions {
+      |        sourceCompatibility = JavaVersion.VERSION_17
+      |        targetCompatibility = JavaVersion.VERSION_17
+      |    }
       |    defaultConfig {
+      |        compileSdk = $androidCompileSdk
       |        minSdk = $androidMinSdk
-      |        targetSdk = $androidTargetSdk
       |    }
       |}
       |

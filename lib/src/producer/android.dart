@@ -252,7 +252,7 @@ class _Configuration {
         |}
         |
         |android {
-        |    namespace "$packageName"
+        |    namespace "$packageName.$pluginName"
         |
         |    compileOptions {
         |        sourceCompatibility JavaVersion.VERSION_17
