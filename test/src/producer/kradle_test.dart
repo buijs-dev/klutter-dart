@@ -48,19 +48,12 @@ void main() {
     await Kradle(root.normalizeToFolder.absolutePath).copyToRoot;
 
     final env = File("${root.path}/kradle.env").normalizeToFile;
-    final wrapperJar = File("${root.path}/kradle/kradle-wrapper.jar").normalizeToFile;
     final yaml = File("${root.path}/kradle.yaml").normalizeToFile;
-    final wrapperShell = File("${root.path}/kradlew").normalizeToFile;
-    final wrapperBat = File("${root.path}/kradlew.bat").normalizeToFile;
 
     expect(env.existsSync(), true,
         reason: "kradle.env should exist");
-    expect(wrapperJar.existsSync(), true,
-        reason: "kradle-wrapper.jar should exist");
     expect(yaml.existsSync(), true,
         reason: "kradle.yaml should exist");
-    expect(wrapperShell.existsSync(), true, reason: "kradlew should exist");
-    expect(wrapperBat.existsSync(), true, reason: "kradlew.bat should exist");
 
     root.deleteSync(recursive: true);
   });

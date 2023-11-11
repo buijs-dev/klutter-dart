@@ -47,13 +47,9 @@ class Kradle {
   /// The Flutter project root folder.
   final String pathToRoot;
 
-  late final LocalResource _kradlew;
-  late final LocalResource _kradlewBat;
-
   late final LocalResource _kradleEnv;
 
   late final LocalResource _kradleYaml;
-  late final LocalResource _kradlewJar;
 
   late final Future<bool> _isInitialized =
       Future.wait([_init]).then((_) => true);
@@ -61,36 +57,9 @@ class Kradle {
   /// Read all resources from the klutter package lib/res folder.
   Future<void> get _init async {
     await Future.wait([
-      _loadKradlew,
-      _loadKradlewBat,
       _loadKradleEnv,
       _loadKradleYaml,
-      _loadKradlewJar,
     ]);
-  }
-
-  Future<void> get _loadKradlew async {
-    _kradlew = await loadResource(
-      uri: "package:klutter/res/kradlew".toUri,
-      targetRelativeToRoot: "",
-      filename: "kradlew",
-    );
-  }
-
-  Future<void> get _loadKradlewBat async {
-    _kradlewBat = await loadResource(
-      uri: "package:klutter/res/kradlew.bat".toUri,
-      targetRelativeToRoot: "",
-      filename: "kradlew.bat",
-    );
-  }
-
-  Future<void> get _loadKradlewJar async {
-    _kradlewJar = await loadResource(
-      uri: "package:klutter/res/kradle-wrapper.jar".toUri,
-      targetRelativeToRoot: "kradle".normalize,
-      filename: "kradle-wrapper.jar",
-    );
   }
 
   Future<void> get _loadKradleEnv async {
@@ -121,10 +90,7 @@ class Kradle {
     await _isInitialized;
     pathToRoot.verifyExists.rootFolder.copyFiles([
       _kradleYaml,
-      _kradlew,
-      _kradlewBat,
       _kradleEnv,
-      _kradlewJar,
     ]);
   }
 }
