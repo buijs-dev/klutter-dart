@@ -119,7 +119,7 @@ void main() {
         () => writeRootBuildGradleFile(
           pathToRoot: "fake",
           pluginName: "some_plugin",
-          klutterBomVersion: "2023.1.1",),
+          klutterBomVersion: "2023.3.1",),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
@@ -136,7 +136,7 @@ void main() {
     writeRootBuildGradleFile(
       pathToRoot: root.path,
       pluginName: "some_plugin",
-      klutterBomVersion: "2023.1.1",
+      klutterBomVersion: "2023.3.1",
     );
 
     expect(
@@ -151,9 +151,9 @@ void main() {
                   maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
               }
               dependencies {
-                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
-                  classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath(platform("dev.buijs.klutter:bom:2023.1.1"))
+                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
+                  classpath("com.android.tools.build:gradle:8.0.2")
+                  classpath(platform("dev.buijs.klutter:bom:2023.3.1"))
                   classpath("dev.buijs.klutter:gradle")
               }
           }
@@ -173,7 +173,7 @@ void main() {
     writeRootBuildGradleFile(
       pathToRoot: root.path,
       pluginName: "some_plugin",
-      klutterBomVersion: "2023.1.1",
+      klutterBomVersion: "2023.3.1",
     );
 
     expect(
@@ -188,9 +188,9 @@ void main() {
                   maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
               }
               dependencies {
-                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
-                  classpath("com.android.tools.build:gradle:7.0.4")
-                  classpath(platform("dev.buijs.klutter:bom:2023.1.1"))
+                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
+                  classpath("com.android.tools.build:gradle:8.0.2")
+                  classpath(platform("dev.buijs.klutter:bom:2023.3.1"))
                   classpath("dev.buijs.klutter:gradle")
               }
           }
@@ -316,6 +316,7 @@ void main() {
       
       kotlin {
   
+          jvmToolchain(17)
           android()
       
           val xcfName = "Platform"
@@ -342,7 +343,7 @@ void main() {
               val commonMain by getting {
                   dependencies {
                       implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
                   }
               }
       
@@ -391,12 +392,15 @@ void main() {
       }
       
       android {
-          compileSdk = 31
-          sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+          namespace = "com.organisation.nigulp.nigulp.platform"
           sourceSets["main"].kotlin { srcDirs("src/androidMain/kotlin") }
+          compileOptions {
+              sourceCompatibility = JavaVersion.VERSION_17
+              targetCompatibility = JavaVersion.VERSION_17
+          }
           defaultConfig {
-              minSdk = 21
-              targetSdk = 31
+              compileSdk = 33
+              minSdk = 24
           }
       }
       

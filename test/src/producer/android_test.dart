@@ -28,14 +28,16 @@ void main() {
   final s = Platform.pathSeparator;
 
   const pluginVersion = "1.0.0";
+  const pluginName = "pluggy";
   const packageName = "dev.buijs.klutter.example_plugin";
 
   test("Verify exception is thrown if root/android does not exist", () {
     expect(
         () => writeBuildGradleFile(
+          pluginName: pluginName,
             pluginVersion: pluginVersion,
             packageName: packageName,
-            klutterBomVersion: "2023.1.1",
+            klutterBomVersion: "2023.3.1",
             pathToAndroid: "fake"),
         throwsA(predicate((e) =>
             e is KlutterException &&
@@ -54,10 +56,11 @@ void main() {
 
     expect(
         () => writeBuildGradleFile(
+          pluginName: pluginName,
               pluginVersion: pluginVersion,
               packageName: packageName,
               pathToAndroid: android.path,
-          klutterBomVersion: "2023.1.1",
+          klutterBomVersion: "2023.3.1",
             ),
         throwsA(predicate((e) =>
             e is KlutterException &&
@@ -79,10 +82,11 @@ void main() {
       ..writeAsString("====");
 
     writeBuildGradleFile(
+      pluginName: pluginName,
       pluginVersion: pluginVersion,
       packageName: packageName,
       pathToAndroid: android.path,
-      klutterBomVersion: "2023.1.1",
+      klutterBomVersion: "2023.3.1",
     );
 
     expect(
@@ -105,9 +109,9 @@ void main() {
             }
         
             dependencies {
-                classpath platform("dev.buijs.klutter:bom:2023.1.1")
+                classpath platform("dev.buijs.klutter:bom:2023.3.1")
                 classpath "dev.buijs.klutter:gradle"
-                classpath 'com.android.tools.build:gradle:7.0.4'
+                classpath 'com.android.tools.build:gradle:8.0.2'
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
             }
         }
@@ -122,15 +126,15 @@ void main() {
         }
         
         android {
-            compileSdkVersion 31
+            namespace "dev.buijs.klutter.example_plugin.pluggy"
         
             compileOptions {
-                sourceCompatibility JavaVersion.VERSION_1_8
-                targetCompatibility JavaVersion.VERSION_1_8
+                sourceCompatibility JavaVersion.VERSION_17
+                targetCompatibility JavaVersion.VERSION_17
             }
         
             kotlinOptions {
-                jvmTarget = '1.8'
+                jvmTarget = '17'
             }
         
             sourceSets {
@@ -138,7 +142,8 @@ void main() {
             }
         
             defaultConfig {
-                minSdkVersion 21
+                compileSdk 33
+                minSdk 24
             }
         }
         
@@ -157,8 +162,12 @@ void main() {
         }
         
         java {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        }
+        
+        kotlin {
+            jvmToolchain(17)
         }'''
             .replaceAll(" ", ""));
 
@@ -168,7 +177,9 @@ void main() {
   test("Verify exception is thrown if root/android does not exist", () {
     expect(
         () =>
-            writeAndroidPlugin(packageName: packageName, pathToAndroid: "fake"),
+            writeAndroidPlugin(
+                pluginName: pluginName,
+                packageName: packageName, pathToAndroid: "fake"),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
@@ -187,6 +198,7 @@ void main() {
 
     expect(
         () => writeAndroidPlugin(
+          pluginName: pluginName,
               packageName: packageName,
               pathToAndroid: android.path,
             ),
@@ -211,6 +223,7 @@ void main() {
 
     expect(
         () => writeAndroidPlugin(
+          pluginName: pluginName,
               packageName: packageName,
               pathToAndroid: android.path,
             ),
@@ -234,6 +247,7 @@ void main() {
 
     expect(
         () => writeAndroidPlugin(
+          pluginName: pluginName,
               packageName: packageName,
               pathToAndroid: android.path,
             ),
@@ -257,6 +271,7 @@ void main() {
     )..createSync(recursive: true);
 
     writeAndroidPlugin(
+      pluginName: pluginName,
       packageName: packageName,
       pathToAndroid: android.path,
     );

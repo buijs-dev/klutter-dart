@@ -43,7 +43,6 @@ void _executeInitAndroid(String pathToRoot) {
   final pathToAndroid = "$pathToRoot/android".normalize;
   final sdk = findFlutterSDK(pathToAndroid);
   final app = "$pathToAndroid/app".normalize;
-
   writePluginLoaderGradleFile(sdk);
   createRegistry(pathToRoot);
   applyPluginLoader(pathToAndroid);

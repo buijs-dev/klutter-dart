@@ -21,6 +21,7 @@
 import "dart:io";
 
 import "../common/common.dart";
+import "../consumer/android.dart";
 import "../producer/android.dart";
 import "../producer/gradle.dart";
 import "../producer/ios.dart";
@@ -57,14 +58,16 @@ class ProducerInit extends Task {
     final producer = _Producer(
         pathToRoot: pathToRoot,
         bomVersion: validBomVersionOrNull,
-        flutterVersion: flutterVersion)
+        flutterVersion: flutterVersion);
+    await producer.addGradle;
+    await producer.addKradle;
+    producer
       ..setupRoot
       ..setupAndroid
       ..setupIOS
       ..setupPlatform
       ..setupExample;
-    await producer.addGradle;
-    await producer.addKradle;
+
   }
 
   @override
@@ -116,8 +119,10 @@ extension on _Producer {
     final packageName = findPackageName(pathToRoot);
     final pluginVersion = findPluginVersion(pathToRoot);
     final pathToAndroid = "$pathToRoot/android".normalize;
+    final pluginName = findPluginName(pathToRoot);
 
     writeBuildGradleFile(
+      pluginName: pluginName,
         pathToAndroid: pathToAndroid,
         packageName: packageName,
         pluginVersion: pluginVersion,
@@ -126,9 +131,16 @@ extension on _Producer {
     writeAndroidPlugin(
       pathToAndroid: pathToAndroid,
       packageName: packageName,
+      pluginName: pluginName,
     );
 
+    writeAndroidAppBuildGradleFile(
+        pathToAndroid: "$pathToRoot/example/android".normalize,
+        packageName: packageName,
+        pluginName: pluginName);
     writeKlutterGradleFile(pathToAndroid);
+    setGradleWrapperVersion(pathToAndroid: pathToAndroid);
+    deleteRootAndroidManifestFile(pathToAndroid: pathToAndroid);
   }
 
   void get setupPlatform {

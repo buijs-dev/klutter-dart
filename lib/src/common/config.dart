@@ -13,13 +13,10 @@ const klutterFlutterVersion = "3.10.6";
 const kotlinVersion = "1.8.20";
 
 /// The minimum SDK version for Android.
-const androidMinSdk = 21;
-
-/// The target SDK version for Android.
-const androidTargetSdk = 31;
+const androidMinSdk = 24;
 
 /// The compile SDK version for Android.
-const androidCompileSdk = 31;
+const androidCompileSdk = 33;
 
 /// Flutter SDK versions which can be used for a Producer project.
 const supportedFlutterVersions = {"3.0.5", "3.3.10", "3.7.12", "3.10.6"};
