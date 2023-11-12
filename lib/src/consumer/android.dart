@@ -241,7 +241,7 @@ extension on File {
     required String pluginName,
   }) {
     writeAsStringSync(r'''
-|buildscript {
+buildscript {
 |    repositories {
 |        google()
 |        mavenCentral()
