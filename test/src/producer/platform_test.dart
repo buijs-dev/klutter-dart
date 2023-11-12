@@ -392,7 +392,7 @@ void main() {
       }
       
       android {
-          namespace = "com.organisation.nigulp.nigulp.platform"
+          namespace = "com.organisation.nigulp.platform"
           sourceSets["main"].kotlin { srcDirs("src/androidMain/kotlin") }
           compileOptions {
               sourceCompatibility = JavaVersion.VERSION_17
@@ -446,25 +446,6 @@ void main() {
       iosMain.existsSync(),
       reason:
           "root/klutter/nigulp/src/iosMain/kotlin/com/organisation/nigulp/platform should be created",
-    );
-
-    final androidManifest =
-        File("${platform.path}/src/androidMain/AndroidManifest.xml".normalize);
-
-    expect(
-      true,
-      androidManifest.existsSync(),
-      reason:
-          "root/klutter/nigulp/src/androidMain/AndroidManifest.xml should be created",
-    );
-
-    expect(
-      """
-        <?xml version="1.0" encoding="utf-8"?>
-        <manifest package="com.organisation.nigulp.platform" />
-        """
-          .replaceAll(" ", ""),
-      androidManifest.readAsStringSync().replaceAll(" ", ""),
     );
 
     final androidPlatformClass =
