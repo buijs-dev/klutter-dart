@@ -77,7 +77,6 @@ void createPlatformModule({
         packageName: packageName)
       ..createPlatformGradleFile
       ..createPlatformSourceFolders
-      ..createAndroidManifest
       ..createAndroidPlatformClass
       ..createCommonGreetingClass
       ..createCommonPlatformClass
@@ -351,7 +350,7 @@ class PlatformModule {
       |}
       |
       |android {
-      |    namespace = "$packageName.$pluginName.platform"
+      |    namespace = "$packageName.platform"
       |    sourceSets["main"].kotlin { srcDirs("src/androidMain/kotlin") }
       |    compileOptions {
       |        sourceCompatibility = JavaVersion.VERSION_17
@@ -372,23 +371,6 @@ class PlatformModule {
       |    .setFinalizedBy(listOf(tasks.getByName("klutterCopyFramework")))
       |"""
           .format);
-  }
-
-  /// Create the AndroidManifest.xml file.
-  ///
-  /// Will create a new file if it does not exist
-  /// or overwrite the current AndroidManifest.xml
-  /// if it already exists.
-  void get createAndroidManifest {
-    root.resolveFile("src/androidMain/AndroidManifest.xml").normalizeToFile
-      ..maybeCreate
-      ..writeAsStringSync(
-        """
-        <?xml version="1.0" encoding="utf-8"?>
-        |<manifest package="$packageName.platform" />
-        """
-            .format,
-      );
   }
 
   /// Create Platform.kt (Kotlin) class file

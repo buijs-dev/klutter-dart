@@ -126,7 +126,7 @@ void main() {
         }
         
         android {
-            namespace "dev.buijs.klutter.example_plugin.pluggy"
+            namespace "dev.buijs.klutter.example_plugin"
         
             compileOptions {
                 sourceCompatibility JavaVersion.VERSION_17
