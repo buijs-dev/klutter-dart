@@ -153,7 +153,7 @@ extension on _Producer {
     final pathToAndroid = "$pathToRoot/example/android".normalize;
 
     writeExampleMainDartFile(
-      pathToExample: pathToAndroid,
+      pathToExample: "$pathToRoot/example".normalize,
       pluginName: pluginName,
     );
 
