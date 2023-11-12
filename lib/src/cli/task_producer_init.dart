@@ -134,10 +134,6 @@ extension on _Producer {
       pluginName: pluginName,
     );
 
-    writeAndroidAppBuildGradleFile(
-        pathToAndroid: "$pathToRoot/example/android".normalize,
-        packageName: packageName,
-        pluginName: pluginName);
     writeKlutterGradleFile(pathToAndroid);
     setGradleWrapperVersion(pathToAndroid: pathToAndroid);
     deleteRootAndroidManifestFile(pathToAndroid: pathToAndroid);
@@ -152,10 +148,23 @@ extension on _Producer {
   }
 
   void get setupExample {
+    final packageName = findPackageName(pathToRoot);
+    final pluginName = findPluginName(pathToRoot);
+
     writeExampleMainDartFile(
       pathToExample: "$pathToRoot/example".normalize,
-      pluginName: findPluginName(pathToRoot),
+      pluginName: pluginName,
     );
+
+    writeAndroidAppBuildGradleFile(
+        pathToAndroid: "$pathToRoot/example/android".normalize,
+        packageName: packageName,
+        pluginName: pluginName);
+
+    writeAndroidBuildGradleFile(
+        pathToAndroid: "$pathToRoot/example/android".normalize,
+        packageName: packageName,
+        pluginName: pluginName);
   }
 
   void get setupIOS {

@@ -92,6 +92,20 @@ void writeAndroidAppBuildGradleFile({
   );
 }
 
+/// Overwrite the build.gradle File in android.
+///
+/// {@category consumer}
+void writeAndroidBuildGradleFile({
+  required String pathToAndroid,
+  required String packageName,
+  required String pluginName,
+}) {
+  pathToAndroid.verifyExists.toBuildGradleFile.writeBuildGradleContent(
+    packageName: packageName,
+    pluginName: pluginName,
+  );
+}
+
 extension on String {
   /// Create a path to the root-project/android/local.properties file.
   /// If the file does not exist throw a [KlutterException].
@@ -221,6 +235,43 @@ extension on File {
             |    }
             |}'''
         .format);
+  }
+
+  void writeBuildGradleContent({ required String packageName,
+    required String pluginName,
+  }) {
+    writeAsStringSync(r'''
+|buildscript {
+|    repositories {
+|        google()
+|        mavenCentral()
+|    }
+|
+|    dependencies {
+|        classpath 'com.android.tools.build:gradle:8.0.2'
+|        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
+|    }
+|}
+|
+|allprojects {
+|    repositories {
+|        google()
+|        mavenCentral()
+|    }
+|}
+|
+|rootProject.buildDir = '../build'
+|subprojects {
+|    project.buildDir = "${rootProject.buildDir}/${project.name}"
+|}
+|subprojects {
+|    project.evaluationDependsOn(':app')
+|}
+|
+|tasks.register("clean", Delete) {
+|    delete rootProject.buildDir
+|}
+|'''.format);
   }
 
   void writeAppBuildGradleContent({
