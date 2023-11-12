@@ -150,21 +150,24 @@ extension on _Producer {
   void get setupExample {
     final packageName = findPackageName(pathToRoot);
     final pluginName = findPluginName(pathToRoot);
+    final pathToAndroid = "$pathToRoot/example/android".normalize;
 
     writeExampleMainDartFile(
-      pathToExample: "$pathToRoot/example".normalize,
+      pathToExample: pathToAndroid,
       pluginName: pluginName,
     );
 
     writeAndroidAppBuildGradleFile(
-        pathToAndroid: "$pathToRoot/example/android".normalize,
+        pathToAndroid: pathToAndroid,
         packageName: packageName,
         pluginName: pluginName);
 
     writeAndroidBuildGradleFile(
-        pathToAndroid: "$pathToRoot/example/android".normalize,
+        pathToAndroid: pathToAndroid,
         packageName: packageName,
         pluginName: pluginName);
+
+    setGradleWrapperVersion(pathToAndroid: pathToAndroid);
   }
 
   void get setupIOS {
