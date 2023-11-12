@@ -172,6 +172,19 @@ void main() {
           reason:
               "Plugin should be created in: '${producerPlugin.absolute.path}'");
 
+      /// Example/lib/main.dart file should be created.
+      final mainDartFile =  File("${producerPlugin.absolutePath}/example/lib/main.dart"
+          .normalize);
+      expect(mainDartFile.existsSync(),
+          true,
+          reason: "example/lib/main.dart file should exist");
+
+      expect(mainDartFile
+          .readAsStringSync()
+          .contains('String _greeting = "There shall be no greeting for now!";'),
+          true,
+      reason: "main.dart content is overwritten");
+
       /// Add Klutter as dev_dependency.
       await addKlutterAsDevDependency(
         root: consumerPlugin.absolutePath,
