@@ -307,7 +307,7 @@ def localProperties = new Properties()
 |apply from: "\$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 |
 |android {
-|    namespace "$packageName"
+|    namespace "${packageName}_example"
 |    ndkVersion flutter.ndkVersion
 |
 |    compileOptions {
