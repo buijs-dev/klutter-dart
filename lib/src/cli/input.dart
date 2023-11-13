@@ -110,7 +110,7 @@ extension TaskNameParser on String? {
       case "ADD":
         return TaskName.add;
       case "GET":
-        return TaskName.init;
+        return TaskName.get;
       case "INIT":
         return TaskName.init;
       default:

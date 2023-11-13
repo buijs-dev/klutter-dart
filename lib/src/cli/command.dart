@@ -64,7 +64,7 @@ class Command {
 
     if (script == ScriptName.consumer) {
       if (taskName == TaskName.init) {
-        if (arguments.isEmpty) {
+        if (args.isEmpty) {
           return Command(taskName: taskName, scriptName: script);
         } else {
           return null;
