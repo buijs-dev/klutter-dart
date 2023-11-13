@@ -47,6 +47,8 @@ class Kradle {
   /// The Flutter project root folder.
   final String pathToRoot;
 
+  final bool _isWindows = Platform.isWindows;
+
   late final LocalResource _kradleEnv;
 
   late final LocalResource _kradleYaml;
@@ -67,6 +69,7 @@ class Kradle {
       uri: "package:klutter/res/kradle.env".toUri,
       targetRelativeToRoot: "".normalize,
       filename: "kradle.env",
+      isWindows: _isWindows,
     );
   }
 
@@ -75,6 +78,7 @@ class Kradle {
       uri: "package:klutter/res/kradle.yaml".toUri,
       targetRelativeToRoot: "".normalize,
       filename: "kradle.yaml",
+      isWindows: _isWindows,
     );
   }
 

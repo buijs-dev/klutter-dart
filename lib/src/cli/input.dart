@@ -75,7 +75,12 @@ enum ScriptOption {
   /// Name of library to add.
   ///
   /// Used by [ScriptName.consumer] when adding a Klutter Library as dependency.
-  lib
+  lib,
+
+  /// For testing purposes.
+  ///
+  /// Skips downloading of libraries when set to true.
+  dryRun
 }
 
 /// List of available tasks.

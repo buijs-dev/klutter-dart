@@ -35,29 +35,26 @@ class GetFlutterSDK extends Task {
 
   @override
   Future<void> toBeExecuted(String pathToRoot) async {
-    final skip = Platform.environment["GET_FLUTTER_SDK_SKIP"] != null;
-    if (skip) {
-      return;
-    }
-
     final flutterVersion = options[ScriptOption.flutter]?.verifyFlutterVersion;
 
     if (flutterVersion == null) {
       throw KlutterException(
-          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $this");
+          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $flutterVersion");
     }
 
     OperatingSystem? platform;
 
     if (flutterVersion.os != null) {
-      platform = flutterVersion.os!;
+      platform = flutterVersion.os;
     } else if (Platform.isWindows) {
       platform = OperatingSystem.windows;
     } else if (Platform.isMacOS) {
       platform = OperatingSystem.macos;
     } else if (Platform.isLinux) {
       platform = OperatingSystem.linux;
-    } else {
+    }
+
+    if (platform == null) {
       throw KlutterException(
           "Current OS is not supported (supported: macos, windows or linux): ${Platform.operatingSystem}");
     }
@@ -80,6 +77,13 @@ class GetFlutterSDK extends Task {
       if (url == null) {
         throw KlutterException(
             "Failed to determine download URL for Flutter SDK: $flutterVersion $platform $arch");
+      }
+
+      final skip = Platform.environment["GET_FLUTTER_SDK_SKIP"] != null ||
+          options[ScriptOption.dryRun] == "true";
+
+      if (skip) {
+        return;
       }
 
       final zip = cachedSDK.resolveFile("flutter.zip")

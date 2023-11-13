@@ -41,6 +41,8 @@ class Gradle {
   /// The Flutter project root folder.
   final String pathToRoot;
 
+  final bool _isWindows = Platform.isWindows;
+
   late final LocalResource _gradlew;
   late final LocalResource _gradlewBat;
   late final LocalResource _gradlewJar;
@@ -66,6 +68,7 @@ class Gradle {
       uri: "package:klutter/res/gradlew".toUri,
       targetRelativeToRoot: "",
       filename: "gradlew",
+      isWindows: _isWindows,
     );
   }
 
@@ -74,6 +77,7 @@ class Gradle {
       uri: "package:klutter/res/gradlew.bat".toUri,
       targetRelativeToRoot: "",
       filename: "gradlew.bat",
+      isWindows: _isWindows,
     );
   }
 
@@ -82,6 +86,7 @@ class Gradle {
       uri: "package:klutter/res/gradle-wrapper.jar".toUri,
       targetRelativeToRoot: "gradle/wrapper".normalize,
       filename: "gradle-wrapper.jar",
+      isWindows: _isWindows,
     );
   }
 
@@ -90,6 +95,7 @@ class Gradle {
       uri: "package:klutter/res/gradle-wrapper.properties".toUri,
       targetRelativeToRoot: "gradle/wrapper".normalize,
       filename: "gradle-wrapper.properties",
+      isWindows: _isWindows,
     );
   }
 
@@ -98,6 +104,7 @@ class Gradle {
       uri: "package:klutter/res/gradle.properties".toUri,
       targetRelativeToRoot: "",
       filename: "gradle.properties",
+      isWindows: _isWindows,
     );
   }
 
