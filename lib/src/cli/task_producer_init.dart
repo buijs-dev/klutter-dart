@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -40,11 +40,11 @@ class ProducerInit extends Task {
 
   @override
   Future<void> toBeExecuted(String pathToRoot) async {
-    final validBomVersionOrNull = options[ScriptOption.bom]!.verifyBomVersion;
+    final validBomVersionOrNull = options[ScriptOption.bom]?.verifyBomVersion;
 
     if (validBomVersionOrNull == null) {
       throw KlutterException(
-          "Invalid BOM version (example of correct version: $klutterGradleVersion): $this");
+          "Invalid BOM version (example of correct version: $klutterGradleVersion): $validBomVersionOrNull");
     }
 
     final flutterVersion =
@@ -52,7 +52,7 @@ class ProducerInit extends Task {
 
     if (flutterVersion == null) {
       throw KlutterException(
-          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $this");
+          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $flutterVersion");
     }
 
     final producer = _Producer(

@@ -18,38 +18,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "dart:io";
-
 import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
-  final temp = Directory.systemTemp..createTempSync();
-
-  test("Verify exception is thrown if podspec file does not exist", () {
-    final folder = Directory("${temp.absolutePath}/ios_test1".normalize)
-      ..createSync();
-
-    expect(
-        () => addFrameworkToPodspec(
-            pluginName: "some_plugin", pathToIos: folder.absolutePath),
-        throwsA(predicate((e) =>
-            e is KlutterException &&
-            e.cause.startsWith("Missing podspec file"))));
+  test("ProducerInit fails when BOM version is not set", () async {
+    final result = await ProducerInit().execute("");
+    expect(result.isOk, false);
+    expect(result.message, "Invalid BOM version (example of correct version: $klutterGradleVersion): null");
   });
 
-  test("Verify exception is thrown if addFramework fails", () {
-    final folder = Directory("${temp.absolutePath}/ios_test2".normalize)
-      ..createSync();
+  test("ProducerInit fails when Flutter SDK is not set", () async {
+    final task = ProducerInit()
+      ..options = { ScriptOption.bom : "2023.3.1.beta" };
 
-    File("${folder.absolutePath}/some_plugin.podspec").createSync();
-
-    expect(
-        () => addFrameworkToPodspec(
-            pluginName: "some_plugin", pathToIos: folder.absolutePath),
-        throwsA(predicate((e) =>
-            e is KlutterException &&
-            e.cause.startsWith(
-                "Failed to add Platform.framework to ios folder."))));
+    final result = await task.execute("");
+    expect(result.isOk, false);
+    expect(result.message, "Invalid Flutter version (supported versions are: {3.0.5, 3.3.10, 3.7.12, 3.10.6}): null");
   });
 }

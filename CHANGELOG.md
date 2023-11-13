@@ -1,15 +1,18 @@
 ## 2.0.0
-* Copies kradle-wrapper distribution to new project.
+* Uses AGP 8.0.2 in projects.
+* Removed AndroidManifest.xml references.
+* Add code generation for example/app/build.gradle to control dependency versions used.
 * Uses kradle.yaml instead of klutter.yaml.
 * Bump SDK constraints to >=2.17.6 <4.0.0.
 * Uses Klutter Gradle v2023.3.1.beta.
 * Uses klutter_ui 1.0.1.
 * Removed deprecated TaskName install.
+* Add support for Linux.
 
 ## 1.0.0
 * Uses Klutter Gradle v2023.1.2.beta.
 * Uses klutter_ui 1.0.0.
-* Added support for windows development ([ticket](https://github.com/buijs-dev/klutter-dart/issues/3)).
+* Add support for windows development ([ticket](https://github.com/buijs-dev/klutter-dart/issues/3)).
 
 ## 0.3.0
 * Uses Klutter Gradle v2023.1.1.beta.

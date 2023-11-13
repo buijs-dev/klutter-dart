@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -120,7 +120,7 @@ void main() {
     expect(
         pluginLoader.readAsStringSync().replaceAll(" ", ""),
         r'''
-            // Copyright (c) 2021 - 2022 Buijs Software
+            // Copyright (c) 2021 - 2023 Buijs Software
             //
             // Permission is hereby granted, free of charge, to any person obtaining a copy
             // of this software and associated documentation files (the "Software"), to deal
@@ -191,7 +191,7 @@ void main() {
     expect(
         pluginLoader.readAsStringSync().replaceAll(" ", ""),
         r'''
-        // Copyright (c) 2021 - 2022 Buijs Software
+        // Copyright (c) 2021 - 2023 Buijs Software
         //
         // Permission is hereby granted, free of charge, to any person obtaining a copy
         // of this software and associated documentation files (the "Software"), to deal
@@ -380,6 +380,23 @@ void main() {
   });
 
   test(
+      "Verify exception is thrown if build.gradle does not exist when setting android SDK settings",
+          () {
+        final root = Directory("${Directory.systemTemp.path}${s}apl10")
+          ..createSync();
+
+        final android = Directory("${root.path}${s}android")..createSync();
+
+        expect(
+                () => setAndroidSdkConstraints(android.absolute.path),
+            throwsA(predicate((e) =>
+            e is KlutterException &&
+                e.cause.startsWith("Missing build.gradle file in folder"))));
+
+        root.deleteSync(recursive: true);
+      });
+
+  test(
       "Verify exception is thrown if root/android/app/build.gradle does not exist",
       () {
     final root = Directory("${Directory.systemTemp.path}${s}apl10")
@@ -387,11 +404,13 @@ void main() {
 
     final android = Directory("${root.path}${s}android")..createSync();
 
-    expect(
-        () => setAndroidSdkConstraints(android.absolute.path),
+    expect(() => writeAndroidAppBuildGradleFile(
+            pathToAndroid: android.absolute.path,
+            packageName: "",
+            pluginName: ""),
         throwsA(predicate((e) =>
             e is KlutterException &&
-            e.cause.startsWith("Missing build.gradle file in folder"))));
+            e.cause.startsWith("Missing app/build.gradle file in folder"))));
 
     root.deleteSync(recursive: true);
   });
