@@ -33,7 +33,7 @@ void main() {
   });
 
   test("Verify _substitute correctly normalizes a path", () {
-    expect(File("foo/bar/res/../../pikachu").normalizeToFile.path.endsWith("foo/pikachu"), true);
+    expect(File("foo/bar/res/../../pikachu").normalizeToFile.path.endsWith("foo${Platform.pathSeparator}pikachu"), true);
   });
 
 }
