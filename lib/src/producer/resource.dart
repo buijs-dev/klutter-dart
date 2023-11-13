@@ -64,10 +64,11 @@ Future<LocalResource> loadResource({
   required Uri uri,
   required String filename,
   required String targetRelativeToRoot,
+  required bool isWindows,
 }) =>
     Isolate.resolvePackageUri(uri).then((pathToSource) {
       return LocalResource(
-        pathToSource: Platform.isWindows
+        pathToSource: isWindows
             ? pathToSource!.path.replaceFirst("/", "")
             : pathToSource!.path,
         filename: filename,

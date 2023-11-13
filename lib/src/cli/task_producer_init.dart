@@ -67,7 +67,6 @@ class ProducerInit extends Task {
       ..setupIOS
       ..setupPlatform
       ..setupExample;
-
   }
 
   @override
@@ -122,7 +121,7 @@ extension on _Producer {
     final pluginName = findPluginName(pathToRoot);
 
     writeBuildGradleFile(
-      pluginName: pluginName,
+        pluginName: pluginName,
         pathToAndroid: pathToAndroid,
         packageName: packageName,
         pluginVersion: pluginVersion,

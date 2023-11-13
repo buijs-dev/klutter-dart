@@ -128,8 +128,8 @@ extension on String {
   /// Create a path to the app/build.gradle file.
   /// If the file does not exist throw a [KlutterException].
   File get toAppBuildGradleFile => File("$this/app/build.gradle".normalize)
-    ..ifNotExists((_) =>
-    throw KlutterException("Missing app/build.gradle file in folder: $this"));
+    ..ifNotExists((_) => throw KlutterException(
+        "Missing app/build.gradle file in folder: $this"));
 
   /// Create a path to the flutter/tools/gradle/klutter_plugin_loader.gradle.kts file.
   /// If the file does not exist create it.
@@ -237,7 +237,8 @@ extension on File {
         .format);
   }
 
-  void writeBuildGradleContent({ required String packageName,
+  void writeBuildGradleContent({
+    required String packageName,
     required String pluginName,
   }) {
     writeAsStringSync(r'''
@@ -271,13 +272,14 @@ buildscript {
 |tasks.register("clean", Delete) {
 |    delete rootProject.buildDir
 |}
-|'''.format);
+|'''
+        .format);
   }
 
   void writeAppBuildGradleContent({
     required String packageName,
     required String pluginName,
-}) {
+  }) {
     writeAsStringSync('''
 def localProperties = new Properties()
 |def localPropertiesFile = rootProject.file('local.properties')
@@ -353,7 +355,8 @@ def localProperties = new Properties()
 |
 |kotlin {
 |    jvmToolchain(17)
-|}'''.format);
+|}'''
+        .format);
   }
 
   /// Add the following line to the settings.gradle file if not present:
