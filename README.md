@@ -27,10 +27,12 @@ Use this plugin if you want to:
 1. [Installation](#Installation)
 2. [Using plugins](#Usage)
 3. [Creating plugins](#Creation)
-4. [FAQ!](#Faq!)
+4. [FAQ](#Faq)
 
-- Start a new project by using the [Intellij](https://buijs.dev/klutter-3/) or [Android Studio](https://buijs.dev/klutter-4/) plugin.
-  This plugin will create a new Flutter plugin and setup Klutter automatically.
+- Start a new project with the
+  - [Intellij](https://buijs.dev/klutter-3/) plugin
+  - [Android Studio](https://buijs.dev/klutter-4/) plugin
+  - [Kradle](https://buijs.dev/kradle-1/) cli tool
 - For a step-by-step guide (doing everything manually), see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
 
 # Installation
@@ -116,8 +118,9 @@ The consumer init task will do the following for Android in your Flutter project
  1. Create a .klutter-plugins file in the root folder.  
  2. Create a new Gradle file in the flutter/packages/flutter_tools/gradle.  
  3. Update the android/settings.gradle file to apply the newly generated Gradle file.  
- 4. Update the min/compile/target SDK versions to 21/31/31 in the android/app/build.gradle file. 
-  
+ 4. Update the min/target SDK versions to 24/33 in the android/app/build.gradle file.
+ 5. Update the Android Gradle Plugin to 8.0.2 and gradle-wrapper to Gradle 8+.
+
 The .klutter-plugins file will register all Klutter made plugins used in your project. 
 The created Gradle file in the flutter_tools manages the plugins 
 and enables them to be found by the Flutter project.  
@@ -158,10 +161,23 @@ Build the platform module by running the following in the root folder (takes a f
 ./gradlew clean build -p "platform"
 ```
 
+It is also possible to import the kradle tool in your project using Gradle:
+
+```shell
+./gradlew klutterGetKradle
+```
+
+And then build the project with kradle:
+
+```shell
+./kradlew build
+```
+
+
 Now test the plugin by following the steps outlined [here](#Usage) in the root/example project. 
 When done you can run the example project from the root/example/lib folder and see your first plugin in action!
 
-# Faq!
+# Faq
 1. [App won't start on...](#App%20won't%20start)
 
 ## App won't start
