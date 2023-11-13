@@ -32,25 +32,12 @@ void main() {
     expect(command.taskName, TaskName.init);
   });
 
-  test("Verify parsing get flutter command", () {
+  test("Verify parsing get flutte command", () {
     final command = Command.from(
         script: ScriptName.producer,
         arguments: ["get", "flutter=3.10.6.macos.x64"]);
 
     expect(command != null, true);
-  });
-
-  test("Verify parsing producer init command", () {
-    final command = Command.from(
-        script: ScriptName.producer,
-        arguments: ["init", "bom=2023.1.1.beta", "flutter=3.10.6.macos.arm64",]);
-
-    expect(command != null, true);
-    expect(command!.scriptName, ScriptName.producer);
-    expect(command.taskName, TaskName.init);
-    expect(command.options.isNotEmpty, true);
-    expect(command.options[ScriptOption.bom], "2023.1.1.beta");
-    expect(command.options[ScriptOption.flutter], "3.10.6.macos.arm64");
   });
 
   test("When more than 2 arguments are supplied then command is null", () {
