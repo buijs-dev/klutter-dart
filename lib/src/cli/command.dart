@@ -117,11 +117,11 @@ class Command {
           }
         }
 
-        if (!options.containsKey(ScriptOption.bom.name)) {
+        if (!options.containsKey(ScriptOption.bom)) {
           options[ScriptOption.bom] = klutterGradleVersion;
         }
 
-        if (!options.containsKey(ScriptOption.flutter.name)) {
+        if (!options.containsKey(ScriptOption.flutter)) {
           options[ScriptOption.flutter] = klutterFlutterVersion;
         }
 
