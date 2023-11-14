@@ -66,7 +66,7 @@ String findPluginName(String pathToRoot) =>
 String findPluginVersion(String pathToRoot) =>
     pathToRoot.verifyExists.toPubspecYaml.pluginVersion;
 
-/// Find the version of klutter bill-of-materials in root/klutter.yaml or return null.
+/// Find the version of klutter bill-of-materials in root/kradle.yaml or return null.
 ///
 /// {@category consumer}
 /// {@category producer}
@@ -153,13 +153,7 @@ String findDependencyPath({
   /// Create an absolute path to a locally stored dependency.
   if (pathToPlugin != null) {
     final relativeToRoot = pathToPlugin.group(1)!;
-
     return "\$root${Platform.pathSeparator}${relativeToRoot.trim()}${Platform.pathSeparator}android${Platform.pathSeparator}klutter";
-
-    // return Directory(pathToRoot)
-    //     .resolveFolder(relativeToRoot)
-    //     .resolveFolder("android/klutter")
-    //     .path;
   }
 
   /// Create an absolute path to the the default pub-cache folder.
@@ -178,7 +172,7 @@ extension on String {
         throw KlutterException("Missing pubspec.yaml file in folder: $this"));
 
   String? get klutterBomVersionOrNull {
-    final file = File("$this/klutter.yaml").normalizeToFile;
+    final file = File("$this/kradle.yaml").normalizeToFile;
     if (!file.existsSync()) {
       return null;
     }

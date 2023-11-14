@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ void main() {
       final tasks = service.allTasks();
 
       // There should be 3 Tasks.
-      expect(tasks.length, 3);
+      expect(tasks.length, 4);
 
       expect(
         tasks.getTask(ScriptName.consumer, TaskName.add).toString(),
@@ -48,7 +48,7 @@ void main() {
 
       expect(
         tasks.getTask(ScriptName.producer, TaskName.init).toString(),
-        "Instance of Task: ScriptName.producer | TaskName.init | DependsOn: []",
+        "Instance of Task: ScriptName.producer | TaskName.init | DependsOn: [Instance of Task: ScriptName.producer | TaskName.get | DependsOn: []]",
       );
 
     });
@@ -57,12 +57,12 @@ void main() {
         "Verify identical TaskNames are ignored when the ScriptName is different",
         () {
       final dummy1 = _DummyTask(
-        taskName: TaskName.install,
+        taskName: TaskName.init,
         scriptName: ScriptName.consumer,
       );
 
       final dummy2 = _DummyTask(
-        taskName: TaskName.install,
+        taskName: TaskName.init,
         dependsOnList: [dummy1],
       );
 
@@ -104,7 +104,7 @@ void main() {
       const command = Command(
         scriptName: ScriptName.consumer,
         taskName: TaskName.add,
-        option: "platform",
+        options: { ScriptOption.lib: "platform"},
       );
 
       final tasks = service.tasksOrEmptyList(command);
@@ -127,7 +127,7 @@ void main() {
       );
 
       final task1 = _DummyTask(
-        taskName: TaskName.install,
+        taskName: TaskName.add,
         dependsOnList: [task2],
       );
 
@@ -138,7 +138,7 @@ void main() {
 
     test("When task2 depends on task1, then t1 has higher priority", () {
       final task1 = _DummyTask(
-        taskName: TaskName.install,
+        taskName: TaskName.add,
       );
 
       final task2 = _DummyTask(
@@ -155,7 +155,7 @@ void main() {
       final taskNotInList = _DummyTask();
 
       final task1 = _DummyTask(
-          taskName: TaskName.install, dependsOnList: [taskNotInList]);
+          taskName: TaskName.get, dependsOnList: [taskNotInList]);
 
       final task2 =
           _DummyTask(taskName: TaskName.init, dependsOnList: [taskNotInList]);
@@ -168,7 +168,7 @@ void main() {
     });
 
     test("When both tasks depend on nothing then t1 takes priority", () {
-      final task1 = _DummyTask(taskName: TaskName.install, dependsOnList: []);
+      final task1 = _DummyTask(taskName: TaskName.add, dependsOnList: []);
 
       final task2 = _DummyTask(taskName: TaskName.init, dependsOnList: []);
 
@@ -185,7 +185,7 @@ void main() {
       final taskNotInList = _DummyTask();
 
       final task1 = _DummyTask(
-          taskName: TaskName.install, dependsOnList: [taskNotInList]);
+          taskName: TaskName.add, dependsOnList: [taskNotInList]);
 
       final task2 = _DummyTask(taskName: TaskName.init, dependsOnList: []);
 
@@ -201,7 +201,7 @@ void main() {
         () {
       final taskNotInList = _DummyTask();
 
-      final task1 = _DummyTask(taskName: TaskName.install, dependsOnList: []);
+      final task1 = _DummyTask(taskName: TaskName.add, dependsOnList: []);
 
       final task2 =
           _DummyTask(taskName: TaskName.init, dependsOnList: [taskNotInList]);
@@ -218,10 +218,13 @@ void main() {
           printTasksAsCommands.replaceAll(" ", ""),
           """
           The following commands are valid:
-          flutter pub run klutter:consumer add=<name_of_plugin_to_add>
+          flutter pub run klutter:consumer add lib=foo_example
           flutter pub run klutter:consumer init
-          flutter pub run klutter:consumer init=android
-          flutter pub run klutter:producer init"""
+          flutter pub run klutter:producer init
+          flutter pub run klutter:producer init bom=<version>(default is $klutterGradleVersion)
+          flutter pub run klutter:producer init flutter=<version>(default is $klutterFlutterVersion)
+          flutter pub run klutter:producer init flutter=<version> bom=<version> 
+          flutter pub run klutter:producer get flutter=<version> (one of versions: {3.0.5, 3.3.10, 3.7.12, 3.10.6 })"""
               .replaceAll(" ", ""));
     });
   });
@@ -242,7 +245,10 @@ class _DummyTask extends Task {
   List<Task> dependsOn() => dependsOnList;
 
   @override
-  void toBeExecuted(String pathToRoot) {}
+  Future<void> toBeExecuted(String pathToRoot) async {}
+
+  @override
+  List<String> exampleCommands() => [];
 }
 
 class _SelfDependingTask extends _DummyTask {

@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,14 +18,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "package:klutter/src/cli/cli.dart";
+import "dart:io";
+
+import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
-  test("When option is invalid then result is not ok", () {
-    final task = ConsumerInit()..option = "windows";
-    final result = task.execute("");
-    expect(result.isOk, false);
-    expect(result.message, "Invalid option value: 'windows'");
+  test("Verify verifyExists throws exception if File does not exist", () {
+    expect(
+        () => File("BLABLA").verifyExists,
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist"))));
   });
+
+  test("Verify _substitute correctly normalizes a path", () {
+    expect(File("foo/bar/res/../../pikachu").normalizeToFile.path.endsWith("foo${Platform.pathSeparator}pikachu"), true);
+  });
+
 }

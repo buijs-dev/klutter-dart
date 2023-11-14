@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,7 @@
 import "../common/exception.dart";
 import "../common/utilities.dart";
 import "cli.dart";
+import "task_get_flutter.dart";
 
 const _prefix = "|flutter pub run klutter:";
 
@@ -41,6 +42,7 @@ Set<Task> allTasks(
         ConsumerAdd(),
         ConsumerInit(),
         ProducerInit(),
+        GetFlutterSDK(),
       ]
     ..verifyNoDuplicates
     ..verifyNoCircularDependencies;
@@ -74,14 +76,14 @@ Set<Task> tasksOrEmptyList(Command command,
   final primaryTask = tasksForScript.firstWhere((task) {
     return task.taskName == command.taskName;
   })
-    ..option = command.option;
+    ..options = command.options;
 
   final taskList = [primaryTask];
 
   /// Find al dependencies and add them to the taskList.
   for (final task in primaryTask.dependsOn()) {
     if (!taskList.map((e) => e.taskName).contains(task.taskName)) {
-      taskList.add(task);
+      taskList.add(task..options = command.options);
     }
   }
 
@@ -173,31 +175,14 @@ String get printTasksAsCommands {
   final output = <String>["The following commands are valid:"];
 
   for (final task in allTasks()) {
-    final scriptName = task.scriptName.name;
-    final taskName = task.taskName.name;
-
-    if (task.optionValues().isEmpty) {
-      output.append(scriptName, taskName);
-    }
-
-    for (final option in task.optionValues()) {
-      if (option == "") {
-        output.append(scriptName, taskName);
-      } else {
-        output.appendWithOption(scriptName, taskName, option);
-      }
-    }
+    task.exampleCommands().forEach(output.append);
   }
 
   return output.join("\n").format;
 }
 
 extension on List<String> {
-  void append(String scriptName, String taskName) {
-    add("$_prefix$scriptName $taskName");
-  }
-
-  void appendWithOption(String scriptName, String taskName, String option) {
-    add("$_prefix$scriptName $taskName=$option");
+  void append(String command) {
+    add("$_prefix$command");
   }
 }

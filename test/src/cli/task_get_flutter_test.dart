@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,38 +18,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// List of available tasks.
-///
-/// The task functionality depends on the calling script.
-enum TaskName {
-  /// Tasks which add libraries.
-  add,
+import "package:klutter/klutter.dart";
+import "package:klutter/src/cli/task_get_flutter.dart";
+import "package:test/test.dart";
 
-  /// Tasks which do project initialization (setup).
-  init,
+void main() {
 
-  /// Tasks which do project installation (code or artifact generation).
-  install,
-}
+  test("GetFlutterSDK fails when Flutter SDK is not set", () async {
+    final task = GetFlutterSDK();
+    final result = await task.execute("");
+    expect(result.isOk, false);
+    expect(result.message, "Invalid Flutter version (supported versions are: {3.0.5, 3.3.10, 3.7.12, 3.10.6}): null");
+  });
 
-/// Convert a String value to a [TaskName].
-extension TaskNameParser on String? {
-  /// Find a [TaskName] that matches the current
-  /// (trimmed) String value or return null.
-  TaskName? get toTaskNameOrNull {
-    if (this == null) {
-      return null;
-    }
+  test("GetFlutterSDK uses OS from version if present in version String", () async {
+    final task = GetFlutterSDK()
+      ..options = {
+      ScriptOption.flutter : "3.3.10.linux.x64",
+      ScriptOption.dryRun : "true"
 
-    switch (this!.trim().toUpperCase()) {
-      case "ADD":
-        return TaskName.add;
-      case "INIT":
-        return TaskName.init;
-      case "INSTALL":
-        return TaskName.install;
-      default:
-        return null;
-    }
-  }
+    };
+
+    final result = await task.execute("");
+    expect(result.isOk, true);
+  });
 }

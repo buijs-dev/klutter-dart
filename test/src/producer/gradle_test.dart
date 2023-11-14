@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,8 +48,8 @@ void main() {
     final wrapperProperties =
         File("${root.path}/gradle/wrapper/gradle-wrapper.properties")
             .normalizeToFile;
-    final wrapperBat = File("${root.path}/gradlew").normalizeToFile;
-    final wrapperShell = File("${root.path}/gradlew.bat").normalizeToFile;
+    final wrapperSh = File("${root.path}/gradlew").normalizeToFile;
+    final wrapperBat = File("${root.path}/gradlew.bat").normalizeToFile;
 
     expect(properties.existsSync(), true,
         reason: "gradle.properties should exist");
@@ -57,8 +57,8 @@ void main() {
         reason: "gradle-wrapper.jar should exist");
     expect(wrapperProperties.existsSync(), true,
         reason: "gradle-wrapper.properties should exist");
-    expect(wrapperBat.existsSync(), true, reason: "gradlew should exist");
-    expect(wrapperShell.existsSync(), true, reason: "gradlew.bat should exist");
+    expect(wrapperSh.existsSync(), true, reason: "gradlew should exist");
+    expect(wrapperBat.existsSync(), true, reason: "gradlew.bat should exist");
 
     root.deleteSync(recursive: true);
   });
@@ -101,8 +101,8 @@ void main() {
     final wrapperProperties =
         File("${android.path}/gradle/wrapper/gradle-wrapper.properties")
             .normalizeToFile;
-    final wrapperBat = File("${android.path}/gradlew").normalizeToFile;
-    final wrapperShell = File("${android.path}/gradlew.bat").normalizeToFile;
+    final warpperSh = File("${android.path}/gradlew").normalizeToFile;
+    final wrapperBat = File("${android.path}/gradlew.bat").normalizeToFile;
 
     expect(properties.existsSync(), true,
         reason: "gradle.properties should exist");
@@ -110,8 +110,8 @@ void main() {
         reason: "gradle-wrapper.jar should exist");
     expect(wrapperProperties.existsSync(), true,
         reason: "gradle-wrapper.properties should exist");
-    expect(wrapperBat.existsSync(), true, reason: "gradlew should exist");
-    expect(wrapperShell.existsSync(), true, reason: "gradlew.bat should exist");
+    expect(warpperSh.existsSync(), true, reason: "gradlew should exist");
+    expect(wrapperBat.existsSync(), true, reason: "gradlew.bat should exist");
 
     root.deleteSync(recursive: true);
   });

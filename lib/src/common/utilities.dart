@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -169,4 +169,22 @@ extension StringUtil on String {
       return "${this}Plugin";
     }
   }
+}
+
+/// Download a File.
+Future<void> download(String endpoint, File target) async {
+  final client = HttpClient();
+  final request = await client.getUrl(Uri.parse(endpoint));
+  final response = await request.close();
+  await response.pipe(target.openWrite());
+}
+
+/// Unzip a File.
+Future<void> unzip(File zip, Directory target) async {
+  await Process.run(
+    "tar",
+    ["-xf", zip.absolutePath, "-p"],
+    runInShell: true,
+    workingDirectory: target.absolutePath,
+  );
 }

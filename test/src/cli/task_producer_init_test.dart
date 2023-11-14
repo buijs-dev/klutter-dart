@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,32 +18,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// List of available scripts.
-///
-/// Tasks are accessible through scripts.
-///
-/// There are 2 scripts:
-/// - Consumer
-/// - Producer
-///
-/// <B>Consumer:</B>
-///
-/// Tasks to be executed in a project that will use (consume)
-/// libraries that are created with the use of Klutter.
-///
-/// <B>Producer:</B>
-///
-/// Tasks to be executed in a project that will use
-/// Klutter to create (produce) a new Flutter library.
-///
-/// {@category consumer}
-/// {@category producer}
-enum ScriptName {
-  /// Script containing tasks for projects
-  /// that use libraries created with Klutter.
-  consumer,
+import "package:klutter/klutter.dart";
+import "package:test/test.dart";
 
-  /// Script containing tasks for projects
-  /// that are being created with Klutter.
-  producer,
+void main() {
+  test("ProducerInit fails when BOM version is not set", () async {
+    final result = await ProducerInit().execute("");
+    expect(result.isOk, false);
+    expect(result.message, "Invalid BOM version (example of correct version: $klutterGradleVersion): null");
+  });
+
+  test("ProducerInit fails when Flutter SDK is not set", () async {
+    final task = ProducerInit()
+      ..options = { ScriptOption.bom : "2023.3.1.beta" };
+
+    final result = await task.execute("");
+    expect(result.isOk, false);
+    expect(result.message, "Invalid Flutter version (supported versions are: {3.0.5, 3.3.10, 3.7.12, 3.10.6}): null");
+  });
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,16 +32,16 @@ class ConsumerAdd extends Task {
   ConsumerAdd() : super(ScriptName.consumer, TaskName.add);
 
   @override
-  void toBeExecuted(String pathToRoot) {
-    if (option == "") {
+  Future<void> toBeExecuted(String pathToRoot) async {
+    if (!options.containsKey(ScriptOption.lib)) {
       throw KlutterException(
-        "Name of Flutter plugin to add not specified.",
+        "Name of Flutter plugin to add not specified. Example: klutter consumer add lib=foo_example",
       );
     }
 
     final location = findDependencyPath(
       pathToRoot: pathToRoot,
-      pluginName: option,
+      pluginName: options[ScriptOption.lib]!,
       pathToSDK: findFlutterSDK(
         "$pathToRoot/android".normalize,
       ),
@@ -49,7 +49,7 @@ class ConsumerAdd extends Task {
 
     registerPlugin(
       pathToRoot: pathToRoot,
-      pluginName: ":klutter:$option",
+      pluginName: ":klutter:${options[ScriptOption.lib]}",
       pluginLocation: location,
     );
   }
@@ -58,5 +58,5 @@ class ConsumerAdd extends Task {
   List<Task> dependsOn() => [ConsumerInit()];
 
   @override
-  List<String> optionValues() => ["<name_of_plugin_to_add>"];
+  List<String> exampleCommands() => ["consumer add lib=foo_example"];
 }

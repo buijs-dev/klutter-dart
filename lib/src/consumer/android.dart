@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,6 @@ void writePluginLoaderGradleFile(String pathToFlutterSDK) => pathToFlutterSDK
 ///
 /// - compileSdkVersion to [androidCompileSdk]
 /// - minSdkVersion to [androidMinSdk]
-/// - targetSdkVersion to [androidTargetSdk]
 ///
 /// {@category consumer}
 void setAndroidSdkConstraints(String pathToAndroid) =>
@@ -79,6 +78,34 @@ void setKotlinVersionInBuildGradle(String pathToAndroid) {
 void applyPluginLoader(String pathToAndroid) =>
     pathToAndroid.verifyExists.toSettingsGradleFile.appendSettingsGradle;
 
+/// Overwrite the build.gradle File in android/app.
+///
+/// {@category consumer}
+void writeAndroidAppBuildGradleFile({
+  required String pathToAndroid,
+  required String packageName,
+  required String pluginName,
+}) {
+  pathToAndroid.verifyExists.toAppBuildGradleFile.writeAppBuildGradleContent(
+    packageName: packageName,
+    pluginName: pluginName,
+  );
+}
+
+/// Overwrite the build.gradle File in android.
+///
+/// {@category consumer}
+void writeAndroidBuildGradleFile({
+  required String pathToAndroid,
+  required String packageName,
+  required String pluginName,
+}) {
+  pathToAndroid.verifyExists.toBuildGradleFile.writeBuildGradleContent(
+    packageName: packageName,
+    pluginName: pluginName,
+  );
+}
+
 extension on String {
   /// Create a path to the root-project/android/local.properties file.
   /// If the file does not exist throw a [KlutterException].
@@ -97,6 +124,12 @@ extension on String {
   File get toBuildGradleFile => File("$this/build.gradle".normalize)
     ..ifNotExists((_) =>
         throw KlutterException("Missing build.gradle file in folder: $this"));
+
+  /// Create a path to the app/build.gradle file.
+  /// If the file does not exist throw a [KlutterException].
+  File get toAppBuildGradleFile => File("$this/app/build.gradle".normalize)
+    ..ifNotExists((_) => throw KlutterException(
+        "Missing app/build.gradle file in folder: $this"));
 
   /// Create a path to the flutter/tools/gradle/klutter_plugin_loader.gradle.kts file.
   /// If the file does not exist create it.
@@ -129,8 +162,7 @@ extension on String {
           |
           |defaultConfig {
           |   ...
-          |   minSdkVersion $androidMinSdk
-          |   targetSdkVersion $androidTargetSdk
+          |   minSdk $androidMinSdk
           |   ...
           |}
           """
@@ -152,7 +184,7 @@ extension on File {
   /// the Klutter made plugins in a Flutter project.
   void get writeGradleContent {
     writeAsStringSync(r'''
-            // Copyright (c) 2021 - 2022 Buijs Software
+            // Copyright (c) 2021 - 2023 Buijs Software
             |//
             |// Permission is hereby granted, free of charge, to any person obtaining a copy
             |// of this software and associated documentation files (the "Software"), to deal
@@ -202,6 +234,128 @@ extension on File {
             |        project(plugin[0]).projectDir = pluginDirectory
             |    }
             |}'''
+        .format);
+  }
+
+  void writeBuildGradleContent({
+    required String packageName,
+    required String pluginName,
+  }) {
+    writeAsStringSync(r'''
+buildscript {
+|    repositories {
+|        google()
+|        mavenCentral()
+|    }
+|
+|    dependencies {
+|        classpath 'com.android.tools.build:gradle:8.0.2'
+|        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
+|    }
+|}
+|
+|allprojects {
+|    repositories {
+|        google()
+|        mavenCentral()
+|    }
+|}
+|
+|rootProject.buildDir = '../build'
+|subprojects {
+|    project.buildDir = "${rootProject.buildDir}/${project.name}"
+|}
+|subprojects {
+|    project.evaluationDependsOn(':app')
+|}
+|
+|tasks.register("clean", Delete) {
+|    delete rootProject.buildDir
+|}
+|'''
+        .format);
+  }
+
+  void writeAppBuildGradleContent({
+    required String packageName,
+    required String pluginName,
+  }) {
+    writeAsStringSync('''
+def localProperties = new Properties()
+|def localPropertiesFile = rootProject.file('local.properties')
+|if (localPropertiesFile.exists()) {
+|    localPropertiesFile.withReader('UTF-8') { reader ->
+|        localProperties.load(reader)
+|    }
+|}
+|
+|def flutterRoot = localProperties.getProperty('flutter.sdk')
+|if (flutterRoot == null) {
+|    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+|}
+|
+|def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+|if (flutterVersionCode == null) {
+|    flutterVersionCode = '1'
+|}
+|
+|def flutterVersionName = localProperties.getProperty('flutter.versionName')
+|if (flutterVersionName == null) {
+|    flutterVersionName = '1.0'
+|}
+|
+|apply plugin: 'com.android.application'
+|apply plugin: 'kotlin-android'
+|apply from: "\$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+|
+|android {
+|    namespace "${packageName}_example"
+|    ndkVersion flutter.ndkVersion
+|
+|    compileOptions {
+|        sourceCompatibility JavaVersion.VERSION_17
+|        targetCompatibility JavaVersion.VERSION_17
+|    }
+|
+|    kotlinOptions {
+|        jvmTarget = '17'
+|    }
+|
+|    sourceSets {
+|        main.java.srcDirs += 'src/main/kotlin'
+|    }
+|
+|    defaultConfig {
+|        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+|        applicationId "com.example.my_plugin_example"
+|        // You can update the following values to match your application needs.
+|        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+|        compileSdk $androidCompileSdk
+|        minSdk $androidMinSdk
+|        versionCode flutterVersionCode.toInteger()
+|        versionName flutterVersionName
+|    }
+|
+|    buildTypes {
+|        release {
+|            // TODO: Add your own signing config for the release build.
+|            // Signing with the debug keys for now, so `flutter run --release` works.
+|            signingConfig signingConfigs.debug
+|        }
+|    }
+|}
+|
+|flutter {
+|    source '../..'
+|}
+|
+|dependencies {
+|    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.20"
+|}
+|
+|kotlin {
+|    jvmToolchain(17)
+|}'''
         .format);
   }
 
@@ -273,12 +427,10 @@ extension on File {
   ///
   /// - compileSdkVersion to [androidCompileSdk]
   /// - minSdkVersion to [androidMinSdk]
-  /// - targetSdkVersion to [androidTargetSdk]
   void get setAndroidSdkVersions {
     final buildGradleText = readAsStringSync()
-        .setAndroidSdkVersion("compileSdkVersion", androidCompileSdk)
-        .setAndroidSdkVersion("minSdkVersion", androidMinSdk)
-        .setAndroidSdkVersion("targetSdkVersion", androidTargetSdk);
+        .setAndroidSdkVersion("compileSdk", androidCompileSdk)
+        .setAndroidSdkVersion("minSdk", androidMinSdk);
 
     deleteSync();
     createSync();

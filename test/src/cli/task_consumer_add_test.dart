@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,9 @@ import "package:klutter/src/cli/cli.dart";
 import "package:test/test.dart";
 
 void main() {
-  test("ConsumerAdd fails when option is not set", () {
-    final result = ConsumerAdd().execute("");
+  test("ConsumerAdd fails when option is not set", () async {
+    final result = await ConsumerAdd().execute("");
     expect(result.isOk, false);
-    expect(result.message, "Name of Flutter plugin to add not specified.");
+    expect(result.message, "Name of Flutter plugin to add not specified. Example: klutter consumer add lib=foo_example");
   });
 }

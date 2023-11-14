@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -120,7 +120,7 @@ void main() {
     expect(
         pluginLoader.readAsStringSync().replaceAll(" ", ""),
         r'''
-            // Copyright (c) 2021 - 2022 Buijs Software
+            // Copyright (c) 2021 - 2023 Buijs Software
             //
             // Permission is hereby granted, free of charge, to any person obtaining a copy
             // of this software and associated documentation files (the "Software"), to deal
@@ -191,7 +191,7 @@ void main() {
     expect(
         pluginLoader.readAsStringSync().replaceAll(" ", ""),
         r'''
-        // Copyright (c) 2021 - 2022 Buijs Software
+        // Copyright (c) 2021 - 2023 Buijs Software
         //
         // Permission is hereby granted, free of charge, to any person obtaining a copy
         // of this software and associated documentation files (the "Software"), to deal
@@ -357,7 +357,7 @@ void main() {
     root.deleteSync(recursive: true);
   });
 
-  test("Verify min, compile and target SDK are updated in build.gradle file",
+  test("Verify min and compile SDK are updated in build.gradle file",
       () {
     final root = Directory("${Directory.systemTemp.path}${s}apl5")
       ..createSync();
@@ -373,170 +373,28 @@ void main() {
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.contains(
-                "Failed to set 'compileSdkVersion' in the root/android/build.gradle file"))));
+                "Failed to set 'compileSdk' in the root/android/build.gradle file")
+        )));
 
     root.deleteSync(recursive: true);
   });
 
-  test("Verify min, compile and target SDK are updated in build.gradle file",
-      () {
-    final root = Directory("${Directory.systemTemp.path}${s}apl5")
-      ..createSync();
+  test(
+      "Verify exception is thrown if build.gradle does not exist when setting android SDK settings",
+          () {
+        final root = Directory("${Directory.systemTemp.path}${s}apl10")
+          ..createSync();
 
-    final android = Directory("${root.path}${s}android");
-    final buildGradle = File("${android.absolute.path}${s}build.gradle")
-      ..createSync(recursive: true)
-      ..writeAsStringSync("""
-          def localProperties = new Properties()
-          def localPropertiesFile = rootProject.file('local.properties')
-          if (localPropertiesFile.exists()) {
-              localPropertiesFile.withReader('UTF-8') { reader ->
-                  localProperties.load(reader)
-              }
-          }
-          
-          def flutterRoot = localProperties.getProperty('flutter.sdk')
-          if (flutterRoot == null) {
-              throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
-          }
-          
-          def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-          if (flutterVersionCode == null) {
-              flutterVersionCode = '1'
-          }
-          
-          def flutterVersionName = localProperties.getProperty('flutter.versionName')
-          if (flutterVersionName == null) {
-              flutterVersionName = '1.0'
-          }
-          
-          apply plugin: 'com.android.application'
-          apply plugin: 'kotlin-android'
-          apply from: "foo/bar/root/packages/flutter_tools/gradle/flutter.gradle"
-          
-          android {
-              compileSdkVersion 21
-          
-              compileOptions {
-                  sourceCompatibility JavaVersion.VERSION_1_8
-                  targetCompatibility JavaVersion.VERSION_1_8
-              }
-          
-              kotlinOptions {
-                  jvmTarget = '1.8'
-              }
-          
-              sourceSets {
-                  main.java.srcDirs += 'src/main/kotlin'
-              }
-          
-              defaultConfig {
-                  // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-                  applicationId "com.buijs.awesome_plugin_example"
-                  minSdkVersion 16
-                  targetSdkVersion 21
-                  versionCode flutterVersionCode.toInteger()
-                  versionName flutterVersionName
-              }
-          
-              buildTypes {
-                  release {
-                      // TODO: Add your own signing config for the release build.
-                      // Signing with the debug keys for now, so `flutter run --release` works.
-                      signingConfig signingConfigs.debug
-                  }
-              }
-          }
-          
-          flutter {
-              source '../..'
-          }
-          
-          dependencies {
-              implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-          }
-        """);
+        final android = Directory("${root.path}${s}android")..createSync();
 
-    // When the visitor has done it's magic.
-    setAndroidSdkConstraints(android.path);
+        expect(
+                () => setAndroidSdkConstraints(android.absolute.path),
+            throwsA(predicate((e) =>
+            e is KlutterException &&
+                e.cause.startsWith("Missing build.gradle file in folder"))));
 
-    // Then a new line applying the klutter_plugin_loader.gradle.kts is added.
-    expect(
-        buildGradle.readAsStringSync().replaceAll(" ", ""),
-        """
-         def localProperties = new Properties()
-          def localPropertiesFile = rootProject.file('local.properties')
-          if (localPropertiesFile.exists()) {
-              localPropertiesFile.withReader('UTF-8') { reader ->
-                  localProperties.load(reader)
-              }
-          }
-          
-          def flutterRoot = localProperties.getProperty('flutter.sdk')
-          if (flutterRoot == null) {
-              throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
-          }
-          
-          def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-          if (flutterVersionCode == null) {
-              flutterVersionCode = '1'
-          }
-          
-          def flutterVersionName = localProperties.getProperty('flutter.versionName')
-          if (flutterVersionName == null) {
-              flutterVersionName = '1.0'
-          }
-          
-          apply plugin: 'com.android.application'
-          apply plugin: 'kotlin-android'
-          apply from: "foo/bar/root/packages/flutter_tools/gradle/flutter.gradle"
-          
-          android {
-              compileSdkVersion 31
-          
-              compileOptions {
-                  sourceCompatibility JavaVersion.VERSION_1_8
-                  targetCompatibility JavaVersion.VERSION_1_8
-              }
-          
-              kotlinOptions {
-                  jvmTarget = '1.8'
-              }
-          
-              sourceSets {
-                  main.java.srcDirs += 'src/main/kotlin'
-              }
-          
-              defaultConfig {
-                  // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-                  applicationId "com.buijs.awesome_plugin_example"
-                  minSdkVersion 21
-                  targetSdkVersion 31
-                  versionCode flutterVersionCode.toInteger()
-                  versionName flutterVersionName
-              }
-          
-              buildTypes {
-                  release {
-                      // TODO: Add your own signing config for the release build.
-                      // Signing with the debug keys for now, so `flutter run --release` works.
-                      signingConfig signingConfigs.debug
-                  }
-              }
-          }
-          
-          flutter {
-              source '../..'
-          }
-          
-          dependencies {
-              implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-          }
-        """
-            .replaceAll(" ", ""));
-
-    root.deleteSync(recursive: true);
-  });
+        root.deleteSync(recursive: true);
+      });
 
   test(
       "Verify exception is thrown if root/android/app/build.gradle does not exist",
@@ -546,11 +404,13 @@ void main() {
 
     final android = Directory("${root.path}${s}android")..createSync();
 
-    expect(
-        () => setAndroidSdkConstraints(android.absolute.path),
+    expect(() => writeAndroidAppBuildGradleFile(
+            pathToAndroid: android.absolute.path,
+            packageName: "",
+            pluginName: ""),
         throwsA(predicate((e) =>
             e is KlutterException &&
-            e.cause.startsWith("Missing build.gradle file in folder"))));
+            e.cause.startsWith("Missing app/build.gradle file in folder"))));
 
     root.deleteSync(recursive: true);
   });

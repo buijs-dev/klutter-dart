@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,8 @@ import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
-  test("When a task fails with a KlutterException, it is caught", () {
-    final result = _ExplodingTask().execute("");
+  test("When a task fails with a KlutterException, it is caught", () async {
+    final result = await _ExplodingTask().execute("");
     expect(result.isOk, false);
     expect(result.message, "BOOM!");
   });
@@ -36,7 +36,10 @@ class _ExplodingTask extends Task {
   List<Task> dependsOn() => const [];
 
   @override
-  void toBeExecuted(String pathToRoot) {
+  Future<void> toBeExecuted(String pathToRoot) {
     throw KlutterException("BOOM!");
   }
+
+  @override
+  List<String> exampleCommands() => [];
 }

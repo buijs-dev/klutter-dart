@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,12 +21,15 @@
 import "dart:io";
 
 import "../common/common.dart";
+import "../consumer/android.dart";
 import "../producer/android.dart";
 import "../producer/gradle.dart";
 import "../producer/ios.dart";
+import "../producer/kradle.dart";
 import "../producer/platform.dart";
 import "../producer/project.dart";
 import "cli.dart";
+import "task_get_flutter.dart";
 
 /// Task to run project initialization (setup).
 ///
@@ -36,87 +39,154 @@ class ProducerInit extends Task {
   ProducerInit() : super(ScriptName.producer, TaskName.init);
 
   @override
-  void toBeExecuted(String pathToRoot) => pathToRoot
-    ..setupRoot
-    ..setupAndroid
-    ..setupIOS
-    ..setupPlatform
-    ..setupExample
-    ..addGradle;
+  Future<void> toBeExecuted(String pathToRoot) async {
+    final validBomVersionOrNull = options[ScriptOption.bom]?.verifyBomVersion;
+
+    if (validBomVersionOrNull == null) {
+      throw KlutterException(
+          "Invalid BOM version (example of correct version: $klutterGradleVersion): $validBomVersionOrNull");
+    }
+
+    final flutterVersion =
+        options[ScriptOption.flutter]?.verifyFlutterVersion?.version;
+
+    if (flutterVersion == null) {
+      throw KlutterException(
+          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $flutterVersion");
+    }
+
+    final producer = _Producer(
+        pathToRoot: pathToRoot,
+        bomVersion: validBomVersionOrNull,
+        flutterVersion: flutterVersion);
+    await producer.addGradle;
+    await producer.addKradle;
+    producer
+      ..setupRoot
+      ..setupAndroid
+      ..setupIOS
+      ..setupPlatform
+      ..setupExample;
+  }
+
+  @override
+  List<String> exampleCommands() => [
+        "producer init",
+        "producer init bom=<version> (default is $klutterGradleVersion)",
+        "producer init flutter=<version> (default is $klutterFlutterVersion)",
+        "producer init flutter=<version> bom=<version>",
+      ];
+
+  @override
+  List<Task> dependsOn() => [GetFlutterSDK()];
 }
 
-extension on String {
+class _Producer {
+  _Producer(
+      {required this.bomVersion,
+      required this.flutterVersion,
+      required this.pathToRoot});
+
+  final String bomVersion;
+  final String flutterVersion;
+  final String pathToRoot;
+}
+
+extension on _Producer {
   void get setupRoot {
-    Directory("$this/lib".normalize)
+    Directory("$pathToRoot/lib".normalize)
       // Delete folder and all children if they exist.
       ..normalizeToFolder.maybeDelete
       // Create a new empty lib folder.
       ..maybeCreate;
 
-    final name = findPluginName(this);
-    writeGradleProperties(this);
+    final name = findPluginName(pathToRoot);
+    writeGradleProperties(pathToRoot);
 
     writeRootBuildGradleFile(
-        pathToRoot: this,
+        pathToRoot: pathToRoot,
         pluginName: name,
-        klutterBomVersion: findKlutterBomVersion(this) ?? klutterGradleVersion);
+        klutterBomVersion: bomVersion);
 
     writeRootSettingsGradleFile(
-      pathToRoot: this,
+      pathToRoot: pathToRoot,
       pluginName: name,
     );
   }
 
   void get setupAndroid {
-    final packageName = findPackageName(this);
-    final pluginVersion = findPluginVersion(this);
-    final pathToAndroid = "$this/android".normalize;
-    final klutterBomVersion =
-        findKlutterBomVersion(this) ?? klutterGradleVersion;
+    final packageName = findPackageName(pathToRoot);
+    final pluginVersion = findPluginVersion(pathToRoot);
+    final pathToAndroid = "$pathToRoot/android".normalize;
+    final pluginName = findPluginName(pathToRoot);
 
     writeBuildGradleFile(
+        pluginName: pluginName,
         pathToAndroid: pathToAndroid,
         packageName: packageName,
         pluginVersion: pluginVersion,
-        klutterBomVersion: klutterBomVersion);
+        klutterBomVersion: bomVersion);
 
     writeAndroidPlugin(
       pathToAndroid: pathToAndroid,
       packageName: packageName,
+      pluginName: pluginName,
     );
 
     writeKlutterGradleFile(pathToAndroid);
+    setGradleWrapperVersion(pathToAndroid: pathToAndroid);
+    deleteRootAndroidManifestFile(pathToAndroid: pathToAndroid);
   }
 
   void get setupPlatform {
     createPlatformModule(
-      pathToRoot: this,
-      pluginName: findPluginName(this),
-      packageName: findPackageName(this),
+      pathToRoot: pathToRoot,
+      pluginName: findPluginName(pathToRoot),
+      packageName: findPackageName(pathToRoot),
     );
   }
 
   void get setupExample {
+    final packageName = findPackageName(pathToRoot);
+    final pluginName = findPluginName(pathToRoot);
+    final pathToAndroid = "$pathToRoot/example/android".normalize;
+
     writeExampleMainDartFile(
-      pathToExample: "$this/example".normalize,
-      pluginName: findPluginName(this),
+      pathToExample: "$pathToRoot/example".normalize,
+      pluginName: pluginName,
     );
+
+    writeAndroidAppBuildGradleFile(
+        pathToAndroid: pathToAndroid,
+        packageName: packageName,
+        pluginName: pluginName);
+
+    writeAndroidBuildGradleFile(
+        pathToAndroid: pathToAndroid,
+        packageName: packageName,
+        pluginName: pluginName);
+
+    setGradleWrapperVersion(pathToAndroid: pathToAndroid);
   }
 
   void get setupIOS {
-    final pathToIos = "$this/ios";
+    final pathToIos = "$pathToRoot/ios";
     createIosKlutterFolder(pathToIos);
     addFrameworkToPodspec(
-      pathToIos: "$this/ios",
-      pluginName: findPluginName(this),
+      pathToIos: "$pathToRoot/ios",
+      pluginName: findPluginName(pathToRoot),
     );
   }
 
   Future<void> get addGradle async {
-    final gradle = Gradle(this);
+    final gradle = Gradle(pathToRoot);
     await Future.wait([
       gradle.copyToRoot,
       gradle.copyToAndroid,
     ]);
+  }
+
+  Future<void> get addKradle async {
+    await Future.wait([Kradle(pathToRoot).copyToRoot]);
   }
 }

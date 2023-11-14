@@ -25,17 +25,25 @@ import "../common/exception.dart";
 import "../common/project.dart";
 import "../common/utilities.dart";
 
+/// Set the version in the gradle-wrapper.properties.
+void setGradleWrapperVersion({required String pathToAndroid}) {
+  pathToAndroid
+      .verifyExists.toGradleWrapperPropertiesFile.writeGradleWrapperContent;
+}
+
 /// Overwrite the build.gradle file in the root/android folder.
 ///
 /// {@category producer}
 void writeBuildGradleFile({
   required String pathToAndroid,
   required String packageName,
+  required String pluginName,
   required String pluginVersion,
   required String klutterBomVersion,
 }) =>
     pathToAndroid.verifyExists.toBuildGradleFile.configure
       ..packageName = packageName
+      ..pluginName = pluginName
       ..version = pluginVersion
       ..klutterBomVersion = klutterBomVersion
       ..writeBuildGradleContent;
@@ -46,9 +54,11 @@ void writeBuildGradleFile({
 void writeAndroidPlugin({
   required String pathToAndroid,
   required String packageName,
+  required String pluginName,
 }) =>
     pathToAndroid.verifyExists.toKotlinSourcePackage.configure
       ..packageName = packageName
+      ..pluginName = pluginName
       ..writePluginContent;
 
 /// Create the android/klutter folder if it does not exist.
@@ -56,6 +66,17 @@ void writeAndroidPlugin({
 /// {@category producer}
 void writeKlutterGradleFile(String pathToAndroid) =>
     pathToAndroid.verifyExists.toKlutterFolder..writeAndroidGradleFile;
+
+/// Delete the root/android/src/main/AndroidManifest.xml File because it is only
+/// used to set the package name, which is not supported from AGP 8.0+.
+///
+/// Package name is set in the build.gradle File.
+/// {@category producer}
+void deleteRootAndroidManifestFile({
+  required String pathToAndroid,
+}) {
+  pathToAndroid.verifyExists.toAndroidManifestFile.maybeDelete;
+}
 
 extension on FileSystemEntity {
   _Configuration get configure => _Configuration(this);
@@ -79,6 +100,17 @@ extension on String {
   /// If the file does not exist then create it.
   Directory get toKlutterFolder =>
       Directory("$this/klutter".normalize)..maybeCreate;
+
+  /// Create a path to the gradle-wrapper.properties.
+  /// If the file does not exist throw a [KlutterException].
+  File get toGradleWrapperPropertiesFile =>
+      File("$this/gradle/wrapper/gradle-wrapper.properties".normalize)
+        ..ifNotExists((_) => throw KlutterException(
+            "Missing gradle-wrapper.properties file in: $this"));
+
+  /// Create a path to the AndroidManifest.xml.
+  File get toAndroidManifestFile =>
+      File("$this/src/main/AndroidManifest.xml".normalize);
 }
 
 extension on Directory {
@@ -100,6 +132,8 @@ class _Configuration {
   final FileSystemEntity file;
 
   late final String packageName;
+
+  late final String pluginName;
 
   late final String version;
 
@@ -203,7 +237,7 @@ class _Configuration {
         |    dependencies {
         |        classpath platform("dev.buijs.klutter:bom:$klutterBomVersion")
         |        classpath "dev.buijs.klutter:gradle"
-        |        classpath 'com.android.tools.build:gradle:7.0.4'
+        |        classpath 'com.android.tools.build:gradle:8.0.2'
         |        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         |    }
         |}
@@ -218,15 +252,15 @@ class _Configuration {
         |}
         |
         |android {
-        |    compileSdkVersion $androidCompileSdk
+        |    namespace "$packageName"
         |
         |    compileOptions {
-        |        sourceCompatibility JavaVersion.VERSION_1_8
-        |        targetCompatibility JavaVersion.VERSION_1_8
+        |        sourceCompatibility JavaVersion.VERSION_17
+        |        targetCompatibility JavaVersion.VERSION_17
         |    }
         |
         |    kotlinOptions {
-        |        jvmTarget = '1.8'
+        |        jvmTarget = '17'
         |    }
         |
         |    sourceSets {
@@ -234,7 +268,8 @@ class _Configuration {
         |    }
         |
         |    defaultConfig {
-        |        minSdkVersion $androidMinSdk
+        |        compileSdk $androidCompileSdk
+        |        minSdk $androidMinSdk
         |    }
         |}
         |
@@ -253,9 +288,27 @@ class _Configuration {
         |}
         |
         |java {
-        |    sourceCompatibility = JavaVersion.VERSION_1_8
-        |    targetCompatibility = JavaVersion.VERSION_1_8
+        |    sourceCompatibility = JavaVersion.VERSION_17
+        |    targetCompatibility = JavaVersion.VERSION_17
+        |}
+        |
+        |kotlin {
+        |    jvmToolchain(17)
         |}'''
+        .format);
+  }
+}
+
+extension on File {
+  /// Write the content of the android/gradle/wrapper/gradle-wrapper.properties file.
+  void get writeGradleWrapperContent {
+    writeAsStringSync("""
+distributionBase=GRADLE_USER_HOME
+    |distributionPath=wrapper/dists
+    |distributionUrl=https\://services.gradle.org/distributions/gradle-8.0-bin.zip
+    |zipStoreBase=GRADLE_USER_HOME
+    |zipStorePath=wrapper/dists
+        """
         .format);
   }
 }

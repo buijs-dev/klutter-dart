@@ -20,36 +20,42 @@
 
 import "dart:io";
 
-import "package:klutter/klutter.dart";
+import "package:klutter/src/common/common.dart";
+import "package:klutter/src/producer/kradle.dart";
 import "package:test/test.dart";
 
 void main() {
-  final temp = Directory.systemTemp..createTempSync();
+  final s = Platform.pathSeparator;
 
-  test("Verify exception is thrown if podspec file does not exist", () {
-    final folder = Directory("${temp.absolutePath}/ios_test1".normalize)
-      ..createSync();
-
+  test("Verify exception is thrown if root does not exist", () {
     expect(
-        () => addFrameworkToPodspec(
-            pluginName: "some_plugin", pathToIos: folder.absolutePath),
+        () => Kradle("fake").copyToRoot,
         throwsA(predicate((e) =>
             e is KlutterException &&
-            e.cause.startsWith("Missing podspec file"))));
+            e.cause.startsWith("Path does not exist:") &&
+            e.cause.endsWith("fake"))));
   });
 
-  test("Verify exception is thrown if addFramework fails", () {
-    final folder = Directory("${temp.absolutePath}/ios_test2".normalize)
-      ..createSync();
-
-    File("${folder.absolutePath}/some_plugin.podspec").createSync();
-
-    expect(
-        () => addFrameworkToPodspec(
-            pluginName: "some_plugin", pathToIos: folder.absolutePath),
-        throwsA(predicate((e) =>
-            e is KlutterException &&
-            e.cause.startsWith(
-                "Failed to add Platform.framework to ios folder."))));
+  test("Verify cache folder can be found", () async {
+    expect(defaultKradleCacheFolder.absolutePath.contains(".kradle${Platform.pathSeparator}cache"), true,
+        reason: "kradle cache should exist");
   });
+
+  test("Verify Kradle files are copied to the root folder", () async {
+    final root = Directory("${Directory.systemTemp.path}${s}kradle10")
+      ..createSync(recursive: true);
+
+    await Kradle(root.normalizeToFolder.absolutePath).copyToRoot;
+
+    final env = File("${root.path}/kradle.env").normalizeToFile;
+    final yaml = File("${root.path}/kradle.yaml").normalizeToFile;
+
+    expect(env.existsSync(), true,
+        reason: "kradle.env should exist");
+    expect(yaml.existsSync(), true,
+        reason: "kradle.yaml should exist");
+
+    root.deleteSync(recursive: true);
+  });
+
 }

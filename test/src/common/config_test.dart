@@ -18,38 +18,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "dart:io";
-
 import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
-  final temp = Directory.systemTemp..createTempSync();
-
-  test("Verify exception is thrown if podspec file does not exist", () {
-    final folder = Directory("${temp.absolutePath}/ios_test1".normalize)
-      ..createSync();
-
-    expect(
-        () => addFrameworkToPodspec(
-            pluginName: "some_plugin", pathToIos: folder.absolutePath),
-        throwsA(predicate((e) =>
-            e is KlutterException &&
-            e.cause.startsWith("Missing podspec file"))));
+  test("Valid Flutter versions are returned as VerifiedFlutterVersion", () {
+    for(final version in supportedFlutterVersions) {
+      expect(version.verifyFlutterVersion != null, true, reason: "Version should be valid: $version");
+      expect("$version.windows.x64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.windows.x64");
+      expect("$version.macos.x64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.macos.x64");
+      expect("$version.linux.x64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.linux.x64");
+      expect("$version.windows.arm64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.windows.arm64");
+      expect("$version.macos.arm64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.macos.arm64");
+      expect("$version.linux.arm64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.linux.arm64");
+    }
   });
 
-  test("Verify exception is thrown if addFramework fails", () {
-    final folder = Directory("${temp.absolutePath}/ios_test2".normalize)
-      ..createSync();
-
-    File("${folder.absolutePath}/some_plugin.podspec").createSync();
-
-    expect(
-        () => addFrameworkToPodspec(
-            pluginName: "some_plugin", pathToIos: folder.absolutePath),
-        throwsA(predicate((e) =>
-            e is KlutterException &&
-            e.cause.startsWith(
-                "Failed to add Platform.framework to ios folder."))));
+  test("Invalid Flutter versions are returned as null", () {
+      expect("thisIsNotAFlutterVersion".verifyFlutterVersion == null, true);
   });
 }

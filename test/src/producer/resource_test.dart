@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,17 +18,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "dart:io";
-
-import "package:klutter/klutter.dart";
+import "package:klutter/src/producer/resource.dart";
 import "package:test/test.dart";
 
 void main() {
-  test("Verify verifyExists throws exception if File does not exist", () {
-    expect(
-        () => File("BLABLA").verifyExists,
-        throwsA(predicate((e) =>
-            e is KlutterException &&
-            e.cause.startsWith("Path does not exist"))));
+  test("When Platform is windows then first '/' character of a resource path is removed", () async {
+    final resource = await loadResource(
+        uri: Uri.parse("package:klutter/res/gradlew.bat"),
+        targetRelativeToRoot: "",
+        filename: "gradlew.bat",
+        isWindows: true,
+      );
+
+    expect(resource.pathToSource.startsWith("/"), false);
+  });
+
+  test("When Platform is NOT windows then first '/' character of a resource path is NOT removed", () async {
+    final resource = await loadResource(
+      uri: Uri.parse("package:klutter/res/gradlew.bat"),
+      targetRelativeToRoot: "",
+      filename: "gradlew.bat",
+      isWindows: false,
+    );
+
+    expect(resource.pathToSource.startsWith("/"), true);
   });
 }

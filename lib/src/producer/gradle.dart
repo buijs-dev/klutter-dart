@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2022 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,9 +19,9 @@
 // SOFTWARE.
 
 import "dart:io";
-import "dart:isolate";
 
 import "../common/utilities.dart";
+import "resource.dart";
 
 /// Copy Gradle files to root and root/android folders to enable the usage of Gradle.
 ///
@@ -41,11 +41,13 @@ class Gradle {
   /// The Flutter project root folder.
   final String pathToRoot;
 
-  late final _GradleResource _gradlew;
-  late final _GradleResource _gradlewBat;
-  late final _GradleResource _gradlewJar;
-  late final _GradleResource _gradlewProperties;
-  late final _GradleResource _gradleProperties;
+  final bool _isWindows = Platform.isWindows;
+
+  late final LocalResource _gradlew;
+  late final LocalResource _gradlewBat;
+  late final LocalResource _gradlewJar;
+  late final LocalResource _gradlewProperties;
+  late final LocalResource _gradleProperties;
 
   late final Future<bool> _isInitialized =
       Future.wait([_init]).then((_) => true);
@@ -66,6 +68,7 @@ class Gradle {
       uri: "package:klutter/res/gradlew".toUri,
       targetRelativeToRoot: "",
       filename: "gradlew",
+      isWindows: _isWindows,
     );
   }
 
@@ -74,6 +77,7 @@ class Gradle {
       uri: "package:klutter/res/gradlew.bat".toUri,
       targetRelativeToRoot: "",
       filename: "gradlew.bat",
+      isWindows: _isWindows,
     );
   }
 
@@ -82,6 +86,7 @@ class Gradle {
       uri: "package:klutter/res/gradle-wrapper.jar".toUri,
       targetRelativeToRoot: "gradle/wrapper".normalize,
       filename: "gradle-wrapper.jar",
+      isWindows: _isWindows,
     );
   }
 
@@ -90,6 +95,7 @@ class Gradle {
       uri: "package:klutter/res/gradle-wrapper.properties".toUri,
       targetRelativeToRoot: "gradle/wrapper".normalize,
       filename: "gradle-wrapper.properties",
+      isWindows: _isWindows,
     );
   }
 
@@ -98,6 +104,7 @@ class Gradle {
       uri: "package:klutter/res/gradle.properties".toUri,
       targetRelativeToRoot: "",
       filename: "gradle.properties",
+      isWindows: _isWindows,
     );
   }
 
@@ -148,47 +155,3 @@ extension on String {
   Directory get androidFolder =>
       Directory("$this/android".normalize)..absolutePath.verifyExists;
 }
-
-extension on Directory {
-  /// Copy a Gradle file from lib/res folder to a project folder.
-  void copyFiles(List<_GradleResource> resources) {
-    for (final resource in resources) {
-      final from = File(resource.pathToSource.verifyExists);
-      final pathTo = Directory(
-        "$absolutePath/${resource.targetRelativeToRoot}".normalize,
-      ).maybeCreate;
-
-      from.copySync(pathTo.resolveFile(resource.filename).absolutePath);
-    }
-  }
-}
-
-/// Representation of a Gradle file which
-/// should be copied to a Klutter project.
-class _GradleResource {
-  const _GradleResource({
-    required this.pathToSource,
-    required this.filename,
-    required this.targetRelativeToRoot,
-  });
-
-  final String filename;
-  final String targetRelativeToRoot;
-  final String pathToSource;
-}
-
-/// Load resource files from lib/res folder.
-Future<_GradleResource> loadResource({
-  required Uri uri,
-  required String filename,
-  required String targetRelativeToRoot,
-}) =>
-    Isolate.resolvePackageUri(uri).then((pathToSource) {
-      return _GradleResource(
-        pathToSource: Platform.isWindows
-            ? pathToSource!.path.replaceFirst("/", "")
-            : pathToSource!.path,
-        filename: filename,
-        targetRelativeToRoot: targetRelativeToRoot,
-      );
-    });

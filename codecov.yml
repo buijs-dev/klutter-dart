@@ -1,0 +1,2 @@
+ignore: #download task, don't want to test it in a UT
+  - "**/task_get_flutter.dart"
