@@ -156,7 +156,7 @@ void main() {
         }
         
         dependencies {
-            runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
+            runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
             implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.10"
             implementation project(":klutter:example_plugin")
         }

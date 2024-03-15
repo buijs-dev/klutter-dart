@@ -302,7 +302,7 @@ class PlatformModule {
       |            dependencies {
       |                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
       |                implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.6.3")
-      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
       |            }
       |        }
       |
@@ -312,13 +312,13 @@ class PlatformModule {
       |                implementation(kotlin("test-annotations-common"))
       |                implementation(kotlin("test-junit"))
       |                implementation("junit:junit:4.13.2")
-      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
       |            }
       |        }
       |
       |        val androidMain by getting {
       |            dependencies {
-      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
+      |                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
       |                embedded("dev.buijs.klutter:flutter-engine-kmp-android:2024.1.1.beta")
       |            }
       |        }
