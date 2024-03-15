@@ -282,7 +282,7 @@ class _Configuration {
         |}
         |
         |dependencies {
-        |    runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+        |    runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
         |    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         |    implementation project(":klutter:${packageName.substring(1 + packageName.lastIndexOf("."))}")
         |}

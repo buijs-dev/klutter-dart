@@ -1,16 +1,16 @@
 import "../cli/task_get_flutter.dart";
 
 /// The version of the Klutter Pub Plugin.
-const klutterPubVersion = "2.0.0";
+const klutterPubVersion = "2.1.0";
 
 /// The version of the Klutter Gradle Plugin.
-const klutterGradleVersion = "2023.3.1.beta";
+const klutterGradleVersion = "2024.1.1.beta";
 
 /// The default Flutter version to be used in the Klutter project.
 const klutterFlutterVersion = "3.10.6";
 
 /// The version of Kotlin to be used.
-const kotlinVersion = "1.8.20";
+const kotlinVersion = "1.9.10";
 
 /// The minimum SDK version for Android.
 const androidMinSdk = 24;

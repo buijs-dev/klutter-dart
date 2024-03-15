@@ -1,3 +1,7 @@
+## 2.1.0
+* Uses klutter_ui 1.1.0.
+* Uses Klutter Gradle v2024.1.1.beta with support for protobuf.
+
 ## 2.0.0
 * Uses AGP 8.0.2 in projects.
 * Removed AndroidManifest.xml references.

@@ -86,7 +86,7 @@ void main() {
       pluginVersion: pluginVersion,
       packageName: packageName,
       pathToAndroid: android.path,
-      klutterBomVersion: "2023.3.1",
+      klutterBomVersion: "2024.1.1.beta",
     );
 
     expect(
@@ -109,10 +109,10 @@ void main() {
             }
         
             dependencies {
-                classpath platform("dev.buijs.klutter:bom:2023.3.1")
+                classpath platform("dev.buijs.klutter:bom:2024.1.1.beta")
                 classpath "dev.buijs.klutter:gradle"
                 classpath 'com.android.tools.build:gradle:8.0.2'
-                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
+                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10"
             }
         }
         
@@ -156,8 +156,8 @@ void main() {
         }
         
         dependencies {
-            runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
-            implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.20"
+            runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0"
+            implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.10"
             implementation project(":klutter:example_plugin")
         }
         
