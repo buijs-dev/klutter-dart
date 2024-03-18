@@ -48,8 +48,8 @@ void main() {
       /// Run a Klutter task without an existing Flutter project
       final result = await sut.execute(
         pathToRoot: producerPlugin.absolutePath,
-        script: sut.ScriptName.producer,
-        arguments: ["init"],
+        script: sut.ScriptName.consumer,
+        arguments: ["add", "lib=foo"],
       );
 
       expect(
@@ -168,20 +168,6 @@ void main() {
           true,
           reason: "ios/Klutter should exist");
 
-      /// Install KMP Platform module.
-      await sut.execute(
-        pathToRoot: producerPlugin.absolutePath,
-        script: sut.ScriptName.producer,
-        arguments: ["install=platform"],
-      );
-
-      /// Generate Dart service code.
-      await sut.execute(
-        pathToRoot: producerPlugin.absolutePath,
-        script: sut.ScriptName.producer,
-        arguments: ["install=library"],
-      );
-
       expect(consumerPlugin.existsSync(), true,
           reason:
               "Plugin should be created in: '${producerPlugin.absolute.path}'");
@@ -215,7 +201,7 @@ void main() {
       await sut.execute(
         pathToRoot: consumerPlugin.absolutePath,
         script: sut.ScriptName.consumer,
-        arguments: ["add=$pluginName"],
+        arguments: ["add", "lib=$pluginName"],
       );
 
       final registry =
@@ -229,47 +215,7 @@ void main() {
 
       expect(registryContainsPlugin, true,
           reason:
-              "add task should have added plugin name to the .klutter-plugins file");
-
-      // Delete the klutter-plugins file which is added by Android init
-      registry.deleteSync();
-      expect(registry.existsSync(), false);
-
-      await sut.execute(
-        pathToRoot: consumerPlugin.absolutePath,
-        script: sut.ScriptName.consumer,
-        arguments: ["init=android"],
-      );
-
-      expect(registry.existsSync(), true,
-          reason: "klutter-plugins file should be created");
-
-      /// Run only iOS init, then Android is skipped
-      ///
-      /// This can only be run successfully on Mac OS.
-      if(Platform.isMacOS) {
-        final podFile =
-        File("${consumerPlugin.absolutePath}/ios/Podfile".normalize);
-        expect(podFile.existsSync(), true, reason: "Podfile should exist: ${podFile.absolutePath}");
-
-        // Delete the exclusion which is added by iOS init
-        podFile.writeAsStringSync(podFile.readAsStringSync().replaceAll(
-            "bc.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`", ""));
-
-        // Delete the klutter-plugins file which is added by Android init
-        registry.deleteSync();
-        expect(registry.existsSync(), false);
-
-        await sut.execute(
-          pathToRoot: consumerPlugin.absolutePath,
-          script: sut.ScriptName.consumer,
-          arguments: ["init=ios"],
-        );
-
-        expect(registry.existsSync(), false,
-            reason: "Android init should not have been executed");
-      }
-
+              "add task should have added plugin name to the .klutter-plugins file: ${registry.readAsStringSync()}");
     });
 
   } catch (e, s) {
@@ -336,7 +282,7 @@ Future<void> addKlutterAsDevDependency({
     stderr.write(result.stderr);
   });
 
-  File("$root/klutter.yaml".normalize)
+  File("$root/kradle.yaml".normalize)
     ..maybeCreate
     ..writeAsStringSync("flutter-version: '3.0.5.${Platform.isWindows ? "windows" : "macos"}.x64'")
   ;
