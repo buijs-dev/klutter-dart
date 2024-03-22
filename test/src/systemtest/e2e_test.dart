@@ -215,7 +215,7 @@ void main() {
 
       expect(registryContainsPlugin, true,
           reason:
-              "add task should have added plugin name to the .klutter-plugins file");
+              "add task should have added plugin name to the .klutter-plugins file: ${registry.readAsStringSync()}");
     });
 
   } catch (e, s) {

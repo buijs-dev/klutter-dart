@@ -11,9 +11,10 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
       - uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.10.6'
           channel: 'stable'
 
       # Get dependencies
@@ -26,7 +27,7 @@ jobs:
 
       # Convert to LCOV
       - name: Convert coverage to LCOV
-        run: dart pub run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --packages=.dart_tool/package_config.json --report-on=lib
+        run: dart run coverage:format_coverage --lcov --in=coverage --out=coverage.lcov --packages=.dart_tool/package_config.json --report-on=lib
 
       # Upload coverage data
       - name: Upload coverage to Codecov
