@@ -419,7 +419,7 @@ void main() {
       }
       
       val gradleBuildInstanceClassLoader: ClassLoader = this::class.java.classLoader
-      tasks.register<GenerateProtoSchemasGradleTask>("klutterGenerateProtoSchemas") {
+      tasks.register<GenerateProtoSchemasGradleTask>(GenerateProtoSchemasGradleTask.taskName) {
           classLoader = gradleBuildInstanceClassLoader
       }
     

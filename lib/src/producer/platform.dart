@@ -378,7 +378,7 @@ class PlatformModule {
       |}
       |
       |val gradleBuildInstanceClassLoader: ClassLoader = this::class.java.classLoader
-      |tasks.register<GenerateProtoSchemaGradleTask>(GenerateProtoSchemaGradleTask.taskName) {
+      |tasks.register<GenerateProtoSchemasGradleTask>(GenerateProtoSchemasGradleTask.taskName) {
       |    classLoader = gradleBuildInstanceClassLoader
       |}
       |
