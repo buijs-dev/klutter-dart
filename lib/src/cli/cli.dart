@@ -60,6 +60,7 @@ export "task.dart";
 export "task_comparator.dart";
 export "task_consumer_add.dart";
 export "task_consumer_init.dart";
+export "task_get_flutter.dart";
 export "task_producer_init.dart";
 export "task_result.dart";
 export "task_service.dart";

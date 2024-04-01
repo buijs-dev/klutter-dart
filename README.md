@@ -179,6 +179,7 @@ When done you can run the example project from the root/example/lib folder and s
 
 # Faq
 1. [App won't start on...](#App%20won't%20start)
+2. [Build fails](#build-fails)
 
 ## App won't start
 Make sure you have followed all the following steps:
@@ -210,3 +211,25 @@ If there's an error message saying something similiar to '...example/ios/Pods/Ta
 then try one of:
 - delete the Podfile.lock and run pod install in root/example/ios folder.
 - run pod deintegrate and then pod install in root/example/ios folder.
+
+## Build fails
+1. [Java toolchain error](#java-toolchain-error)
+
+### Java toolchain error
+When you get an error like below, indicating no compatible Java version is detected, make sure you 
+have the same Java version installed as required by the klutter project. 
+
+```shell
+* What went wrong:
+  Could not determine the dependencies of task ':klutter:hello_world:compileDebugKotlinAndroid'.
+> No matching toolchains found for requested specification: {languageVersion=17, vendor=any, implementation=vendor-specific}.
+> No locally installed toolchains match ...
+```
+
+You might also have to add the following plugin to the settings.gradle(.kts) files:
+
+```kotlin
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
+}
+```

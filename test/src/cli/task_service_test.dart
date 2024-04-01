@@ -127,7 +127,6 @@ void main() {
       );
 
       final task1 = _DummyTask(
-        taskName: TaskName.add,
         dependsOnList: [task2],
       );
 
@@ -138,7 +137,7 @@ void main() {
 
     test("When task2 depends on task1, then t1 has higher priority", () {
       final task1 = _DummyTask(
-        taskName: TaskName.add,
+        
       );
 
       final task2 = _DummyTask(
@@ -168,7 +167,7 @@ void main() {
     });
 
     test("When both tasks depend on nothing then t1 takes priority", () {
-      final task1 = _DummyTask(taskName: TaskName.add, dependsOnList: []);
+      final task1 = _DummyTask(dependsOnList: []);
 
       final task2 = _DummyTask(taskName: TaskName.init, dependsOnList: []);
 
@@ -185,7 +184,7 @@ void main() {
       final taskNotInList = _DummyTask();
 
       final task1 = _DummyTask(
-          taskName: TaskName.add, dependsOnList: [taskNotInList]);
+          dependsOnList: [taskNotInList]);
 
       final task2 = _DummyTask(taskName: TaskName.init, dependsOnList: []);
 
@@ -201,7 +200,7 @@ void main() {
         () {
       final taskNotInList = _DummyTask();
 
-      final task1 = _DummyTask(taskName: TaskName.add, dependsOnList: []);
+      final task1 = _DummyTask(dependsOnList: []);
 
       final task2 =
           _DummyTask(taskName: TaskName.init, dependsOnList: [taskNotInList]);

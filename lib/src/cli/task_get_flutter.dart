@@ -178,6 +178,7 @@ class _FlutterDistribution {
   final OperatingSystem os;
   final Architecture arch;
 
+  @override
   bool operator ==(Object other) {
     if (other is! _FlutterDistribution) {
       return false;
