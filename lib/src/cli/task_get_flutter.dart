@@ -174,7 +174,6 @@ Map<FlutterDistribution, String> get _compatibleFlutterVersions {
 /// A flutter distribution which is compatible with klutter.
 @immutable
 class FlutterDistribution {
-
   /// Create a new [FlutterDistribution] instance.
   const FlutterDistribution({
     required this.version,

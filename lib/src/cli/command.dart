@@ -130,35 +130,57 @@ class Command {
       }
 
       if (taskName == TaskName.get) {
-        if (args.length != 1) {
+        if (args.length > 2) {
           return null;
         }
 
-        final option = args.first.split("=");
+        final options = <ScriptOption, String>{};
 
-        if (option.length != 2) {
-          return null;
+        for (final arg in args) {
+          final option = arg.split("=");
+
+          if (option.length != 2) {
+            return null;
+          }
+
+          if (option.first == ScriptOption.overwrite.name) {
+            final boolean = option[1].toLowerCase();
+            if (boolean == "true") {
+              options[ScriptOption.overwrite] = "true";
+            } else if (boolean == "false") {
+              options[ScriptOption.overwrite] = "false";
+            } else {
+              return null;
+            }
+          } else if (option.first == ScriptOption.flutter.name) {
+            final version = option[1];
+            if (version.verifyFlutterVersion != null) {
+              options[ScriptOption.flutter] = version;
+            } else {
+              return null;
+            }
+          } else {
+            return null;
+          }
         }
 
-        if (option.first != ScriptOption.flutter.name) {
-          return null;
+        if (!options.containsKey(ScriptOption.overwrite)) {
+          options[ScriptOption.overwrite] = "false";
         }
 
-        final version = option[1].verifyFlutterVersion?.version;
-
-        if (version == null) {
-          return null;
+        if (!options.containsKey(ScriptOption.flutter)) {
+          options[ScriptOption.flutter] = klutterFlutterVersion;
         }
 
         return Command(
-            taskName: taskName,
-            scriptName: script,
-            options: <ScriptOption, String>{
-              ScriptOption.flutter: version.prettyPrint
-            });
+            taskName: taskName, scriptName: script, options: options);
       }
     }
 
     return null;
   }
+
+  @override
+  String toString() =>
+      "Command(task=${taskName.name}, script=${scriptName.name}, options=$options)";
 }

@@ -62,15 +62,23 @@ enum ScriptOption {
   /// Used by [ScriptName.producer] when creating a new project.
   bom,
 
-  /// The Flutter SDK distribution in format major.minor.patch.platform.architecture.
+  /// The Flutter SDK distribution in format
+  /// major.minor.patch.platform.architecture
+  /// or major.minor.patch.
   ///
   /// Example format:
   /// ```dart
   /// 3.10.6.macos.arm64.
+  /// 3.10.6
   /// ```
   ///
   /// Used by [ScriptName.producer] when creating a new project.
   flutter,
+
+  /// To overwrite existing entities or not.
+  ///
+  /// Used by [ScriptName.producer] when downloading a flutter distribution.
+  overwrite,
 
   /// Name of library to add.
   ///

@@ -104,7 +104,7 @@ void main() {
   test("When get command option flutter is not a valid version, command is null", () {
     final command = Command.from(
         script: ScriptName.producer,
-        arguments: ["get", "flutter=not.really.flutterrrr"]);
+        arguments: ["get", "flutter=not.really.flutterrrr", "overwrite=true"]);
 
     expect(command, null);
   });
