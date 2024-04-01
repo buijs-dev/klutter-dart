@@ -31,7 +31,7 @@ const supportedFlutterVersions = {
 /// Verify if version input is valid.
 extension VersionVerifier on String {
   /// Verify if the version matches:
-  /// 4 digits dot 1 or 2 digits dot 1 or 2 digits and optionally  a dot plus postfix.
+  /// 4 digits dot 1 or 2 digits dot 1 or 2 digits and optionally a dot plus postfix.
   ///
   /// Examples:
   /// - 2023.3.1.beta
@@ -46,12 +46,14 @@ extension VersionVerifier on String {
     }
   }
 
-  /// Verify if the version matches:
-  /// 1 or 2 digits dot 1 or 2 digits dot 1 or 2 digits.
+  /// Verify if the version is in format
+  /// major.minor.patch or
+  /// major.minor.patch.os.arch.
   ///
   /// Examples:
   /// - 3.10.6
   /// - 2.16.77
+  /// - 2.16.77.windows.x64
   VerifiedFlutterVersion? get verifyFlutterVersion {
     final version = supportedFlutterVersions[this];
     if (version != null) {

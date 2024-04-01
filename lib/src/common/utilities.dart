@@ -45,6 +45,14 @@ extension FileUtil on FileSystemEntity {
       throw KlutterException("Path does not exist: ${file.absolute.path}");
     });
 
+  /// Create an absolute path to the given folder.
+  ///
+  /// If the path does not exist throw a [KlutterException].
+  Directory get verifyFolderExists => Directory(absolutePath)
+    ..ifNotExists((dir) {
+      throw KlutterException("Path does not exist: ${dir.absolute.path}");
+    });
+
   /// Check if the Directory exists and if not create it recursively.
   FileSystemEntity get maybeCreate {
     ifNotExists((fse) {

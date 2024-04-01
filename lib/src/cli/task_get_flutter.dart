@@ -67,7 +67,7 @@ class GetFlutterSDK extends Task {
             ? Architecture.arm64
             : Architecture.x64);
 
-    final dist = _FlutterDistribution(
+    final dist = FlutterDistribution(
         version: flutterVersion.version, os: platform, arch: arch);
 
     final cachedSDK = cache.resolveFolder("${dist.folderNameString}");
@@ -111,7 +111,7 @@ class GetFlutterSDK extends Task {
       ];
 }
 
-Map<_FlutterDistribution, String> get _compatibleFlutterVersions {
+Map<FlutterDistribution, String> get _compatibleFlutterVersions {
   final dist = [
     _windows(
         "https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.0.5-stable.zip",
@@ -163,7 +163,7 @@ Map<_FlutterDistribution, String> get _compatibleFlutterVersions {
         "3.10.6"),
   ];
 
-  final versions = <_FlutterDistribution, String>{};
+  final versions = <FlutterDistribution, String>{};
   for (final entry in dist) {
     versions[entry.key] = entry.value;
   }
@@ -171,16 +171,24 @@ Map<_FlutterDistribution, String> get _compatibleFlutterVersions {
   return versions;
 }
 
+/// A flutter distribution which is compatible with klutter.
 @immutable
-class _FlutterDistribution {
-  const _FlutterDistribution({
+class FlutterDistribution {
+
+  /// Create a new [FlutterDistribution] instance.
+  const FlutterDistribution({
     required this.version,
     required this.os,
     required this.arch,
   });
 
+  /// The version in format major.minor.patch.
   final Version version;
+
+  /// The operating system.
   final OperatingSystem os;
+
+  /// The architecture.
   final Architecture arch;
 
   @override
@@ -202,7 +210,7 @@ class _FlutterDistribution {
 
   @override
   bool operator ==(Object other) {
-    if (other is! _FlutterDistribution) {
+    if (other is! FlutterDistribution) {
       return false;
     }
 
@@ -282,34 +290,34 @@ enum Architecture {
   arm64,
 }
 
-MapEntry<_FlutterDistribution, String> _windows(String path, String version) =>
+MapEntry<FlutterDistribution, String> _windows(String path, String version) =>
     MapEntry(
-        _FlutterDistribution(
+        FlutterDistribution(
             os: OperatingSystem.windows,
             arch: Architecture.x64,
             version: Version.fromString(version)),
         path);
 
-MapEntry<_FlutterDistribution, String> _linux(String path, String version) =>
+MapEntry<FlutterDistribution, String> _linux(String path, String version) =>
     MapEntry(
-        _FlutterDistribution(
+        FlutterDistribution(
             os: OperatingSystem.linux,
             arch: Architecture.x64,
             version: Version.fromString(version)),
         path);
 
-MapEntry<_FlutterDistribution, String> _macosX64(String path, String version) =>
+MapEntry<FlutterDistribution, String> _macosX64(String path, String version) =>
     MapEntry(
-        _FlutterDistribution(
+        FlutterDistribution(
             os: OperatingSystem.macos,
             arch: Architecture.x64,
             version: Version.fromString(version)),
         path);
 
-MapEntry<_FlutterDistribution, String> _macosArm64(
+MapEntry<FlutterDistribution, String> _macosArm64(
         String path, String version) =>
     MapEntry(
-        _FlutterDistribution(
+        FlutterDistribution(
             os: OperatingSystem.macos,
             arch: Architecture.arm64,
             version: Version.fromString(version)),
