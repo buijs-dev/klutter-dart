@@ -37,4 +37,30 @@ void main() {
   test("Invalid Flutter versions are returned as null", () {
       expect("thisIsNotAFlutterVersion".verifyFlutterVersion == null, true);
   });
+
+  group("Verify version sort order is descending by default", () {
+    void testSorting(String a, String b, List<String> expected) {
+      test("$a > $b",() {
+        final sortedList = [a.toVersion, b.toVersion]..sort();
+        expect(sortedList.map((e) => e.prettyPrint).toList(), expected);
+      });
+    }
+
+    testSorting("1.0.0", "1.0.0", ["1.0.0", "1.0.0"]);
+    testSorting("1.0.0", "1.1.0", ["1.1.0", "1.0.0"]);
+    testSorting("1.0.0", "1.0.1", ["1.0.1", "1.0.0"]);
+    testSorting("0.1.0", "0.0.1", ["0.1.0", "0.0.1"]);
+  });
+
+}
+
+extension on String {
+  Version get toVersion {
+    final splitted = split(".");
+    return Version(
+      major: int.parse(splitted[0]),
+      minor: int.parse(splitted[1]),
+      patch: int.parse(splitted[2]),
+    );
+  }
 }
