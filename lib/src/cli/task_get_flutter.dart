@@ -44,6 +44,8 @@ class GetFlutterSDK extends Task {
           "Invalid Flutter version (supported versions are: ${supportedFlutterVersions.keys}): $flutterVersion");
     }
 
+    final overwrite = options[ScriptOption.overwrite] == "true";
+
     OperatingSystem? platform;
 
     if (flutterVersion.os != null) {
@@ -72,32 +74,34 @@ class GetFlutterSDK extends Task {
 
     final cachedSDK = cache.resolveFolder("${dist.folderNameString}");
 
-    if (!cachedSDK.resolveFolder("flutter").existsSync()) {
-      cachedSDK.createSync();
+    if (cachedSDK.resolveFolder("flutter").existsSync() && !overwrite) {
+      return;
+    }
 
-      final url = _compatibleFlutterVersions[dist];
+    cachedSDK.createSync();
 
-      if (url == null) {
-        throw KlutterException(
-            "Failed to determine download URL for Flutter SDK: ${dist.prettyPrintedString}");
-      }
+    final url = _compatibleFlutterVersions[dist];
 
-      final skip = Platform.environment["GET_FLUTTER_SDK_SKIP"] != null ||
-          options[ScriptOption.dryRun] == "true";
+    if (url == null) {
+      throw KlutterException(
+          "Failed to determine download URL for Flutter SDK: ${dist.prettyPrintedString}");
+    }
 
-      if (skip) {
-        return;
-      }
+    final skip = Platform.environment["GET_FLUTTER_SDK_SKIP"] != null ||
+        options[ScriptOption.dryRun] == "true";
 
-      final zip = cachedSDK.resolveFile("flutter.zip")
-        ..maybeDelete
-        ..createSync();
+    if (skip) {
+      return;
+    }
 
-      await download(url, zip);
-      if (zip.existsSync()) {
-        await unzip(zip, cachedSDK);
-        zip.deleteSync();
-      }
+    final zip = cachedSDK.resolveFile("flutter.zip")
+      ..maybeDelete
+      ..createSync();
+
+    await download(url, zip);
+    if (zip.existsSync()) {
+      await unzip(zip, cachedSDK);
+      zip.deleteSync();
     }
 
     if (!cachedSDK.existsSync()) {
