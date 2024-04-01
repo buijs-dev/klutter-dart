@@ -34,6 +34,6 @@ void main() {
 
     final result = await task.execute("");
     expect(result.isOk, false);
-    expect(result.message, "Invalid Flutter version (supported versions are: {3.0.5, 3.3.10, 3.7.12, 3.10.6}): null");
+    expect(result.message, "Invalid Flutter version (supported versions are: (3.0.5, 3.3.10, 3.7.12, 3.10.6)): null");
   });
 }

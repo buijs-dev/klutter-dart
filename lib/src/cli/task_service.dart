@@ -21,7 +21,6 @@
 import "../common/exception.dart";
 import "../common/utilities.dart";
 import "cli.dart";
-import "task_get_flutter.dart";
 
 const _prefix = "|flutter pub run klutter:";
 

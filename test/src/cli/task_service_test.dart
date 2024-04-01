@@ -223,7 +223,7 @@ void main() {
           flutter pub run klutter:producer init bom=<version>(default is $klutterGradleVersion)
           flutter pub run klutter:producer init flutter=<version>(default is $klutterFlutterVersion)
           flutter pub run klutter:producer init flutter=<version> bom=<version> 
-          flutter pub run klutter:producer get flutter=<version> (one of versions: {3.0.5, 3.3.10, 3.7.12, 3.10.6 })"""
+          flutter pub run klutter:producer get flutter=<version> (one of versions: (3.0.5, 3.3.10, 3.7.12, 3.10.6))"""
               .replaceAll(" ", ""));
     });
   });

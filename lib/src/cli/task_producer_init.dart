@@ -29,7 +29,6 @@ import "../producer/kradle.dart";
 import "../producer/platform.dart";
 import "../producer/project.dart";
 import "cli.dart";
-import "task_get_flutter.dart";
 
 /// Task to run project initialization (setup).
 ///
@@ -52,13 +51,13 @@ class ProducerInit extends Task {
 
     if (flutterVersion == null) {
       throw KlutterException(
-          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $flutterVersion");
+          "Invalid Flutter version (supported versions are: ${supportedFlutterVersions.keys}): $flutterVersion");
     }
 
     final producer = _Producer(
         pathToRoot: pathToRoot,
         bomVersion: validBomVersionOrNull,
-        flutterVersion: flutterVersion);
+        flutterVersion: flutterVersion.prettyPrint);
     await producer.addGradle;
     await producer.addKradle;
     producer

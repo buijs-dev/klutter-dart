@@ -23,7 +23,7 @@ import "package:test/test.dart";
 
 void main() {
   test("Valid Flutter versions are returned as VerifiedFlutterVersion", () {
-    for(final version in supportedFlutterVersions) {
+    for(final version in supportedFlutterVersions.keys) {
       expect(version.verifyFlutterVersion != null, true, reason: "Version should be valid: $version");
       expect("$version.windows.x64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.windows.x64");
       expect("$version.macos.x64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.macos.x64");

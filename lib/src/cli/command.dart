@@ -153,7 +153,9 @@ class Command {
         return Command(
             taskName: taskName,
             scriptName: script,
-            options: <ScriptOption, String>{ScriptOption.flutter: version});
+            options: <ScriptOption, String>{
+              ScriptOption.flutter: version.prettyPrint
+            });
       }
     }
 

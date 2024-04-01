@@ -21,6 +21,8 @@
 import "dart:ffi";
 import "dart:io";
 
+import "package:meta/meta.dart";
+
 import "../common/common.dart";
 import "../producer/kradle.dart";
 import "cli.dart";
@@ -39,7 +41,7 @@ class GetFlutterSDK extends Task {
 
     if (flutterVersion == null) {
       throw KlutterException(
-          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $flutterVersion");
+          "Invalid Flutter version (supported versions are: ${supportedFlutterVersions.keys}): $flutterVersion");
     }
 
     OperatingSystem? platform;
@@ -64,19 +66,20 @@ class GetFlutterSDK extends Task {
         (Abi.current().toString().contains("arm")
             ? Architecture.arm64
             : Architecture.x64);
-    final prettyPrintedSdk =
-        "${flutterVersion.version}.${platform.name}.${arch.name}".toLowerCase();
-    final cachedSDK = cache.resolveFolder(prettyPrintedSdk);
+
+    final dist = _FlutterDistribution(
+        version: flutterVersion.version, os: platform, arch: arch);
+
+    final cachedSDK = cache.resolveFolder("${dist.folderNameString}");
 
     if (!cachedSDK.resolveFolder("flutter").existsSync()) {
       cachedSDK.createSync();
-      final dist = _FlutterDistribution(
-          version: flutterVersion.version, os: platform, arch: arch);
+
       final url = _compatibleFlutterVersions[dist];
 
       if (url == null) {
         throw KlutterException(
-            "Failed to determine download URL for Flutter SDK: $flutterVersion $platform $arch");
+            "Failed to determine download URL for Flutter SDK: ${dist.prettyPrintedString}");
       }
 
       final skip = Platform.environment["GET_FLUTTER_SDK_SKIP"] != null ||
@@ -104,7 +107,7 @@ class GetFlutterSDK extends Task {
 
   @override
   List<String> exampleCommands() => [
-        "producer get flutter=<version> (one of versions: $supportedFlutterVersions)",
+        "producer get flutter=<version> (one of versions: ${supportedFlutterVersions.keys})",
       ];
 }
 
@@ -168,15 +171,34 @@ Map<_FlutterDistribution, String> get _compatibleFlutterVersions {
   return versions;
 }
 
+@immutable
 class _FlutterDistribution {
   const _FlutterDistribution({
     required this.version,
     required this.os,
     required this.arch,
   });
-  final String version;
+
+  final Version version;
   final OperatingSystem os;
   final Architecture arch;
+
+  @override
+  String toString() => "FlutterDistribution $prettyPrintedString";
+
+  /// Generate a unique display name for this Flutter configuration.
+  ///
+  /// Example: "3.0.5 (MACOS ARM64)".
+  PrettyPrintedFlutterDistribution get prettyPrintedString =>
+      PrettyPrintedFlutterDistribution(
+          "${version.prettyPrint} (${os.name} ${arch.name})");
+
+  /// Generate a unique folder name for this Flutter configuration.
+  ///
+  /// Example: "3.0.5.macos.arm64".
+  FlutterDistributionFolderName get folderNameString =>
+      FlutterDistributionFolderName(
+          "${version.prettyPrint}.${os.name}.${arch.name}");
 
   @override
   bool operator ==(Object other) {
@@ -201,6 +223,42 @@ class _FlutterDistribution {
 
   @override
   int get hashCode => version.hashCode + os.index + arch.index;
+}
+
+///The full Flutter distribution version in format major.minor.patch (platform architecture).
+///
+/// Example: 3.0.5 MACOS (ARM64).
+@immutable
+class PrettyPrintedFlutterDistribution {
+  /// Create a new [PrettyPrintedFlutterDistribution] instance.
+  const PrettyPrintedFlutterDistribution(this.source);
+
+  /// The formatted string representation for a specific distribution.
+  ///
+  /// Example: 3.0.5 MACOS (ARM64).
+  final String source;
+
+  @override
+  String toString() => source;
+}
+
+/// The full Flutter distribution version in format major.minor.patch.platform.architecture.
+///
+/// Example: 3.0.5.windows.x64.
+@immutable
+class FlutterDistributionFolderName {
+  /// Create a new [FlutterDistributionFolderName] instance.
+  const FlutterDistributionFolderName(this.source);
+
+  /// The formatted string representation for a specific distribution.
+  ///
+  /// To be used as folder name.
+  ///
+  /// Example: 3.0.5 MACOS (ARM64).
+  final String source;
+
+  @override
+  String toString() => source;
 }
 
 /// The operating system compatible with Klutter.
@@ -229,7 +287,7 @@ MapEntry<_FlutterDistribution, String> _windows(String path, String version) =>
         _FlutterDistribution(
             os: OperatingSystem.windows,
             arch: Architecture.x64,
-            version: version),
+            version: Version.fromString(version)),
         path);
 
 MapEntry<_FlutterDistribution, String> _linux(String path, String version) =>
@@ -237,7 +295,7 @@ MapEntry<_FlutterDistribution, String> _linux(String path, String version) =>
         _FlutterDistribution(
             os: OperatingSystem.linux,
             arch: Architecture.x64,
-            version: version),
+            version: Version.fromString(version)),
         path);
 
 MapEntry<_FlutterDistribution, String> _macosX64(String path, String version) =>
@@ -245,7 +303,7 @@ MapEntry<_FlutterDistribution, String> _macosX64(String path, String version) =>
         _FlutterDistribution(
             os: OperatingSystem.macos,
             arch: Architecture.x64,
-            version: version),
+            version: Version.fromString(version)),
         path);
 
 MapEntry<_FlutterDistribution, String> _macosArm64(
@@ -254,5 +312,5 @@ MapEntry<_FlutterDistribution, String> _macosArm64(
         _FlutterDistribution(
             os: OperatingSystem.macos,
             arch: Architecture.arm64,
-            version: version),
+            version: Version.fromString(version)),
         path);

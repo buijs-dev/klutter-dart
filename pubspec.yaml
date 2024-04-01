@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   dart_style: ^2.2.4 # can be bumped when min SDK is 2.19.0
-
+  meta: ^1.9.1
 dev_dependencies:
   coverage: ^1.6.4
   dartdoc: ^6.1.0 # can be bumped when min SDK is 2.19.0

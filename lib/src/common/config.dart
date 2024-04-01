@@ -1,4 +1,6 @@
-import "../cli/task_get_flutter.dart";
+import "package:meta/meta.dart";
+
+import "../../klutter.dart";
 
 /// The version of the Klutter Pub Plugin.
 const klutterPubVersion = "2.1.0";
@@ -19,7 +21,12 @@ const androidMinSdk = 24;
 const androidCompileSdk = 33;
 
 /// Flutter SDK versions which can be used for a Producer project.
-const supportedFlutterVersions = {"3.0.5", "3.3.10", "3.7.12", "3.10.6"};
+const supportedFlutterVersions = {
+  "3.0.5": Version(major: 3, minor: 0, patch: 5),
+  "3.3.10": Version(major: 3, minor: 3, patch: 10),
+  "3.7.12": Version(major: 3, minor: 7, patch: 12),
+  "3.10.6": Version(major: 3, minor: 10, patch: 6),
+};
 
 /// Verify if version input is valid.
 extension VersionVerifier on String {
@@ -46,14 +53,15 @@ extension VersionVerifier on String {
   /// - 3.10.6
   /// - 2.16.77
   VerifiedFlutterVersion? get verifyFlutterVersion {
-    if (supportedFlutterVersions.contains(this)) {
-      return VerifiedFlutterVersion(this);
+    final version = supportedFlutterVersions[this];
+    if (version != null) {
+      return VerifiedFlutterVersion(version);
     }
 
     for (final os in OperatingSystem.values) {
       for (final arch in Architecture.values) {
-        for (final version in supportedFlutterVersions) {
-          if (this == "$version.${os.name}.${arch.name}") {
+        for (final version in supportedFlutterVersions.values) {
+          if (this == "${version.prettyPrint}.${os.name}.${arch.name}") {
             return VerifiedFlutterVersion(version, os: os, arch: arch);
           }
         }
@@ -70,11 +78,91 @@ class VerifiedFlutterVersion {
   const VerifiedFlutterVersion(this.version, {this.os, this.arch});
 
   /// The Flutter version in format major.minor.patch.
-  final String version;
+  final Version version;
 
   /// The OperatingSystem extracted from the version String.
   final OperatingSystem? os;
 
   /// The Architecture extracted from the version String.
   final Architecture? arch;
+}
+
+/// Version data class.
+@immutable
+class Version implements Comparable<Version> {
+  /// Create a new [Version] instance.
+  const Version({
+    required this.major,
+    required this.minor,
+    required this.patch,
+  });
+
+  /// Create a new [Version] instance from a [prettyPrint] String.
+  factory Version.fromString(String prettyPrintedString) {
+    final regex = RegExp(r"^(\d+[.]\d+[.]\d+$)");
+    if (!regex.hasMatch(prettyPrintedString)) {
+      throw KlutterException(
+          "String is not formatted as expected (major.minor.patch.os.arch): $prettyPrintedString");
+    }
+
+    final data = prettyPrintedString.split(".");
+    return Version(
+        major: int.parse(data[0]),
+        minor: int.parse(data[1]),
+        patch: int.parse(data[2]));
+  }
+
+  /// Major version which is the first part of a version.
+  ///
+  /// A major version change indicates breaking changes.
+  final int major;
+
+  /// Minor version which is the middle part of a version.
+  ///
+  /// A minor version change indicates backwards-compatible features added.
+  final int minor;
+
+  /// Path version which is the last part of a version.
+  ///
+  /// A patch version change indicates technical changes or bug fixes.
+  final int patch;
+
+  /// Return formatted version string.
+  String get prettyPrint => "$major.$minor.$patch";
+
+  @override
+  String toString() => "Version($prettyPrint)";
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! Version) {
+      return false;
+    }
+
+    if (other.major != major) {
+      return false;
+    }
+
+    if (other.minor != minor) {
+      return false;
+    }
+
+    return other.patch == patch;
+  }
+
+  @override
+  int get hashCode => major;
+
+  @override
+  int compareTo(Version other) {
+    if (major != other.major) {
+      return other.major.compareTo(major);
+    }
+
+    if (minor != other.minor) {
+      return other.minor.compareTo(minor);
+    }
+
+    return other.patch.compareTo(patch);
+  }
 }
