@@ -5,6 +5,12 @@ import "../../klutter.dart";
 /// The version of the Klutter Pub Plugin.
 const klutterPubVersion = "2.1.0";
 
+/// The version of the Klutter UI Pub Plugin.
+const klutterUIPubVersion = "1.1.0";
+
+/// The version of the squint_json Pub Plugin.
+const squintPubVersion = "0.1.2";
+
 /// The version of the Klutter Gradle Plugin.
 const klutterGradleVersion = "2024.1.1.beta";
 

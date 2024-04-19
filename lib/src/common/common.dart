@@ -24,6 +24,8 @@
 library common;
 
 export "config.dart";
+export "environment.dart";
 export "exception.dart";
+export "executor.dart";
 export "project.dart";
 export "utilities.dart";

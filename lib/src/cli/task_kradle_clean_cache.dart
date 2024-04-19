@@ -18,27 +18,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "package:klutter/klutter.dart";
-import "package:test/test.dart";
+import "dart:ffi";
+import "dart:io";
 
-void main() {
+import "package:meta/meta.dart";
 
-  test("GetFlutterSDK fails when Flutter SDK is not set", () async {
-    final task = GetFlutterSDK();
-    final result = await task.execute("");
-    expect(result.isOk, false);
-    expect(result.message, "Invalid Flutter version (supported versions are: (3.0.5, 3.3.10, 3.7.12, 3.10.6)): null");
-  });
+import "../common/common.dart";
+import "../producer/kradle.dart";
+import "cli.dart";
 
-  test("GetFlutterSDK uses OS from version if present in version String", () async {
-    final task = GetFlutterSDK()
-      ..options = {
-      ScriptOption.flutter : "3.3.10.linux.x64",
-      ScriptOption.dryRun : "true"
+/// Clean the kradle cache by deleting contents recursively.
+class CleanCache extends Task {
+  /// Create new Task.
+  CleanCache() : super(ScriptName.kradle, TaskName.clean);
 
-    };
+  @override
+  Future<void> toBeExecuted(String pathToRoot) async {
+    void deleteIfExists(FileSystemEntity entity) {
+      if (entity.existsSync()) {
+        try {
+          entity.deleteSync();
+        } on Exception {
+          // ignore
+        }
+      }
+    }
 
-    final result = await task.execute("");
-    expect(result.isOk, true);
-  });
+    final cache = Directory(pathToRoot).kradleCache;
+    cache.listSync(recursive: true).forEach(deleteIfExists);
+  }
+
+  @override
+  List<String> exampleCommands() => ["kradle clean cache"];
 }

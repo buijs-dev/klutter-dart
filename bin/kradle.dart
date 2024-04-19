@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2024 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,27 +18,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// ignore_for_file: avoid_print
+
+import "dart:io";
+
+import "package:args/command_runner.dart";
 import "package:klutter/klutter.dart";
-import "package:test/test.dart";
 
-void main() {
+/// Run kradle tasks.
+Future<void> main(List<String> args) async {
+  print("""
+  ════════════════════════════════════════════
+     KRADLE (v$klutterPubVersion)                               
+  ════════════════════════════════════════════
+  """
+      .ok);
 
-  test("GetFlutterSDK fails when Flutter SDK is not set", () async {
-    final task = GetFlutterSDK();
-    final result = await task.execute("");
-    expect(result.isOk, false);
-    expect(result.message, "Invalid Flutter version (supported versions are: (3.0.5, 3.3.10, 3.7.12, 3.10.6)): null");
-  });
+  final pathToRoot = Directory.current.absolutePath;
+  final result = await execute(
+    script: ScriptName.kradle,
+    pathToRoot: pathToRoot,
+    arguments: args,
+  );
 
-  test("GetFlutterSDK uses OS from version if present in version String", () async {
-    final task = GetFlutterSDK()
-      ..options = {
-      ScriptOption.flutter : "3.3.10.linux.x64",
-      ScriptOption.dryRun : "true"
-
-    };
-
-    final result = await task.execute("");
-    expect(result.isOk, true);
-  });
+  print(result);
 }

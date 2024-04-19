@@ -42,6 +42,9 @@ Set<Task> allTasks(
         ConsumerInit(),
         ProducerInit(),
         GetFlutterSDK(),
+        CreateProject(),
+        BuildProject(),
+        CleanCache()
       ]
     ..verifyNoDuplicates
     ..verifyNoCircularDependencies;

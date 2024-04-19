@@ -46,6 +46,10 @@ enum ScriptName {
   /// Script containing tasks for projects
   /// that are being created with Klutter.
   producer,
+
+  /// Script containing tasks to create and
+  /// manage klutter projects.
+  kradle,
 }
 
 /// List of available scripts options.
@@ -61,6 +65,11 @@ enum ScriptOption {
   ///
   /// Used by [ScriptName.producer] when creating a new project.
   bom,
+
+  /// The Kradle cache directory.
+  ///
+  /// Used by [ScriptName.kradle] when deleting the cache content.
+  cache,
 
   /// The Flutter SDK distribution in format
   /// major.minor.patch.platform.architecture
@@ -88,7 +97,37 @@ enum ScriptOption {
   /// For testing purposes.
   ///
   /// Skips downloading of libraries when set to true.
-  dryRun
+  dryRun,
+
+  /// The klutter project root directory.
+  ///
+  /// Used by [ScriptName.kradle] when creating a new project.
+  root,
+
+  /// The klutter project name.
+  ///
+  /// Used by [ScriptName.kradle] when creating a new project.
+  name,
+
+  /// The klutter project group name.
+  ///
+  /// Used by [ScriptName.kradle] when creating a new project.
+  group,
+
+  /// The klutter pub version in format major.minor.patch.
+  ///
+  /// Used by [ScriptName.kradle] when creating a new project.
+  klutter,
+
+  /// The klutter-ui pub version in format major.minor.patch.
+  ///
+  /// Used by [ScriptName.kradle] when creating a new project.
+  klutterui,
+
+  /// The squint pub version in format major.minor.patch.
+  ///
+  /// Used by [ScriptName.kradle] when creating a new project.
+  squint,
 }
 
 /// List of available tasks.
@@ -103,6 +142,15 @@ enum TaskName {
 
   /// Tasks which does project initialization (setup).
   init,
+
+  /// Clean one or more directories by deleting contents recursively.
+  clean,
+
+  /// Create a new klutter project.
+  create,
+
+  /// Build a klutter project.
+  build
 }
 
 /// Convert a String value to a [TaskName].
@@ -117,6 +165,12 @@ extension TaskNameParser on String? {
     switch (this!.trim().toUpperCase()) {
       case "ADD":
         return TaskName.add;
+      case "BUILD":
+        return TaskName.build;
+      case "CLEAN":
+        return TaskName.clean;
+      case "CREATE":
+        return TaskName.create;
       case "GET":
         return TaskName.get;
       case "INIT":

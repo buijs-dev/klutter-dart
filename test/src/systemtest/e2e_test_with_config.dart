@@ -60,18 +60,6 @@ void main() {
       root: producerPlugin.absolutePath,
     );
 
-    /// Add Klutter as dev_dependency.
-    await addKlutterAsDevDependency(
-      root: producerPlugin.absolutePath,
-    );
-
-    /// Setup Klutter as dev_dependency.
-    await sut.execute(
-      pathToRoot: producerPlugin.absolutePath,
-      script: sut.ScriptName.producer,
-      arguments: ["init"],
-    );
-
     /// Root build.gradle file should be created.
     final rootBuildGradle = File("${producerPlugin.absolutePath}/build.gradle.kts".normalize);
     expect(rootBuildGradle.existsSync(), true, reason: "root/build.gradle.kts should exist");

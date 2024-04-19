@@ -36,11 +36,6 @@ void main() {
             e.cause.endsWith("fake"))));
   });
 
-  test("Verify cache folder can be found", () async {
-    expect(defaultKradleCacheFolder.absolutePath.contains(".kradle${Platform.pathSeparator}cache"), true,
-        reason: "kradle cache should exist");
-  });
-
   test("Verify Kradle files are copied to the root folder", () async {
     final root = Directory("${Directory.systemTemp.path}${s}kradle10")
       ..createSync(recursive: true);

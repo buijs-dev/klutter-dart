@@ -30,11 +30,10 @@ void main() {
     ..maybeCreate;
 
   group("Test allTasks", () {
-    test("Verify allTasks returns 3 tasks", () {
+    test("Verify allTasks returns 7 tasks", () {
       final tasks = service.allTasks();
 
-      // There should be 3 Tasks.
-      expect(tasks.length, 4);
+      expect(tasks.length, 7);
 
       expect(
         tasks.getTask(ScriptName.consumer, TaskName.add).toString(),
@@ -223,7 +222,13 @@ void main() {
           flutter pub run klutter:producer init bom=<version>(default is $klutterGradleVersion)
           flutter pub run klutter:producer init flutter=<version>(default is $klutterFlutterVersion)
           flutter pub run klutter:producer init flutter=<version> bom=<version> 
-          flutter pub run klutter:producer get flutter=<version> (one of versions: (3.0.5, 3.3.10, 3.7.12, 3.10.6))"""
+          flutter pub run klutter:producer get flutter=<version> (one of versions: (3.0.5, 3.3.10, 3.7.12, 3.10.6))
+          flutter pub run klutter:kradle create
+          flutter pub run klutter:kradle create name=my_plugin group=dev.buijs.klutter.example flutter=3.10.6
+          flutter pub run klutter:kradle create name=my_plugin group=dev.buijs.klutter.example flutter=3.10.6 config=./foo/bar/kradle.yaml
+          flutter pub run klutter:kradle create name=my_plugin group=dev.buijs.klutter.example flutter=3.10.6 config=./foo/bar/kradle.yamlroot=./foo/bar/directory
+          flutter pub run klutter:kradle build
+          flutter pub run klutter:kradle clean cache"""
               .replaceAll(" ", ""));
     });
   });

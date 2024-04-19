@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2024 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,27 +18,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "package:klutter/klutter.dart";
-import "package:test/test.dart";
+import "dart:core";
+import "dart:io";
 
-void main() {
+/// Wrapper for [Platform] to access Operating System properties.
+PlatformWrapper platform = PlatformWrapper();
 
-  test("GetFlutterSDK fails when Flutter SDK is not set", () async {
-    final task = GetFlutterSDK();
-    final result = await task.execute("");
-    expect(result.isOk, false);
-    expect(result.message, "Invalid Flutter version (supported versions are: (3.0.5, 3.3.10, 3.7.12, 3.10.6)): null");
-  });
+/// Wrapper for [Platform].
+class PlatformWrapper {
+  /// Get the current Operating System through [Platform.operatingSystem].
+  String get operatingSystem => Platform.operatingSystem;
 
-  test("GetFlutterSDK uses OS from version if present in version String", () async {
-    final task = GetFlutterSDK()
-      ..options = {
-      ScriptOption.flutter : "3.3.10.linux.x64",
-      ScriptOption.dryRun : "true"
+  /// Get the environment variables through [Platform.environment].
+  Map<String, String> get environment => Platform.environment;
 
-    };
+  /// Check if current platform is windows.
+  bool get isWindows => Platform.isWindows;
 
-    final result = await task.execute("");
-    expect(result.isOk, true);
-  });
+  /// Check if current platform is macos.
+  bool get isMacos => Platform.isMacOS;
 }

@@ -23,17 +23,6 @@ import "dart:io";
 import "../common/utilities.dart";
 import "resource.dart";
 
-/// Path to Kradle cache folder which defaults to <user.home>/.kradle/cache.
-///
-/// Cache Path can be overwritten in the project-root/kradle.env File.
-Directory get defaultKradleCacheFolder {
-  final root = Platform.operatingSystem == "windows"
-      ? Platform.environment["USERPROFILE"]
-      : Platform.environment["HOME"];
-
-  return Directory("$root/.kradle/cache").normalizeToFolder;
-}
-
 /// Copy Kradle files to root.
 ///
 /// Copies the following files:

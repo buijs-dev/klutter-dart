@@ -22,8 +22,9 @@
 
 import "dart:io";
 
+import "package:klutter/klutter.dart";
 import "package:klutter/src/cli/cli.dart" as sut;
-import "package:klutter/src/common/common.dart";
+import "package:klutter/src/cli/task_service.dart" as service;
 import "package:test/test.dart";
 
 const organisation = "dev.buijs.integrationtest.example";
@@ -68,18 +69,6 @@ void main() {
       expect(producerPlugin.existsSync(), true,
           reason:
               "Plugin should be created in: '${producerPlugin.absolute.path}'");
-
-      /// Add Klutter as dev_dependency.
-      await addKlutterAsDevDependency(
-        root: producerPlugin.absolutePath,
-      );
-
-      /// Setup Klutter as dev_dependency.
-      await sut.execute(
-        pathToRoot: producerPlugin.absolutePath,
-        script: sut.ScriptName.producer,
-        arguments: ["init"],
-      );
 
       /// Gradle files should be copied to root folder.
       expect(
@@ -185,25 +174,6 @@ void main() {
           true,
       reason: "main.dart content is overwritten");
 
-      /// Add Klutter as dev_dependency.
-      await addKlutterAsDevDependency(
-        root: consumerPlugin.absolutePath,
-      );
-
-      /// Setup Klutter in consumer project.
-      await sut.execute(
-        pathToRoot: consumerPlugin.absolutePath,
-        script: sut.ScriptName.consumer,
-        arguments: ["init"],
-      );
-
-      /// Add plugin to consumer project.
-      await sut.execute(
-        pathToRoot: consumerPlugin.absolutePath,
-        script: sut.ScriptName.consumer,
-        arguments: ["add", "lib=$pluginName"],
-      );
-
       final registry =
       File("${consumerPlugin.absolutePath}/.klutter-plugins".normalize);
 
@@ -230,60 +200,23 @@ Future<void> createFlutterPlugin({
   required String organisation,
   required String pluginName,
   required String root,
+  String? config,
 }) async {
-  await Process.run(
-          "flutter",
-          [
-            "create",
-            "--org",
-            organisation,
-            "--template=plugin",
-            "--platforms=android,ios",
-            pluginName,
-          ],
-          runInShell: true,
-          workingDirectory: root)
-      .then((result) {
-    stdout.write(result.stdout);
-    stderr.write(result.stderr);
-  });
-}
-
-Future<void> addKlutterAsDevDependency({
-  required String root,
-}) async {
-  final pubspec = File("$root/pubspec.yaml".normalize);
-
-  if (!pubspec.existsSync()) {
-    throw KlutterException("Pubspec.yaml is not found!");
-  }
-
-  final lines = pubspec.readAsLinesSync();
-
-  pubspec
-    ..deleteSync()
-    ..createSync();
-
-  for (final line in lines) {
-    pubspec.writeAsStringSync("$line\n", mode: FileMode.append);
-
-    if (line.startsWith("dev_dependencies:")) {
-      pubspec
-        ..writeAsStringSync("  klutter:\n", mode: FileMode.append)
-        ..writeAsStringSync("    path: ${Directory.current.absolute.path}\n",
-            mode: FileMode.append);
+  final tasks = service.tasksOrEmptyList(Command(
+    taskName: TaskName.create,
+    scriptName: ScriptName.kradle,
+    options: {
+      ScriptOption.root:root,
+      ScriptOption.group:organisation,
+      ScriptOption.name:pluginName,
+      ScriptOption.flutter:"3.10.6",
+      ScriptOption.klutter:"local@${Directory.current.resolveFolder("./../".normalize).absolutePath}",
     }
+  ));
+
+  for(final task in tasks) {
+    final res = await task.execute(root);
+    assert(res.isOk, res.message);
   }
 
-  await Process.run("flutter", ["pub", "get"],
-      runInShell: true, workingDirectory: root)
-      .then((result) {
-    stdout.write(result.stdout);
-    stderr.write(result.stderr);
-  });
-
-  File("$root/kradle.yaml".normalize)
-    ..maybeCreate
-    ..writeAsStringSync("flutter-version: '3.0.5.${Platform.isWindows ? "windows" : "macos"}.x64'")
-  ;
 }

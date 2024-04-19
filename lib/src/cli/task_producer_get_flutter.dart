@@ -45,35 +45,10 @@ class GetFlutterSDK extends Task {
     }
 
     final overwrite = options[ScriptOption.overwrite] == "true";
-
-    OperatingSystem? platform;
-
-    if (flutterVersion.os != null) {
-      platform = flutterVersion.os;
-    } else if (Platform.isWindows) {
-      platform = OperatingSystem.windows;
-    } else if (Platform.isMacOS) {
-      platform = OperatingSystem.macos;
-    } else if (Platform.isLinux) {
-      platform = OperatingSystem.linux;
-    }
-
-    if (platform == null) {
-      throw KlutterException(
-          "Current OS is not supported (supported: macos, windows or linux): ${Platform.operatingSystem}");
-    }
-
-    final cache = defaultKradleCacheFolder..maybeCreate;
-    final arch = flutterVersion.arch ??
-        (Abi.current().toString().contains("arm")
-            ? Architecture.arm64
-            : Architecture.x64);
-
-    final dist = FlutterDistribution(
-        version: flutterVersion.version, os: platform, arch: arch);
-
+    final dist = toFlutterDistributionOrThrow(
+        version: flutterVersion, pathToRoot: pathToRoot);
+    final cache = Directory(pathToRoot.normalize).kradleCache..maybeCreate;
     final cachedSDK = cache.resolveFolder("${dist.folderNameString}");
-
     if (cachedSDK.resolveFolder("flutter").existsSync() && !overwrite) {
       return;
     }
@@ -168,6 +143,7 @@ Map<FlutterDistribution, String> get _compatibleFlutterVersions {
   ];
 
   final versions = <FlutterDistribution, String>{};
+
   for (final entry in dist) {
     versions[entry.key] = entry.value;
   }
