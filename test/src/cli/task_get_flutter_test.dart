@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import "dart:io";
+
 import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
@@ -35,10 +37,13 @@ void main() {
       ..options = {
       ScriptOption.flutter : "3.3.10.linux.x64",
       ScriptOption.dryRun : "true"
-
     };
 
-    final result = await task.execute("");
+    final root = Directory.systemTemp;
+    root.resolveFile("kradle.env")
+      ..createSync()
+      ..writeAsStringSync("cache=${root.absolutePath}");
+    final result = await task.execute(root.absolutePath);
     expect(result.isOk, true);
   });
 }

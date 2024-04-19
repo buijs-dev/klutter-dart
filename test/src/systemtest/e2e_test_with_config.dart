@@ -22,7 +22,6 @@
 
 import "dart:io";
 
-import "package:klutter/src/cli/cli.dart" as sut;
 import "package:klutter/src/common/common.dart";
 import "package:test/test.dart";
 
@@ -41,6 +40,10 @@ void main() {
 
   final producerPlugin =
       Directory("${pathToRoot.absolute.path}/$pluginName".normalize);
+
+  pathToRoot.resolveFile("kradle.env")
+    ..createSync()
+    ..writeAsStringSync("cache=${pathToRoot.absolutePath}");
 
   test("end-to-end test", () async {
 
