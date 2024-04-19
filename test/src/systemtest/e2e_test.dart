@@ -38,10 +38,6 @@ void main() {
       "${Directory.systemTemp.absolute.path}/createklutterpluginit".normalize)
     ..createSync();
 
-  pathToRoot.resolveFile("kradle.env")
-    ..createSync()
-    ..writeAsStringSync("cache=${pathToRoot.absolutePath}");
-
   final producerPlugin =
       Directory("${pathToRoot.absolute.path}/$pluginName".normalize);
 

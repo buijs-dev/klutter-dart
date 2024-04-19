@@ -47,7 +47,7 @@ void main() {
 
       expect(
         tasks.getTask(ScriptName.producer, TaskName.init).toString(),
-        "Instance of Task: ScriptName.producer | TaskName.init | DependsOn: [Instance of Task: ScriptName.producer | TaskName.get | DependsOn: []]",
+        "Instance of Task: ScriptName.producer | TaskName.init | DependsOn: []",
       );
 
     });

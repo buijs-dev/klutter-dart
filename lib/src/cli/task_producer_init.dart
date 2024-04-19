@@ -77,7 +77,7 @@ class ProducerInit extends Task {
       ];
 
   @override
-  List<Task> dependsOn() => [GetFlutterSDK()];
+  List<Task> dependsOn() => []; //[GetFlutterSDK()];
 }
 
 class _Producer {

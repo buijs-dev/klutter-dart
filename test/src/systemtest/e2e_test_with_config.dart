@@ -41,10 +41,6 @@ void main() {
   final producerPlugin =
       Directory("${pathToRoot.absolute.path}/$pluginName".normalize);
 
-  pathToRoot.resolveFile("kradle.env")
-    ..createSync()
-    ..writeAsStringSync("cache=${pathToRoot.absolutePath}");
-
   test("end-to-end test", () async {
 
     /// Create Flutter plugin project.
