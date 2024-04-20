@@ -216,7 +216,10 @@ Future<void> createFlutterPlugin({
 
   for(final task in tasks) {
     final res = await task.execute(root);
-    //assert(res.isOk, res.message);
+    if(!res.isOk) {
+      print(task);
+      assert(res.isOk,res.message);
+    }
   }
 
 }

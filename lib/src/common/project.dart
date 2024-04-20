@@ -366,7 +366,7 @@ extension on Directory {
       userHome.error,
     );
 
-    return _kradleCacheDirectoryOrThrow(
+    return _kradleCacheDirectory(
         kradleHome, () => throw KlutterException(errorMessage));
   }
 }
@@ -382,7 +382,7 @@ extension on File {
   /// is not resolved or does not exist.
   Directory get defaultKradleCache {
     final userHome = _userHomeOrError;
-    return _kradleCacheDirectoryOrThrow(
+    return _kradleCacheDirectory(
         _kradleCacheFromEnvironmentPropertyOrNull(userHome.userHome), () {
       throw KlutterException(
           _defaultKradleCacheBecauseCachePropertyNotFoundErrorMessage(
@@ -404,7 +404,7 @@ extension on File {
               kradleEnvPropertyUserHome, userHome.userHome!)
           : null;
 
-      return _kradleCacheDirectoryOrThrow(
+      return _kradleCacheDirectory(
         cachePropertyResolved,
         () => throw KlutterException(
           _configuredKradleHomeErrorMessage(
@@ -415,7 +415,7 @@ extension on File {
       );
     }
 
-    return _kradleCacheDirectoryOrThrow(cacheProperty, () {});
+    return _kradleCacheDirectory(cacheProperty, () {});
   }
 
   /// Return value of property cache or null.
@@ -434,9 +434,8 @@ String _extractPropertyValue(String line) =>
 String? _kradleCacheFromEnvironmentPropertyOrNull(String? userHomeOrNull) =>
     userHomeOrNull == null ? null : "$userHomeOrNull/.kradle/cache".normalize;
 
-/// Returns the kradle cache directory or throws a [KlutterException]
-/// if the directory could not be determined or if it does not exist.
-Directory _kradleCacheDirectoryOrThrow(
+/// Returns the kradle cache directory and creates it if it does not exist.
+Directory _kradleCacheDirectory(
   String? pathToKradleCache,
   void Function() onNullValue,
 ) {
@@ -444,8 +443,7 @@ Directory _kradleCacheDirectoryOrThrow(
     onNullValue();
   }
 
-  return Directory(pathToKradleCache!.normalize).normalizeToFolder
-    ..verifyFolderExists;
+  return Directory(pathToKradleCache!.normalize).normalizeToFolder..maybeCreate;
 }
 
 /// Determine the user home directory by checking environment variables.

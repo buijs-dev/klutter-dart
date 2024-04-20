@@ -208,18 +208,25 @@ void main() {
   });
 
   test(
-      "When kradle.env contains cache property and the file is not found then an exception is thrown",
+      "When kradle.env contains cache property and the directory is not found then it is created",
       () {
+        final dotKradleDirectory = Directory.systemTemp.resolveFolder(".kradle")..createSync();
+        final cacheDirectory = Directory("${dotKradleDirectory.absolutePath}/cache".normalize);
     final rootDirectory = _newProjectFolder;
     setPlatformMacos(rootDirectory);
     createCacheFolder(rootDirectory);
     createKradleEnv(
       rootDirectory,
-      contents: "cache=foo/bar/.kradle/cache",
+      contents: "cache=${cacheDirectory.absolutePath}",
     );
-    expect(() => rootDirectory.kradleCache, throwsA(predicate((e) {
-      return e is KlutterException && e.cause.contains("Path does not exist: ");
-    })));
+
+    expect(cacheDirectory.existsSync(), false);
+
+    // when
+    rootDirectory.kradleCache;
+
+    // then
+        expect(cacheDirectory.existsSync(), true);
   });
 
   tearDownAll(() {
