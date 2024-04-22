@@ -54,12 +54,21 @@ class CreateProject extends Task {
 
     final dist = toFlutterDistributionOrThrow(
         version: flutterVersion, pathToRoot: pathToRoot);
-    final flutter = Directory(pathToRoot.normalize)
+
+    final flutterFromCache = Directory(pathToRoot.normalize)
         .kradleCache
         .resolveFolder("${dist.folderNameString}")
-        .resolveFile("flutter/bin/flutter".normalize)
-        .absolutePath;
+        .resolveFile("flutter/bin/flutter".normalize);
 
+    if(!flutterFromCache.existsSync()) {
+      final task = GetFlutterSDK();
+      final taskResult = await task.execute(context);
+      if(!taskResult.isOk) {
+        throw KlutterException(taskResult.message ?? "failed to get flutter sdk");
+      }
+    }
+
+    final flutter = flutterFromCache.absolutePath;
     final root = Directory(pathToRoot.normalize).resolveFolder(name);
 
     _executor

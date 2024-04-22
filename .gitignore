@@ -34,3 +34,5 @@ build/
 /resimport.sh
 /dartdoc.sh
 /example/ridiculous_awesome/
+/kradlew
+/build_dist.sh

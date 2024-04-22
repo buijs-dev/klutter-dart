@@ -28,7 +28,9 @@ void main() {
 
   test("GetFlutterSDK downloads latest compatible if version is not set", () async {
     final task = GetFlutterSDK();
-    final result = await task.execute(context({}));
+    final result = await task.execute(context({
+      TaskOption.dryRun: "true"
+    }));
     expect(result.isOk, true);
   });
 
