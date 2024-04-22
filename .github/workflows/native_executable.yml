@@ -23,4 +23,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: kradlew-${{ matrix.os }}-${{ matrix.version }}
-          path: kradlew.exe
+          path: kradlew
