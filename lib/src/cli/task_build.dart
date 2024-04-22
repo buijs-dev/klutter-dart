@@ -26,6 +26,7 @@ import "package:meta/meta.dart";
 import "../common/common.dart";
 import "../producer/kradle.dart";
 import "cli.dart";
+import "context.dart";
 
 /// Build the klutter application by running a gradle build. Running
 /// this command does everything which is required to start a klutter
@@ -41,21 +42,22 @@ import "cli.dart";
 class BuildProject extends Task {
   /// Create new Task.
   BuildProject({Executor? executor})
-      : super(ScriptName.kradle, TaskName.build) {
+      : super(TaskName.build, {
+          TaskOption.root: RootDirectoryInput(),
+          // TODO add skiptest option
+        }) {
     _executor = executor ?? Executor();
   }
 
   late final Executor _executor;
 
   @override
-  Future<void> toBeExecuted(String pathToRoot) async {
+  Future<void> toBeExecuted(
+      Context context, Map<TaskOption, dynamic> options) async {
     _executor
-      ..workingDirectory = Directory(pathToRoot)
+      ..workingDirectory = Directory(findPathToRoot(context, options))
       ..arguments = ["clean", "build", "-p", "platform"]
       ..executable = "gradlew"
       ..run();
   }
-
-  @override
-  List<String> exampleCommands() => ["kradle build"];
 }

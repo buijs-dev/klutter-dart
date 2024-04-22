@@ -39,7 +39,7 @@ void writeExampleMainDartFile({
 extension on FileSystemEntity {
   /// Create main.dart file in the example/lib folder.
   File get createMainDartFile {
-    Directory("$absolutePath/lib").normalizeToFolder.maybeCreate;
+    Directory("$absolutePath/lib").normalizeToDirectory.maybeCreate;
     return File("$absolutePath/lib/main.dart").normalizeToFile
       ..ifNotExists((folder) => File(folder.absolutePath).createSync());
   }

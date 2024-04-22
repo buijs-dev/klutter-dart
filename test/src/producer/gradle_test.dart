@@ -40,7 +40,7 @@ void main() {
     final root = Directory("${Directory.systemTemp.path}${s}gradle10")
       ..createSync(recursive: true);
 
-    await Gradle(root.normalizeToFolder.absolutePath).copyToRoot;
+    await Gradle(root.normalizeToDirectory.absolutePath).copyToRoot;
 
     final properties = File("${root.path}/gradle.properties").normalizeToFile;
     final wrapperJar =

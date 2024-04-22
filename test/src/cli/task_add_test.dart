@@ -18,36 +18,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "dart:ffi";
 import "dart:io";
 
-import "package:meta/meta.dart";
+import "package:klutter/klutter.dart";
+import "package:klutter/src/cli/context.dart";
+import "package:test/test.dart";
 
-import "../common/common.dart";
-import "../producer/kradle.dart";
-import "cli.dart";
-
-/// Clean the kradle cache by deleting contents recursively.
-class CleanCache extends Task {
-  /// Create new Task.
-  CleanCache() : super(ScriptName.kradle, TaskName.clean);
-
-  @override
-  Future<void> toBeExecuted(String pathToRoot) async {
-    void deleteIfExists(FileSystemEntity entity) {
-      if (entity.existsSync()) {
-        try {
-          entity.deleteSync();
-        } on Exception {
-          // ignore
-        }
-      }
-    }
-
-    final cache = Directory(pathToRoot).kradleCache;
-    cache.listSync(recursive: true).forEach(deleteIfExists);
-  }
-
-  @override
-  List<String> exampleCommands() => ["kradle clean cache"];
+void main() {
+  test("ConsumerAdd fails when option is not set", () async {
+    final result = await AddLibrary()
+        .execute(Context(
+        taskName: TaskName.add,
+        workingDirectory: Directory.current,
+        taskOptions: <TaskOption, String>{}));
+    expect(result.isOk, false);
+    expect(result.message, "unable to run task add because: [missing value for option: lib]");
+  });
 }

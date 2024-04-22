@@ -18,9 +18,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import '../common/common.dart';
+import '../consumer/consumer.dart';
+import "../common/exception.dart";
+import "../common/project.dart";
+import "cli.dart";
 import "dart:io";
 
-import "../common/common.dart";
 import "../consumer/android.dart";
 import "../producer/android.dart";
 import "../producer/gradle.dart";
@@ -28,56 +32,64 @@ import "../producer/ios.dart";
 import "../producer/kradle.dart";
 import "../producer/platform.dart";
 import "../producer/project.dart";
-import "cli.dart";
+import "context.dart";
 
-/// Task to run project initialization (setup).
+/// Task to prepare a flutter project for using klutter plugins.
 ///
+/// {@category consumer}
 /// {@category producer}
-class ProducerInit extends Task {
+class ProjectInit extends Task {
   /// Create new Task based of the root folder.
-  ProducerInit() : super(ScriptName.producer, TaskName.init);
+  ProjectInit()
+      : super(TaskName.init, {
+          TaskOption.bom: const KlutterGradleVersionOption(),
+          TaskOption.flutter: FlutterVersionOption(),
+          TaskOption.root: RootDirectoryInput(),
+        });
 
   @override
-  Future<void> toBeExecuted(String pathToRoot) async {
-    final validBomVersionOrNull = options[ScriptOption.bom]?.verifyBomVersion;
-
-    if (validBomVersionOrNull == null) {
-      throw KlutterException(
-          "Invalid BOM version (example of correct version: $klutterGradleVersion): $validBomVersionOrNull");
+  Future<void> toBeExecuted(
+      Context context, Map<TaskOption, dynamic> options) async {
+    final pathToRoot = findPathToRoot(context, options);
+    try {
+      // will throw exception if unable to find
+      // the package name which means this is not
+      // a producer project.
+      findPackageName(pathToRoot);
+      final bom = options[TaskOption.bom];
+      final flutter = options[TaskOption.flutter] as VerifiedFlutterVersion;
+      await _producerInit(pathToRoot, bom, flutter);
+    } on KlutterException {
+      _consumerInit(pathToRoot);
     }
-
-    final flutterVersion =
-        options[ScriptOption.flutter]?.verifyFlutterVersion?.version;
-
-    if (flutterVersion == null) {
-      throw KlutterException(
-          "Invalid Flutter version (supported versions are: ${supportedFlutterVersions.keys}): $flutterVersion");
-    }
-
-    final producer = _Producer(
-        pathToRoot: pathToRoot,
-        bomVersion: validBomVersionOrNull,
-        flutterVersion: flutterVersion.prettyPrint);
-    await producer.addGradle;
-    await producer.addKradle;
-    producer
-      ..setupRoot
-      ..setupAndroid
-      ..setupIOS
-      ..setupPlatform
-      ..setupExample;
   }
+}
 
-  @override
-  List<String> exampleCommands() => [
-        "producer init",
-        "producer init bom=<version> (default is $klutterGradleVersion)",
-        "producer init flutter=<version> (default is $klutterFlutterVersion)",
-        "producer init flutter=<version> bom=<version>",
-      ];
+void _consumerInit(String pathToRoot) {
+  final pathToAndroid = "$pathToRoot/android".normalize;
+  final sdk = findFlutterSDK(pathToAndroid);
+  final app = "$pathToAndroid/app".normalize;
+  writePluginLoaderGradleFile(sdk);
+  createRegistry(pathToRoot);
+  applyPluginLoader(pathToAndroid);
+  setAndroidSdkConstraints(app);
+  setKotlinVersionInBuildGradle(pathToAndroid);
+}
 
-  @override
-  List<Task> dependsOn() => []; //[GetFlutterSDK()];
+Future<void> _producerInit(
+    String pathToRoot, String bom, VerifiedFlutterVersion flutter) async {
+  final producer = _Producer(
+      pathToRoot: pathToRoot,
+      bomVersion: bom,
+      flutterVersion: flutter.version.prettyPrint);
+  await producer.addGradle;
+  await producer.addKradle;
+  producer
+    ..setupRoot
+    ..setupAndroid
+    ..setupIOS
+    ..setupPlatform
+    ..setupExample;
 }
 
 class _Producer {
@@ -95,7 +107,7 @@ extension on _Producer {
   void get setupRoot {
     Directory("$pathToRoot/lib".normalize)
       // Delete folder and all children if they exist.
-      ..normalizeToFolder.maybeDelete
+      ..normalizeToDirectory.maybeDelete
       // Create a new empty lib folder.
       ..maybeCreate;
 

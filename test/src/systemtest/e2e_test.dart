@@ -24,7 +24,7 @@ import "dart:io";
 
 import "package:klutter/klutter.dart";
 import "package:klutter/src/cli/cli.dart" as sut;
-import "package:klutter/src/cli/task_service.dart" as service;
+import "package:klutter/src/cli/context.dart";
 import "package:test/test.dart";
 
 const organisation = "dev.buijs.integrationtest.example";
@@ -48,10 +48,7 @@ void main() {
     test("end-to-end test", () async {
       /// Run a Klutter task without an existing Flutter project
       final result = await sut.execute(
-        pathToRoot: producerPlugin.absolutePath,
-        script: sut.ScriptName.consumer,
-        arguments: ["add", "lib=foo"],
-      );
+          toContextOrNull(producerPlugin,["add", "lib=foo"])!);
 
       expect(
         result.contains("finished unsuccessfully"),
@@ -63,7 +60,7 @@ void main() {
       await createFlutterPlugin(
         organisation: organisation,
         pluginName: pluginName,
-        root: Directory(pathToRoot.absolutePath).normalizeToFolder.absolutePath,
+        root: Directory(pathToRoot.absolutePath).normalizeToDirectory.absolutePath,
       );
 
       expect(producerPlugin.existsSync(), true,
@@ -202,24 +199,20 @@ Future<void> createFlutterPlugin({
   required String root,
   String? config,
 }) async {
-  final tasks = service.tasksOrEmptyList(Command(
-    taskName: TaskName.create,
-    scriptName: ScriptName.kradle,
-    options: {
-      ScriptOption.root:root,
-      ScriptOption.group:organisation,
-      ScriptOption.name:pluginName,
-      ScriptOption.flutter:"3.10.6",
-      ScriptOption.klutter:"local@${Directory.current.resolveFolder("./../".normalize).absolutePath}",
-    }
-  ));
+  final context = Context(
+    workingDirectory: Directory(root),
+    taskName:  TaskName.create,
+      taskOptions: {
+    TaskOption.root:root,
+    TaskOption.group:organisation,
+    TaskOption.name:pluginName,
+    TaskOption.flutter:"3.10.6",
+    TaskOption.klutter:"local@${Directory.current.resolveFolder("./../".normalize).absolutePath}",
+  });
 
-  for(final task in tasks) {
-    final res = await task.execute(root);
-    if(!res.isOk) {
-      print(task);
-      assert(res.isOk,res.message);
-    }
+  final res = await sut.toTask(context)!.execute(context);
+  if(!res.isOk) {
+     assert(res.isOk,res.message);
   }
 
 }

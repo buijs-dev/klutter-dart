@@ -22,14 +22,6 @@ import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
-  test("When command is invalid then no tasks are executed", () {
-    execute(
-      script: ScriptName.consumer,
-      pathToRoot: "",
-      arguments: [],
-    );
-  });
-
   test("Verify colored messages", () {
     expect("msg".ok, "\x1B[32mmsg");
     expect("msg".nok, "\x1B[31mmsg");

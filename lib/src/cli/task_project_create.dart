@@ -22,23 +22,35 @@ import "dart:io";
 
 import "../common/common.dart";
 import "cli.dart";
+import "context.dart";
 
 /// Task
 class CreateProject extends Task {
   /// Create new Task.
   CreateProject({Executor? executor})
-      : super(ScriptName.kradle, TaskName.create) {
+      : super(TaskName.create, {
+          TaskOption.name: const PluginNameOption(),
+          TaskOption.group: GroupNameOption(),
+          TaskOption.flutter: FlutterVersionOption(),
+          TaskOption.root: RootDirectoryInput(),
+          TaskOption.klutter: const KlutterPubVersion(),
+          TaskOption.klutterui: const KlutteruiPubVersion(),
+          TaskOption.bom: const KlutterGradleVersionOption(),
+          TaskOption.squint: const SquintPubVersion(),
+        }) {
     _executor = executor ?? Executor();
   }
 
   late final Executor _executor;
 
   @override
-  Future<void> toBeExecuted(String pathToRoot) async {
-    final workingDirectory = _rootOrNull ?? Directory(pathToRoot);
-    final name = _pluginName;
-    final group = _groupName;
-    final flutterVersion = _flutterVersion;
+  Future<void> toBeExecuted(
+      Context context, Map<TaskOption, dynamic> options) async {
+    final pathToRoot = findPathToRoot(context, options);
+    final name = options[TaskOption.name];
+    final group = options[TaskOption.group];
+    final flutterVersion =
+        options[TaskOption.flutter] as VerifiedFlutterVersion;
 
     final dist = toFlutterDistributionOrThrow(
         version: flutterVersion, pathToRoot: pathToRoot);
@@ -52,7 +64,7 @@ class CreateProject extends Task {
 
     _executor
       ..executable = flutter
-      ..workingDirectory = workingDirectory
+      ..workingDirectory = Directory(pathToRoot)
       ..arguments = [
         "create",
         name,
@@ -74,10 +86,10 @@ class CreateProject extends Task {
 
     final flutterSDK = dist.folderNameString.source;
 
-    final bomVersion = _klutterGradleVersion;
-    final klutterVersion = _klutterPubVersion;
-    final klutterUIVersion = _klutteruiPubVersion;
-    final squintVersion = _squintPubVersion;
+    final bomVersion = options[TaskOption.bom];
+    final klutterVersion = options[TaskOption.klutter];
+    final klutterUIVersion = options[TaskOption.klutterui];
+    final squintVersion = options[TaskOption.squint];
 
     rootPubspecFile.writeRootPubspecYaml(
       pluginName: name,
@@ -113,16 +125,16 @@ class CreateProject extends Task {
       ..arguments = [
         "pub",
         "run",
-        "klutter:producer",
+        "klutter:kradle",
         "init",
         "bom=$bomVersion",
         "flutter=$flutterSDK"
       ]
       ..run()
       ..workingDirectory = exampleFolder
-      ..arguments = ["pub", "run", "klutter:consumer", "init"]
+      ..arguments = ["pub", "run", "klutter:kradle", "init"]
       ..run()
-      ..arguments = ["pub", "run", "klutter:consumer", "add", "lib=$name"]
+      ..arguments = ["pub", "run", "klutter:kradle", "add", "lib=$name"]
       ..run();
 
     exampleFolder
@@ -149,83 +161,6 @@ class CreateProject extends Task {
       }
     }
   }
-
-  VerifiedFlutterVersion get _flutterVersion {
-    final flutter = options[ScriptOption.flutter] ?? "3.10.6";
-    return flutter.verifyFlutterVersion ??
-        (throw KlutterException(
-            "Invalid Flutter version (supported versions are: ${supportedFlutterVersions.keys}): $flutter"));
-  }
-
-  Directory? get _rootOrNull {
-    final opt = options[ScriptOption.root];
-    if (opt == null) {
-      return null;
-    }
-
-    return Directory(opt.normalize)..verifyFolderExists;
-  }
-
-  String get _pluginName {
-    final opt = options[ScriptOption.name] ?? "my_plugin";
-
-    if (!RegExp(r"""^[a-z][a-z0-9_]+$""").hasMatch(opt)) {
-      throw KlutterException("PluginName error: Should only contain"
-          " lowercase alphabetic, numeric and or _ characters"
-          " and start with an alphabetic character ('my_plugin').");
-    }
-
-    return opt;
-  }
-
-  String get _groupName {
-    final opt = options[ScriptOption.group] ?? "dev.buijs.klutter.example";
-
-    if (!opt.contains(".")) {
-      throw KlutterException(
-          "GroupName error: Should contain at least 2 parts ('com.example').");
-    }
-
-    if (opt.contains("_.")) {
-      throw KlutterException(
-          "GroupName error: Characters . and _ can not precede each other.");
-    }
-
-    if (opt.contains("._")) {
-      throw KlutterException(
-          "GroupName error: Characters . and _ can not precede each other.");
-    }
-
-    if (!RegExp(r"""^[a-z][a-z0-9._]+[a-z]$""").hasMatch(opt)) {
-      throw KlutterException(
-          "GroupName error: Should be lowercase alphabetic separated by dots ('com.example').");
-    }
-
-    return opt;
-  }
-
-  String get _klutterPubVersion =>
-      options[ScriptOption.klutter] ?? klutterPubVersion;
-
-  String get _klutteruiPubVersion =>
-      options[ScriptOption.klutterui] ?? klutterUIPubVersion;
-
-  String get _squintPubVersion =>
-      options[ScriptOption.squint] ?? squintPubVersion;
-
-  String get _klutterGradleVersion =>
-      options[ScriptOption.bom] ?? klutterGradleVersion;
-
-  @override
-  List<String> exampleCommands() => [
-        "kradle create",
-        "kradle create name=my_plugin group=dev.buijs.klutter.example flutter=3.10.6",
-        "kradle create name=my_plugin group=dev.buijs.klutter.example flutter=3.10.6 config=./foo/bar/kradle.yaml",
-        "kradle create name=my_plugin group=dev.buijs.klutter.example flutter=3.10.6 config=./foo/bar/kradle.yaml root=./foo/bar/directory",
-      ];
-
-  @override
-  List<Task> dependsOn() => [GetFlutterSDK()];
 }
 
 extension on File {

@@ -21,6 +21,7 @@
 import "dart:io";
 
 import "package:klutter/klutter.dart";
+import "package:klutter/src/cli/context.dart";
 import "package:test/test.dart";
 
 import "../common/executor_test.dart";
@@ -37,7 +38,11 @@ void main() {
         expectedPathToWorkingDirectory: pathToRoot.absolutePath,
         expectedCommand: "gradlew clean build -p platform");
 
-    BuildProject(executor: executor).toBeExecuted(pathToRoot.absolutePath);
+    BuildProject(executor: executor).toBeExecuted(Context(
+      workingDirectory: pathToRoot,
+      taskName: TaskName.build,
+      taskOptions: { },
+    ), {});
 
     expect(executor.run().stdout, "Test OK!");
   });

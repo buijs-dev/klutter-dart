@@ -40,7 +40,7 @@ void main() {
     final root = Directory("${Directory.systemTemp.path}${s}kradle10")
       ..createSync(recursive: true);
 
-    await Kradle(root.normalizeToFolder.absolutePath).copyToRoot;
+    await Kradle(root.normalizeToDirectory.absolutePath).copyToRoot;
 
     final env = File("${root.path}/kradle.env").normalizeToFile;
     final yaml = File("${root.path}/kradle.yaml").normalizeToFile;

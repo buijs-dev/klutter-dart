@@ -220,6 +220,10 @@ void main() {
       contents: "cache=${cacheDirectory.absolutePath}",
     );
 
+    if(cacheDirectory.existsSync()) {
+      cacheDirectory.deleteSync();
+    }
+
     expect(cacheDirectory.existsSync(), false);
 
     // when

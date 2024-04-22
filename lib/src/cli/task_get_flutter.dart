@@ -26,6 +26,7 @@ import "package:meta/meta.dart";
 import "../common/common.dart";
 import "../producer/kradle.dart";
 import "cli.dart";
+import "context.dart";
 
 /// Task to download a Flutter SDK to Klutter cache.
 ///
@@ -33,18 +34,23 @@ import "cli.dart";
 /// {@category producer}
 class GetFlutterSDK extends Task {
   /// Create new Task.
-  GetFlutterSDK() : super(ScriptName.producer, TaskName.get);
+  GetFlutterSDK()
+      : super(TaskName.get, {
+          TaskOption.flutter: FlutterVersionOption(),
+          TaskOption.overwrite: OverwriteOption(),
+          TaskOption.dryRun: DryRunOption(),
+          TaskOption.root: RootDirectoryInput(),
+        });
 
   @override
-  Future<void> toBeExecuted(String pathToRoot) async {
-    final flutterVersion = options[ScriptOption.flutter]?.verifyFlutterVersion;
-
-    if (flutterVersion == null) {
-      throw KlutterException(
-          "Invalid Flutter version (supported versions are: ${supportedFlutterVersions.keys}): $flutterVersion");
-    }
-
-    final overwrite = options[ScriptOption.overwrite] == "true";
+  Future<void> toBeExecuted(
+      Context context, Map<TaskOption, dynamic> options) async {
+    final pathToRoot = findPathToRoot(context, options);
+    final flutterVersion =
+        options[TaskOption.flutter] as VerifiedFlutterVersion;
+    final overwrite = options[TaskOption.overwrite] as bool;
+    final skip = Platform.environment["GET_FLUTTER_SDK_SKIP"] != null ||
+        options[TaskOption.dryRun] == true;
     final dist = toFlutterDistributionOrThrow(
         version: flutterVersion, pathToRoot: pathToRoot);
     final cache = Directory(pathToRoot.normalize).kradleCache..maybeCreate;
@@ -61,9 +67,6 @@ class GetFlutterSDK extends Task {
       throw KlutterException(
           "Failed to determine download URL for Flutter SDK: ${dist.prettyPrintedString}");
     }
-
-    final skip = Platform.environment["GET_FLUTTER_SDK_SKIP"] != null ||
-        options[ScriptOption.dryRun] == "true";
 
     if (skip) {
       return;
@@ -83,11 +86,6 @@ class GetFlutterSDK extends Task {
       throw KlutterException("Failed to download Flutter SDK");
     }
   }
-
-  @override
-  List<String> exampleCommands() => [
-        "producer get flutter=<version> (one of versions: ${supportedFlutterVersions.keys})",
-      ];
 }
 
 Map<FlutterDistribution, String> get _compatibleFlutterVersions {

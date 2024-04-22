@@ -24,6 +24,7 @@ import "dart:io";
 
 import "package:args/command_runner.dart";
 import "package:klutter/klutter.dart";
+import "package:klutter/src/cli/context.dart";
 
 /// Run kradle tasks.
 Future<void> main(List<String> args) async {
@@ -34,12 +35,28 @@ Future<void> main(List<String> args) async {
   """
       .ok);
 
-  final pathToRoot = Directory.current.absolutePath;
-  final result = await execute(
-    script: ScriptName.kradle,
-    pathToRoot: pathToRoot,
-    arguments: args,
-  );
+  if (args.isEmpty) {
+    // TODO start interactive mode
+    return;
+  }
 
-  print(result);
+  final arguments = [...args];
+  final firstArgument = arguments.removeAt(0);
+  final taskName = firstArgument.toTaskNameOrNull;
+  final taskOptions = toTaskOptionsOrNull(arguments);
+  if (firstArgument.toLowerCase() == "help") {
+    print(displayKradlewHelpText);
+  } else if (taskName == null) {
+    print("received unknown task name: $firstArgument");
+    print("use kradlew help for more information");
+  } else if (taskOptions == null) {
+    print("received invalid task options: $args");
+    print("use kradlew help for more information");
+  } else {
+    print(await execute(Context(
+      workingDirectory: Directory.current,
+      taskName: taskName,
+      taskOptions: taskOptions,
+    )));
+  }
 }

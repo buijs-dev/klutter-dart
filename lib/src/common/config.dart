@@ -93,6 +93,9 @@ class VerifiedFlutterVersion {
 
   /// The Architecture extracted from the version String.
   final Architecture? arch;
+
+  @override
+  String toString() => "VerifiedFlutterVersion($version, $os, $arch)";
 }
 
 /// Version data class.

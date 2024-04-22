@@ -18,13 +18,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "package:klutter/src/cli/cli.dart";
-import "package:test/test.dart";
+import "dart:ffi";
+import "dart:io";
 
-void main() {
-  test("ConsumerAdd fails when option is not set", () async {
-    final result = await ConsumerAdd().execute("");
-    expect(result.isOk, false);
-    expect(result.message, "Name of Flutter plugin to add not specified. Example: klutter consumer add lib=foo_example");
-  });
+import "package:meta/meta.dart";
+
+import "../common/common.dart";
+import "../producer/kradle.dart";
+import "cli.dart";
+import "context.dart";
+
+/// Clean the kradle cache by deleting contents recursively.
+class CleanCache extends Task {
+  /// Create new Task.
+  CleanCache()
+      : super(TaskName.clean, {
+          TaskOption.root: RootDirectoryInput(),
+        });
+
+  @override
+  Future<void> toBeExecuted(
+      Context context, Map<TaskOption, dynamic> options) async {
+    void deleteIfExists(FileSystemEntity entity) {
+      if (entity.existsSync()) {
+        try {
+          entity.deleteSync();
+        } on Exception {
+          // ignore
+        }
+      }
+    }
+
+    final cache = Directory(findPathToRoot(context, options)).kradleCache;
+    cache.listSync(recursive: true).forEach(deleteIfExists);
+  }
 }

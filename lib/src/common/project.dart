@@ -443,7 +443,8 @@ Directory _kradleCacheDirectory(
     onNullValue();
   }
 
-  return Directory(pathToKradleCache!.normalize).normalizeToFolder..maybeCreate;
+  return Directory(pathToKradleCache!.normalize).normalizeToDirectory
+    ..maybeCreate;
 }
 
 /// Determine the user home directory by checking environment variables.

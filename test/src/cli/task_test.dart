@@ -18,28 +18,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import "dart:io";
+
 import "package:klutter/klutter.dart";
+import "package:klutter/src/cli/context.dart";
 import "package:test/test.dart";
 
 void main() {
   test("When a task fails with a KlutterException, it is caught", () async {
-    final result = await _ExplodingTask().execute("");
+    final result = await _ExplodingTask().execute(
+      Context(workingDirectory: Directory.current, taskName: TaskName.build, taskOptions: {})
+    );
     expect(result.isOk, false);
     expect(result.message, "BOOM!");
   });
 }
 
 class _ExplodingTask extends Task {
-  _ExplodingTask() : super(ScriptName.producer, TaskName.add);
+  _ExplodingTask() : super(TaskName.add, {});
 
   @override
-  List<Task> dependsOn() => const [];
-
-  @override
-  Future<void> toBeExecuted(String pathToRoot) {
+  Future<void> toBeExecuted(Context context, Map<TaskOption, dynamic> options) {
     throw KlutterException("BOOM!");
   }
 
-  @override
-  List<String> exampleCommands() => [];
 }

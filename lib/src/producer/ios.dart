@@ -44,7 +44,7 @@ void addFrameworkToPodspec({
 
 extension on String {
   void get createKlutterFolder {
-    Directory("$this/Klutter").normalizeToFolder.maybeCreate;
+    Directory("$this/Klutter").normalizeToDirectory.maybeCreate;
   }
 
   void get createKlutterReadmeFile {

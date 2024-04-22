@@ -80,7 +80,7 @@ extension FileUtil on FileSystemEntity {
 
   /// Return absolute path of current File or Directory with all
   /// slashes ('/' or '\') replaced for the platform specific separator.
-  Directory get normalizeToFolder => Directory(_substitute);
+  Directory get normalizeToDirectory => Directory(_substitute);
 
   /// Return a normalized path of this folder to the given filename.
   File resolveFile(String filename) =>
@@ -88,7 +88,7 @@ extension FileUtil on FileSystemEntity {
 
   /// Return a normalized path of this folder to the given filename.
   Directory resolveFolder(String folder) =>
-      Directory("$absolutePath/$folder").normalizeToFolder;
+      Directory("$absolutePath/$folder").normalizeToDirectory;
 
   /// Convert a path String by removing all '..' and moving up a folder for each.
   String get _substitute {
