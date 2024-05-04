@@ -27,7 +27,7 @@ import "context.dart";
 /// Task
 class CreateProject extends Task {
   /// Create new Task.
-  CreateProject({Executor? executor})
+  CreateProject({Executor? executor, GetFlutterSDK? getFlutterSDK})
       : super(TaskName.create, {
           TaskOption.name: const PluginNameOption(),
           TaskOption.group: GroupNameOption(),
@@ -39,9 +39,11 @@ class CreateProject extends Task {
           TaskOption.squint: const SquintPubVersion(),
         }) {
     _executor = executor ?? Executor();
+    _getFlutterSDK = getFlutterSDK ?? GetFlutterSDK();
   }
 
   late final Executor _executor;
+  late final GetFlutterSDK _getFlutterSDK;
 
   @override
   Future<void> toBeExecuted(
@@ -55,21 +57,12 @@ class CreateProject extends Task {
     final dist = toFlutterDistributionOrThrow(
         version: flutterVersion, pathToRoot: pathToRoot);
 
-    final flutterFromCache = Directory(pathToRoot.normalize)
-        .kradleCache
-        .resolveFolder("${dist.folderNameString}")
-        .resolveFile("flutter/bin/flutter".normalize);
+    final result = await _getFlutterSDK.execute(context);
+    final flutter = result.output
+            ?.resolveFile("flutter/bin/flutter".normalize)
+            .absolutePath ??
+        (throw KlutterException(result.message ?? "failed to get flutter sdk"));
 
-    if (!flutterFromCache.existsSync()) {
-      final task = GetFlutterSDK();
-      final taskResult = await task.execute(context);
-      if (!taskResult.isOk) {
-        throw KlutterException(
-            taskResult.message ?? "failed to get flutter sdk");
-      }
-    }
-
-    final flutter = flutterFromCache.absolutePath;
     final root = await createFlutterProjectOrThrow(
       executor: _executor,
       pathToFlutter: flutter,
@@ -189,14 +182,14 @@ name: $pluginName
 |  flutter:
 |    sdk: flutter
 |
-${_toDependencyNotation(squintVersion, "squint_json")}
+${toDependencyNotation(squintVersion, "squint_json")}
 |
-${_toDependencyNotation(klutterUiVersion, "klutter_ui")}
+${toDependencyNotation(klutterUiVersion, "klutter_ui")}
 |
 |  protobuf: ^3.1.0
 |
 |dev_dependencies:
-${_toDependencyNotation(klutterVersion, "klutter")}
+${toDependencyNotation(klutterVersion, "klutter")}
 |
 |flutter:
 |  plugin:
@@ -234,15 +227,15 @@ name: ${pluginName}_example
 |  $pluginName:
 |    path: ../
 |
-${_toDependencyNotation(squintVersion, "squint_json")}
+${toDependencyNotation(squintVersion, "squint_json")}
 |
-${_toDependencyNotation(klutterUiVersion, "klutter_ui")}
+${toDependencyNotation(klutterUiVersion, "klutter_ui")}
 |
 |dev_dependencies:
 |  flutter_test:
 |    sdk: flutter
 |
-${_toDependencyNotation(klutterVersion, "klutter")}
+${toDependencyNotation(klutterVersion, "klutter")}
 |
 |flutter:
 |  uses-material-design: true
@@ -250,6 +243,13 @@ ${_toDependencyNotation(klutterVersion, "klutter")}
         .format);
   }
 }
+
+/// Pattern used to get a pubspec dependency from Git.
+///
+/// This pattern should be used in the kradle.yaml file.
+///
+/// Example notation: 'https://github.com/your-repo.git@develop'.
+RegExp _versionDependencyRegex = RegExp(r"""^(\d+[.]\d+[.]\d+)""");
 
 /// Pattern used to get a pubspec dependency from Git.
 ///
@@ -265,13 +265,18 @@ RegExp _gitDependencyRegex = RegExp(r"""^(https:..github.com.+?git)@(.+$)""");
 /// Example notation: 'local@foo/bar/dependency-name'.
 RegExp _pathDependencyRegex = RegExp(r"""(^local)@(.+$)""");
 
-String _toDependencyNotation(String dependency, String name) {
+/// Convert the dependency String input to the correct yaml output.
+///
+/// Throws [KlutterException].
+String toDependencyNotation(String dependency, String name) {
   if (_gitDependencyRegex.hasMatch(dependency)) {
     return _toGitDependencyNotation(dependency, name);
   } else if (_pathDependencyRegex.hasMatch(dependency)) {
     return _toPathDependencyNotation(dependency, name);
-  } else {
+  } else if (_versionDependencyRegex.hasMatch(dependency)) {
     return "|  $name: ^$dependency";
+  } else {
+    throw KlutterException("invalid dependency notations: $dependency");
   }
 }
 

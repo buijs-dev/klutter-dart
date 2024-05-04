@@ -23,7 +23,7 @@ import "cli.dart";
 import "context.dart";
 
 /// Interface to encapsulate CLI task functionality.
-abstract class Task {
+abstract class Task<T> {
   /// Create a new [Task].
   Task(this.taskName, this.taskOptions);
 
@@ -34,13 +34,13 @@ abstract class Task {
   final Map<TaskOption, Input> taskOptions;
 
   /// Task logic implemented by the child class which will be executed.
-  Future<void> toBeExecuted(Context context, Map<TaskOption, dynamic> options);
+  Future<T> toBeExecuted(Context context, Map<TaskOption, dynamic> options);
 
   /// Execute the task.
-  Future<TaskResult> execute(Context context) async {
+  Future<TaskResult<T>> execute(Context context) async {
     try {
-      await toBeExecuted(context, _getOptions(context));
-      return const TaskResult(isOk: true);
+      final output = await toBeExecuted(context, _getOptions(context));
+      return TaskResult(isOk: true, output: output);
     } on KlutterException catch (e) {
       return TaskResult(isOk: false, message: e.cause);
     }

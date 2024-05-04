@@ -30,7 +30,7 @@ import "context.dart";
 ///
 /// {@category consumer}
 /// {@category producer}
-class GetFlutterSDK extends Task {
+class GetFlutterSDK extends Task<Directory> {
   /// Create new Task.
   GetFlutterSDK()
       : super(TaskName.get, {
@@ -39,9 +39,8 @@ class GetFlutterSDK extends Task {
           TaskOption.dryRun: DryRunOption(),
           TaskOption.root: RootDirectoryInput(),
         });
-
   @override
-  Future<void> toBeExecuted(
+  Future<Directory> toBeExecuted(
       Context context, Map<TaskOption, dynamic> options) async {
     final pathToRoot = findPathToRoot(context, options);
     final flutterVersion =
@@ -58,8 +57,10 @@ class GetFlutterSDK extends Task {
           ..maybeDelete
           ..createSync(recursive: true);
         await downloadOrThrow(endpoint, zip, target);
+        return target..verifyFolderExists;
       }
     }
+    return target;
   }
 
   /// Skip downloading the flutter sdk if true.
@@ -80,6 +81,8 @@ class GetFlutterSDK extends Task {
   /// Download the flutter sdk or throw [KlutterException] on failure.
   Future<void> downloadOrThrow(
       String endpoint, File zip, Directory target) async {
+    // ignore: avoid_print
+    print("starting flutter download: $endpoint");
     await download(endpoint, zip);
     if (zip.existsSync()) {
       await unzip(zip, target..maybeCreate);
@@ -89,6 +92,8 @@ class GetFlutterSDK extends Task {
     if (!target.existsSync()) {
       throw KlutterException("Failed to download Flutter SDK");
     }
+    // ignore: avoid_print
+    print("flutter download finished: ${target.absolutePath}");
   }
 
   /// Get url to the flutter distribution or throw [KlutterException].

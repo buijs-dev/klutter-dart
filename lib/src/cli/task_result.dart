@@ -22,10 +22,11 @@
 ///
 /// [isOk] is true when task is finished without exceptions or false when not.
 /// [message] contains the exception message or is null when task was successful.
-class TaskResult {
+class TaskResult<T> {
   /// Create a new result with a message if there was an exception.
   const TaskResult({
     required this.isOk,
+    this.output,
     this.message,
   });
 
@@ -34,4 +35,7 @@ class TaskResult {
 
   /// Exception message if there is any.
   final String? message;
+
+  /// Nullable output [T] of task.
+  final T? output;
 }

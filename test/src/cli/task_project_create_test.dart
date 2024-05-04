@@ -18,26 +18,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "dart:core";
-import "dart:io";
+import "package:klutter/klutter.dart";
+import "package:test/test.dart";
 
-/// Wrapper for [Platform] to access Operating System properties.
-PlatformWrapper platform = PlatformWrapper();
+void main() {
+  test("Verify a git path is converted to correct yaml dependency", () async {
+    const git = "https://github.com/foo.git@develop";
+    const expected = "|  foobar:\n"
+        "|    git:\n"
+        "|      url: https://github.com/foo.git\n"
+        "|      ref: develop\n"
+        "";
+    final yaml = toDependencyNotation(git, "foobar");
+    expect(yaml, expected);
+  });
 
-/// Wrapper for [Platform].
-class PlatformWrapper {
-  /// Stub for environment properties.
-  Map<String, String> environmentMap = Platform.environment;
+  test("Verify a version path is converted to correct yaml dependency",
+      () async {
+    const version = "2.4.8";
+    const expected = "|  foobar: ^2.4.8";
+    final yaml = toDependencyNotation(version, "foobar");
+    expect(yaml, expected);
+  });
 
-  /// Get the current Operating System through [Platform.operatingSystem].
-  String get operatingSystem => Platform.operatingSystem;
-
-  /// Get the environment variables through [Platform.environment].
-  Map<String, String> get environment => environmentMap;
-
-  /// Check if current platform is windows.
-  bool get isWindows => Platform.isWindows;
-
-  /// Check if current platform is macos.
-  bool get isMacos => Platform.isMacOS;
+  test("Verify an exception is thrown if the dependency notation is invalid",
+      () async {
+    const notation = "1.2.beta";
+    expect(
+        () => toDependencyNotation(notation, "foobar"),
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause == "invalid dependency notations: 1.2.beta")));
+  });
 }
