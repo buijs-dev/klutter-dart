@@ -134,7 +134,13 @@ enum TaskName {
   create,
 
   /// Build a klutter project.
-  build
+  build,
+
+  /// Run flutter commands using the cached flutter distribution.
+  flutter,
+
+  /// Run gradle commands using the local gradlew distribution.
+  gradle,
 }
 
 /// Convert a String value to a [TaskName].
@@ -159,6 +165,10 @@ extension TaskNameParser on String? {
         return TaskName.get;
       case "INIT":
         return TaskName.init;
+      case "GRADLE":
+        return TaskName.gradle;
+      case "FLUTTER":
+        return TaskName.flutter;
       default:
         return null;
     }

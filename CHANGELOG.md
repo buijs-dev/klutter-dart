@@ -1,7 +1,9 @@
-## 2.1.0
-* Uses klutter_ui 1.1.0.
-* Uses Klutter Gradle v2024.1.1.beta with support for protobuf.
+## 3.0.0
+* Use klutter_ui 1.1.0.
+* Use Klutter Gradle v2024.1.1.beta with support for protobuf.
 * Move post-build tasks in root/platform build.gradle.kts to gradle plugin.
+* Remove producer and consumer scripts.
+* Add kradle script.
 
 ## 2.0.0
 * Uses AGP 8.0.2 in projects.

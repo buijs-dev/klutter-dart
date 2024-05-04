@@ -62,6 +62,47 @@ void main() {
     });
   });
 
+  test("Verify displayKradlewHelpText output", () {
+    final help = displayKradlewHelpText;
+    const expected = "Manage your klutter project."
+        "\n"
+        "\n"
+        "Usage: kradlew <command> [option=value]\n"
+        "\n"
+        "add\n"
+        "  lib               (Required) name of the library to add.\n"
+        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
+        "\n"
+        "init\n"
+        "  bom               (Optional) the klutter gradle version. Defaults to '2024.1.1.beta'.\n"
+        "  flutter           (Optional) the flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
+        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
+        "\n"
+        "get\n"
+        "  flutter           (Optional) the flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
+        "  overwrite         (Optional) overwrite existing distribution when found. Defaults to 'false'.\n"
+        "  dryRun            (Optional) skip downloading of libraries. Defaults to 'false'.\n"
+        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
+        "\n"
+        "create\n"
+        "  name              (Optional) the plugin name. Defaults to 'my_plugin'.\n"
+        "  group             (Optional) the plugin group name. Defaults to 'dev.buijs.klutter.example'.\n"
+        "  flutter           (Optional) the flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
+        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
+        "  klutter           (Optional) the klutter pub version. Defaults to '3.0.0'.\n"
+        "  klutterui         (Optional) the klutter_ui pub version. Defaults to '1.1.0'.\n"
+        "  bom               (Optional) the klutter gradle version. Defaults to '2024.1.1.beta'.\n"
+        "  squint            (Optional) the squint_json pub version. Defaults to '0.1.2'.\n"
+        "\n"
+        "build\n"
+        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
+        "\n"
+        "clean\n"
+        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
+        "\n"
+        "";
+    expect(help, expected);
+  });
   tearDownAll(() => pathToRoot.deleteSync(recursive: true));
 }
 

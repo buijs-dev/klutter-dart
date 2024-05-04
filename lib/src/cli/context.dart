@@ -22,6 +22,26 @@ class Context {
   final Map<TaskOption, String> taskOptions;
 }
 
+/// Copy utilities for [Context] objects.
+extension CopyContext on Context {
+  /// Create a new [Context] instance where existing
+  /// fields are overwritten with the given data.
+  Context copyWith({
+    Directory? workingDirectory,
+    TaskName? taskName,
+    Map<TaskOption, String> taskOptions = const {},
+  }) {
+    this.taskOptions.forEach((key, value) {
+      taskOptions.putIfAbsent(key, () => value);
+    });
+
+    return Context(
+        workingDirectory: workingDirectory ?? this.workingDirectory,
+        taskName: taskName ?? this.taskName,
+        taskOptions: taskOptions);
+  }
+}
+
 /// Parse user input and return the [Context] or null if input is invalid.
 Context? toContextOrNull(Directory workingDirectory, List<String> arguments) {
   if (arguments.isEmpty) {

@@ -3,7 +3,7 @@ import "package:meta/meta.dart";
 import "../../klutter.dart";
 
 /// The version of the Klutter Pub Plugin.
-const klutterPubVersion = "2.1.0";
+const klutterPubVersion = "3.0.0";
 
 /// The version of the Klutter UI Pub Plugin.
 const klutterUIPubVersion = "1.1.0";

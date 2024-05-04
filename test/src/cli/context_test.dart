@@ -81,4 +81,37 @@ void main() {
     });
   }
 
+  test("Verify parsing flutter context", () {
+    final context = toContextOrNull(Directory.current, ["flutter"]);
+
+    expect(context != null, true, reason: "context should not be null");
+    expect(context!.taskName, TaskName.flutter);
+  });
+
+  test("Verify parsing gradle context", () {
+    final context = toContextOrNull(Directory.current, ["gradle"]);
+
+    expect(context != null, true, reason: "context should not be null");
+    expect(context!.taskName, TaskName.gradle);
+  });
+
+  test("Verify parsing build context", () {
+    final context = toContextOrNull(Directory.current, ["build"]);
+
+    expect(context != null, true, reason: "context should not be null");
+    expect(context!.taskName, TaskName.build);
+  });
+
+  test("Verify copyWith merges options maps", () {
+    final map1 = {TaskOption.bom: "da-bom", TaskOption.name: "name"};
+    final map2 = {TaskOption.bom: "not-da-bom", TaskOption.klutterui:"union"};
+    final context = Context(workingDirectory: Directory(""), taskName: TaskName.build, taskOptions: map1);
+    final copied = context.copyWith(taskOptions: map2);
+    final copiedMap = copied.taskOptions;
+    expect(copiedMap.length, 3);
+    expect(copiedMap[TaskOption.bom], map2[TaskOption.bom]);
+    expect(copiedMap[TaskOption.name], map1[TaskOption.name]);
+    expect(copiedMap[TaskOption.klutterui], map2[TaskOption.klutterui]);
+  });
+
 }

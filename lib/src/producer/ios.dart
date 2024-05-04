@@ -23,7 +23,7 @@ import "dart:io";
 import "../common/exception.dart";
 import "../common/utilities.dart";
 
-/// Overwrite the build.gradle file in the root/android folder.
+/// Create the root/ios/Klutter directory and add a readme file.
 ///
 /// {@category producer}
 void createIosKlutterFolder(String pathToIos) => pathToIos.verifyExists

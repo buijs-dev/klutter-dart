@@ -44,7 +44,6 @@ class BuildProject extends Task {
   BuildProject({Executor? executor})
       : super(TaskName.build, {
           TaskOption.root: RootDirectoryInput(),
-          // TODO add skiptest option
         }) {
     _executor = executor ?? Executor();
   }

@@ -60,31 +60,23 @@ class CreateProject extends Task {
         .resolveFolder("${dist.folderNameString}")
         .resolveFile("flutter/bin/flutter".normalize);
 
-    if(!flutterFromCache.existsSync()) {
+    if (!flutterFromCache.existsSync()) {
       final task = GetFlutterSDK();
       final taskResult = await task.execute(context);
-      if(!taskResult.isOk) {
-        throw KlutterException(taskResult.message ?? "failed to get flutter sdk");
+      if (!taskResult.isOk) {
+        throw KlutterException(
+            taskResult.message ?? "failed to get flutter sdk");
       }
     }
 
     final flutter = flutterFromCache.absolutePath;
-    final root = Directory(pathToRoot.normalize).resolveFolder(name);
-
-    _executor
-      ..executable = flutter
-      ..workingDirectory = Directory(pathToRoot)
-      ..arguments = [
-        "create",
-        name,
-        "--org",
-        group,
-        "--template=plugin",
-        "--platforms=android,ios",
-      ]
-      ..run();
-
-    root.verifyFolderExists;
+    final root = await createFlutterProjectOrThrow(
+      executor: _executor,
+      pathToFlutter: flutter,
+      pathToRoot: pathToRoot,
+      name: name,
+      group: group,
+    );
 
     final rootPubspecFile = root.resolveFile("pubspec.yaml")..verifyExists;
 
@@ -129,22 +121,19 @@ class CreateProject extends Task {
       ..arguments = ["pub", "get"]
       ..run()
       ..workingDirectory = exampleFolder
-      ..run()
-      ..workingDirectory = root
-      ..arguments = [
-        "pub",
-        "run",
-        "klutter:kradle",
-        "init",
-        "bom=$bomVersion",
-        "flutter=$flutterSDK"
-      ]
-      ..run()
-      ..workingDirectory = exampleFolder
-      ..arguments = ["pub", "run", "klutter:kradle", "init"]
-      ..run()
-      ..arguments = ["pub", "run", "klutter:kradle", "add", "lib=$name"]
       ..run();
+
+    final initContext = context.copyWith(taskOptions: {
+      TaskOption.root: root.absolutePath,
+      TaskOption.bom: bomVersion,
+      TaskOption.flutter: flutterSDK,
+    });
+    await ProjectInit().execute(initContext);
+    final addContext = context.copyWith(taskOptions: {
+      TaskOption.root: exampleFolder.absolutePath,
+      TaskOption.lib: name,
+    });
+    await AddLibrary().execute(addContext);
 
     exampleFolder
       ..deleteTestFolder

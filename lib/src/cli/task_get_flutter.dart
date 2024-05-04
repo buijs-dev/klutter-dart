@@ -18,13 +18,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "dart:ffi";
 import "dart:io";
 
 import "package:meta/meta.dart";
 
 import "../common/common.dart";
-import "../producer/kradle.dart";
 import "cli.dart";
 import "context.dart";
 
@@ -49,43 +47,55 @@ class GetFlutterSDK extends Task {
     final flutterVersion =
         options[TaskOption.flutter] as VerifiedFlutterVersion;
     final overwrite = options[TaskOption.overwrite] as bool;
-    final skip = Platform.environment["GET_FLUTTER_SDK_SKIP"] != null ||
-        options[TaskOption.dryRun] == true;
     final dist = toFlutterDistributionOrThrow(
         version: flutterVersion, pathToRoot: pathToRoot);
     final cache = Directory(pathToRoot.normalize).kradleCache..maybeCreate;
-    final cachedSDK = cache.resolveFolder("${dist.folderNameString}");
-    if (cachedSDK.resolveFolder("flutter").existsSync() && !overwrite) {
-      return;
+    final target = cache.resolveFolder("${dist.folderNameString}");
+    if (requiresDownload(target, overwrite)) {
+      final endpoint = downloadEndpointOrThrow(dist);
+      if (!skipDownload(options[TaskOption.dryRun])) {
+        final zip = target.resolveFile("flutter.zip")
+          ..maybeDelete
+          ..createSync();
+        await downloadOrThrow(endpoint, zip, target);
+      }
     }
+  }
 
-    cachedSDK.createSync();
+  /// Skip downloading the flutter sdk if true.
+  ///
+  /// Is true when:
+  /// - environment contains property GET_FLUTTER_SDK_SKIP
+  /// - context [Context] contains [TaskOption.dryRun] with value true
+  ///
+  /// Defaults to false and will download flutter sdk.
+  bool skipDownload(dynamic dryRun) =>
+      Platform.environment["GET_FLUTTER_SDK_SKIP"] != null || dryRun == true;
 
-    final url = _compatibleFlutterVersions[dist];
+  /// Downloading the sdk is not required when the sdk
+  /// already exists and [TaskOption.overwrite] is false.
+  bool requiresDownload(Directory directory, bool overwrite) =>
+      !directory.existsSync() || overwrite;
 
-    if (url == null) {
-      throw KlutterException(
-          "Failed to determine download URL for Flutter SDK: ${dist.prettyPrintedString}");
-    }
-
-    if (skip) {
-      return;
-    }
-
-    final zip = cachedSDK.resolveFile("flutter.zip")
-      ..maybeDelete
-      ..createSync();
-
-    await download(url, zip);
+  /// Download the flutter sdk or throw [KlutterException] on failure.
+  Future<void> downloadOrThrow(
+      String endpoint, File zip, Directory target) async {
+    await download(endpoint, zip);
     if (zip.existsSync()) {
-      await unzip(zip, cachedSDK);
+      await unzip(zip, target..maybeCreate);
       zip.deleteSync();
     }
 
-    if (!cachedSDK.existsSync()) {
+    if (!target.existsSync()) {
       throw KlutterException("Failed to download Flutter SDK");
     }
   }
+
+  /// Get url to the flutter distribution or throw [KlutterException].
+  String downloadEndpointOrThrow(FlutterDistribution dist) =>
+      _compatibleFlutterVersions[dist] ??
+      (throw KlutterException(
+          "Failed to determine download URL for Flutter SDK: ${dist.prettyPrintedString}"));
 }
 
 Map<FlutterDistribution, String> get _compatibleFlutterVersions {

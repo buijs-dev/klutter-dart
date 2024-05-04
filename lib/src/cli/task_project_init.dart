@@ -51,15 +51,23 @@ class ProjectInit extends Task {
   Future<void> toBeExecuted(
       Context context, Map<TaskOption, dynamic> options) async {
     final pathToRoot = findPathToRoot(context, options);
+    bool isProducerProject;
     try {
       // will throw exception if unable to find
       // the package name which means this is not
       // a producer project.
       findPackageName(pathToRoot);
+      isProducerProject = true;
+    } on KlutterException {
+      isProducerProject = false;
+    }
+
+    if (isProducerProject) {
       final bom = options[TaskOption.bom];
       final flutter = options[TaskOption.flutter] as VerifiedFlutterVersion;
       await _producerInit(pathToRoot, bom, flutter);
-    } on KlutterException {
+      _consumerInit("$pathToRoot/example".normalize);
+    } else {
       _consumerInit(pathToRoot);
     }
   }

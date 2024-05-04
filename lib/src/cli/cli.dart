@@ -52,6 +52,7 @@ import "../common/utilities.dart";
 import "context.dart";
 import "task_service.dart" as service;
 
+export "flutter.dart";
 export "option.dart";
 export "task.dart";
 export "task_add.dart";
