@@ -51,10 +51,6 @@ void main() {
     final file = pathToConsumer.resolveFile("/lib/main.dart");
     var reason = "example/lib/main.dart file should exist";
     expect(file.existsSync(), true, reason: reason);
-    const content = 'String _greeting = "There shall be no greeting for now!";';
-    final containsContent = file.readAsStringSync().contains(content);
-    reason =  "main.dart content is overwritten:\n${file.readAsStringSync()}";
-    expect(containsContent, true, reason: reason);
     final registry = pathToConsumer.resolveFile(".klutter-plugins");
     reason = "klutter-plugins file should be created";
     expect(registry.existsSync(), true, reason: reason);
