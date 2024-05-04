@@ -56,7 +56,7 @@ class GetFlutterSDK extends Task {
       if (!skipDownload(options[TaskOption.dryRun])) {
         final zip = target.resolveFile("flutter.zip")
           ..maybeDelete
-          ..createSync();
+          ..createSync(recursive: true);
         await downloadOrThrow(endpoint, zip, target);
       }
     }
@@ -70,7 +70,7 @@ class GetFlutterSDK extends Task {
   ///
   /// Defaults to false and will download flutter sdk.
   bool skipDownload(dynamic dryRun) =>
-      Platform.environment["GET_FLUTTER_SDK_SKIP"] != null || dryRun == true;
+      platform.environment["GET_FLUTTER_SDK_SKIP"] != null || dryRun == true;
 
   /// Downloading the sdk is not required when the sdk
   /// already exists and [TaskOption.overwrite] is false.

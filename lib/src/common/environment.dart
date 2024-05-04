@@ -26,11 +26,15 @@ PlatformWrapper platform = PlatformWrapper();
 
 /// Wrapper for [Platform].
 class PlatformWrapper {
+
+  /// Stub for environment properties.
+  Map<String, String> environmentMap = Platform.environment;
+
   /// Get the current Operating System through [Platform.operatingSystem].
   String get operatingSystem => Platform.operatingSystem;
 
   /// Get the environment variables through [Platform.environment].
-  Map<String, String> get environment => Platform.environment;
+  Map<String, String> get environment => environmentMap;
 
   /// Check if current platform is windows.
   bool get isWindows => Platform.isWindows;

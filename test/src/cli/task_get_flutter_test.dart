@@ -55,6 +55,27 @@ void main() {
     }));
     expect(result.isOk, true, reason: result.message ?? "");
   });
+
+  test("Verify skipDownload", () async {
+    platform = PlatformWrapper()
+      ..environmentMap = {"GET_FLUTTER_SDK_SKIP": "SKIPPIE"};
+    final task = GetFlutterSDK();
+    expect(task.skipDownload(true), true);
+    expect(task.skipDownload(false), true);
+    platform = PlatformWrapper();
+    expect(task.skipDownload(true), true);
+    expect(task.skipDownload(false), false);
+  });
+
+  test("Verify requiresDownload", () async {
+    final task = GetFlutterSDK();
+    final fakeDirectory = Directory("fake");
+    final realDirectory = Directory.current;
+    expect(task.requiresDownload(fakeDirectory, false), true);
+    expect(task.requiresDownload(fakeDirectory, true), true);
+    expect(task.requiresDownload(realDirectory, false), false);
+    expect(task.requiresDownload(realDirectory, true), true);
+  });
 }
 
 Context context(Map<TaskOption, String> options) => Context(
