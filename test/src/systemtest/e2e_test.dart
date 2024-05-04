@@ -47,8 +47,8 @@ void main() {
   try {
     test("end-to-end test", () async {
       /// Run a Klutter task without an existing Flutter project
-      final result = await sut.execute(
-          toContextOrNull(producerPlugin,["add", "lib=foo"])!);
+      final result = await sut
+          .execute(toContextOrNull(producerPlugin, ["add", "lib=foo"])!);
 
       expect(
         result.contains("finished unsuccessfully"),
@@ -60,7 +60,9 @@ void main() {
       await createFlutterPlugin(
         organisation: organisation,
         pluginName: pluginName,
-        root: Directory(pathToRoot.absolutePath).normalizeToDirectory.absolutePath,
+        root: Directory(pathToRoot.absolutePath)
+            .normalizeToDirectory
+            .absolutePath,
       );
 
       expect(producerPlugin.existsSync(), true,
@@ -159,20 +161,19 @@ void main() {
               "Plugin should be created in: '${producerPlugin.absolute.path}'");
 
       /// Example/lib/main.dart file should be created.
-      final mainDartFile =  File("${producerPlugin.absolutePath}/example/lib/main.dart"
-          .normalize);
-      expect(mainDartFile.existsSync(),
-          true,
+      final mainDartFile = File(
+          "${producerPlugin.absolutePath}/example/lib/main.dart".normalize);
+      expect(mainDartFile.existsSync(), true,
           reason: "example/lib/main.dart file should exist");
 
-      expect(mainDartFile
-          .readAsStringSync()
-          .contains('String _greeting = "There shall be no greeting for now!";'),
+      expect(
+          mainDartFile.readAsStringSync().contains(
+              'String _greeting = "There shall be no greeting for now!";'),
           true,
-      reason: "main.dart content is overwritten");
+          reason: "main.dart content is overwritten");
 
       final registry =
-      File("${consumerPlugin.absolutePath}/.klutter-plugins".normalize);
+          File("${consumerPlugin.absolutePath}/.klutter-plugins".normalize);
 
       expect(registry.existsSync(), true,
           reason: "klutter-plugins file should be created");
@@ -184,7 +185,6 @@ void main() {
           reason:
               "add task should have added plugin name to the .klutter-plugins file: ${registry.readAsStringSync()}");
     });
-
   } catch (e, s) {
     print(s);
   }
@@ -200,19 +200,19 @@ Future<void> createFlutterPlugin({
   String? config,
 }) async {
   final context = Context(
-    workingDirectory: Directory(root),
-    taskName:  TaskName.create,
+      workingDirectory: Directory(root),
+      taskName: TaskName.create,
       taskOptions: {
-    TaskOption.root:root,
-    TaskOption.group:organisation,
-    TaskOption.name:pluginName,
-    TaskOption.flutter:"3.10.6",
-    TaskOption.klutter:"local@${Directory.current.resolveFolder("./../".normalize).absolutePath}",
-  });
+        TaskOption.root: root,
+        TaskOption.group: organisation,
+        TaskOption.name: pluginName,
+        TaskOption.flutter: "3.10.6",
+        TaskOption.klutter:
+            "local@${Directory.current.resolveFolder("./../".normalize).absolutePath}",
+      });
 
   final res = await sut.toTask(context)!.execute(context);
-  if(!res.isOk) {
-     assert(res.isOk,res.message);
+  if (!res.isOk) {
+    assert(res.isOk, res.message);
   }
-
 }

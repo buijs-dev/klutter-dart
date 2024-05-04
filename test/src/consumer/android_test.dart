@@ -357,8 +357,7 @@ void main() {
     root.deleteSync(recursive: true);
   });
 
-  test("Verify min and compile SDK are updated in build.gradle file",
-      () {
+  test("Verify min and compile SDK are updated in build.gradle file", () {
     final root = Directory("${Directory.systemTemp.path}${s}apl5")
       ..createSync();
 
@@ -373,28 +372,27 @@ void main() {
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.contains(
-                "Failed to set 'compileSdk' in the root/android/build.gradle file")
-        )));
+                "Failed to set 'compileSdk' in the root/android/build.gradle file"))));
 
     root.deleteSync(recursive: true);
   });
 
   test(
       "Verify exception is thrown if build.gradle does not exist when setting android SDK settings",
-          () {
-        final root = Directory("${Directory.systemTemp.path}${s}apl10")
-          ..createSync();
+      () {
+    final root = Directory("${Directory.systemTemp.path}${s}apl10")
+      ..createSync();
 
-        final android = Directory("${root.path}${s}android")..createSync();
+    final android = Directory("${root.path}${s}android")..createSync();
 
-        expect(
-                () => setAndroidSdkConstraints(android.absolute.path),
-            throwsA(predicate((e) =>
+    expect(
+        () => setAndroidSdkConstraints(android.absolute.path),
+        throwsA(predicate((e) =>
             e is KlutterException &&
-                e.cause.startsWith("Missing build.gradle file in folder"))));
+            e.cause.startsWith("Missing build.gradle file in folder"))));
 
-        root.deleteSync(recursive: true);
-      });
+    root.deleteSync(recursive: true);
+  });
 
   test(
       "Verify exception is thrown if root/android/app/build.gradle does not exist",
@@ -404,7 +402,8 @@ void main() {
 
     final android = Directory("${root.path}${s}android")..createSync();
 
-    expect(() => writeAndroidAppBuildGradleFile(
+    expect(
+        () => writeAndroidAppBuildGradleFile(
             pathToAndroid: android.absolute.path,
             packageName: "",
             pluginName: ""),

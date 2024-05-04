@@ -34,7 +34,7 @@ void main() {
   test("Verify exception is thrown if root/android does not exist", () {
     expect(
         () => writeBuildGradleFile(
-          pluginName: pluginName,
+            pluginName: pluginName,
             pluginVersion: pluginVersion,
             packageName: packageName,
             klutterBomVersion: "2023.3.1",
@@ -56,11 +56,11 @@ void main() {
 
     expect(
         () => writeBuildGradleFile(
-          pluginName: pluginName,
+              pluginName: pluginName,
               pluginVersion: pluginVersion,
               packageName: packageName,
               pathToAndroid: android.path,
-          klutterBomVersion: "2023.3.1",
+              klutterBomVersion: "2023.3.1",
             ),
         throwsA(predicate((e) =>
             e is KlutterException &&
@@ -176,10 +176,10 @@ void main() {
 
   test("Verify exception is thrown if root/android does not exist", () {
     expect(
-        () =>
-            writeAndroidPlugin(
-                pluginName: pluginName,
-                packageName: packageName, pathToAndroid: "fake"),
+        () => writeAndroidPlugin(
+            pluginName: pluginName,
+            packageName: packageName,
+            pathToAndroid: "fake"),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
@@ -190,10 +190,9 @@ void main() {
     final android = Directory("${Directory.systemTemp.path}${s}wag1")
       ..createSync(recursive: true);
     expect(
-            () =>
-                setGradleWrapperVersion(pathToAndroid: android.absolutePath),
+        () => setGradleWrapperVersion(pathToAndroid: android.absolutePath),
         throwsA(predicate((e) =>
-        e is KlutterException &&
+            e is KlutterException &&
             e.cause.contains("Missing gradle-wrapper.properties file in"))));
   });
 
@@ -209,13 +208,12 @@ void main() {
 
     expect(
         () => writeAndroidPlugin(
-          pluginName: pluginName,
+              pluginName: pluginName,
               packageName: packageName,
               pathToAndroid: android.path,
             ),
         throwsA(predicate((e) =>
-            e is KlutterException &&
-            e.cause.startsWith("Missing src"))));
+            e is KlutterException && e.cause.startsWith("Missing src"))));
 
     root.deleteSync(recursive: true);
   });
@@ -234,7 +232,7 @@ void main() {
 
     expect(
         () => writeAndroidPlugin(
-          pluginName: pluginName,
+              pluginName: pluginName,
               packageName: packageName,
               pathToAndroid: android.path,
             ),
@@ -258,7 +256,7 @@ void main() {
 
     expect(
         () => writeAndroidPlugin(
-          pluginName: pluginName,
+              pluginName: pluginName,
               packageName: packageName,
               pathToAndroid: android.path,
             ),

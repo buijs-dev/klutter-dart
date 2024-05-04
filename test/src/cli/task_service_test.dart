@@ -35,8 +35,9 @@ void main() {
 
       expect(tasks.length, 6);
 
-      expect(tasks.getTask(TaskName.add).toString(),
-          "add\n  lib               (Required) name of the library to add.\n"
+      expect(
+        tasks.getTask(TaskName.add).toString(),
+        "add\n  lib               (Required) name of the library to add.\n"
         "  root              (Optional) the klutter project root directory. Defaults to \'current working directory\'.\n",
       );
 
@@ -44,7 +45,6 @@ void main() {
         tasks.getTask(TaskName.init).toString(),
         "init\n  bom               (Optional) the klutter gradle version. Defaults to '2024.1.1.beta'.\n  flutter           (Optional) the flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n  root              (Optional) the klutter project root directory. Defaults to \'current working directory\'.\n",
       );
-
     });
 
     test("Verify exception is thrown if duplicate tasks are found", () {
@@ -105,7 +105,6 @@ void main() {
   });
   tearDownAll(() => pathToRoot.deleteSync(recursive: true));
 }
-
 
 extension on Set<Task> {
   Task getTask(TaskName taskName) => firstWhere((task) {

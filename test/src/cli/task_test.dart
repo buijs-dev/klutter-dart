@@ -26,9 +26,10 @@ import "package:test/test.dart";
 
 void main() {
   test("When a task fails with a KlutterException, it is caught", () async {
-    final result = await _ExplodingTask().execute(
-      Context(workingDirectory: Directory.current, taskName: TaskName.build, taskOptions: {})
-    );
+    final result = await _ExplodingTask().execute(Context(
+        workingDirectory: Directory.current,
+        taskName: TaskName.build,
+        taskOptions: {}));
     expect(result.isOk, false);
     expect(result.message, "BOOM!");
   });
@@ -41,5 +42,4 @@ class _ExplodingTask extends Task {
   Future<void> toBeExecuted(Context context, Map<TaskOption, dynamic> options) {
     throw KlutterException("BOOM!");
   }
-
 }

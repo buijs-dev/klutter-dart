@@ -42,7 +42,6 @@ void main() {
       Directory("${pathToRoot.absolute.path}/$pluginName".normalize);
 
   test("end-to-end test", () async {
-
     /// Create Flutter plugin project.
     await createFlutterPlugin(
       organisation: organisation,
@@ -60,25 +59,35 @@ void main() {
     );
 
     /// Root build.gradle file should be created.
-    final rootBuildGradle = File("${producerPlugin.absolutePath}/build.gradle.kts".normalize);
-    expect(rootBuildGradle.existsSync(), true, reason: "root/build.gradle.kts should exist");
+    final rootBuildGradle =
+        File("${producerPlugin.absolutePath}/build.gradle.kts".normalize);
+    expect(rootBuildGradle.existsSync(), true,
+        reason: "root/build.gradle.kts should exist");
     expect(rootBuildGradle.readAsStringSync().contains("bom:9999.1.1"), true,
-        reason: "root/build.gradle.kts should contains BOM version from config.");
+        reason:
+            "root/build.gradle.kts should contains BOM version from config.");
 
     /// Root settings.gradle file should be created.
-    expect(File("${producerPlugin.absolutePath}/settings.gradle.kts".normalize).existsSync(),
-        true, reason: "root/settings.gradle.kts should exist");
+    expect(
+        File("${producerPlugin.absolutePath}/settings.gradle.kts".normalize)
+            .existsSync(),
+        true,
+        reason: "root/settings.gradle.kts should exist");
 
     /// Android/Klutter build.gradle file should be created.
-    final androidKlutterBuildGradle = File("${producerPlugin.absolutePath}/android/klutter/build.gradle.kts".normalize);
-    expect(androidKlutterBuildGradle.existsSync(), true, reason: "android/klutter/build.gradle.kts should exist");
+    final androidKlutterBuildGradle = File(
+        "${producerPlugin.absolutePath}/android/klutter/build.gradle.kts"
+            .normalize);
+    expect(androidKlutterBuildGradle.existsSync(), true,
+        reason: "android/klutter/build.gradle.kts should exist");
 
     /// Android/Klutter build.gradle file should be created.
-    final androidBuildGradle = File("${producerPlugin.absolutePath}/android/build.gradle".normalize);
-    expect(androidBuildGradle.existsSync(), true, reason: "android/build.gradle.kts should exist");
+    final androidBuildGradle =
+        File("${producerPlugin.absolutePath}/android/build.gradle".normalize);
+    expect(androidBuildGradle.existsSync(), true,
+        reason: "android/build.gradle.kts should exist");
     expect(androidBuildGradle.readAsStringSync().contains("bom:9999.1.1"), true,
         reason: "android/build.gradle should contain BOM version from config.");
-
   });
 
   tearDownAll(() => pathToRoot.deleteSync(recursive: true));

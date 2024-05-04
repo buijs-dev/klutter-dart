@@ -27,8 +27,6 @@ import "package:test/test.dart";
 import "../common/executor_test.dart";
 
 void main() {
-
-
   test("Verify build command executes gradlew clean build", () {
     final pathToRoot =
         Directory("${Directory.systemTemp.absolute.path}/build_test".normalize)
@@ -38,11 +36,13 @@ void main() {
         expectedPathToWorkingDirectory: pathToRoot.absolutePath,
         expectedCommand: "gradlew clean build -p platform");
 
-    BuildProject(executor: executor).toBeExecuted(Context(
-      workingDirectory: pathToRoot,
-      taskName: TaskName.build,
-      taskOptions: { },
-    ), {});
+    BuildProject(executor: executor).toBeExecuted(
+        Context(
+          workingDirectory: pathToRoot,
+          taskName: TaskName.build,
+          taskOptions: {},
+        ),
+        {});
 
     expect(executor.run().stdout, "Test OK!");
   });

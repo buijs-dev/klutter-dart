@@ -25,7 +25,6 @@ import "package:klutter/src/cli/context.dart";
 import "package:test/test.dart";
 
 void main() {
-
   test("Verify init in consumer project skips producer init", () async {
     final pathToRoot =
         Directory("${Directory.systemTemp.absolute.path}/build_test".normalize)
@@ -39,30 +38,25 @@ void main() {
       group: "my.org",
     );
 
+    final pathToConsumer = project.resolveFolder("example");
     final task = ProjectInit();
-    final context = Context(workingDirectory: project.resolveFolder("example"),
-        taskName: TaskName.init,
-        taskOptions: {});
+    final context = Context(
+      workingDirectory: pathToConsumer,
+      taskName: TaskName.init,
+      taskOptions: {},
+    );
+
     final result = await task.execute(context);
     expect(result.isOk, true);
-
-    final mainDartFile =  File("${project.absolutePath}/example/lib/main.dart"
-        .normalize);
-    expect(mainDartFile.existsSync(),
-        true,
-        reason: "example/lib/main.dart file should exist");
-
-    expect(mainDartFile
-        .readAsStringSync()
-        .contains('String _greeting = "There shall be no greeting for now!";'),
-        true,
-        reason: "main.dart content is overwritten");
-
-    final registry =
-    File("${project.absolutePath}/example/.klutter-plugins".normalize);
-
-    expect(registry.existsSync(), true,
-        reason: "klutter-plugins file should be created");
-
+    final file = pathToConsumer.resolveFile("/lib/main.dart");
+    var reason = "example/lib/main.dart file should exist";
+    expect(file.existsSync(), true, reason: reason);
+    const content = 'String _greeting = "There shall be no greeting for now!";';
+    final containsContent = file.readAsStringSync().contains(content);
+    reason =  "main.dart content is overwritten:\n${file.readAsStringSync()}";
+    expect(containsContent, true, reason: reason);
+    final registry = pathToConsumer.resolveFile(".klutter-plugins");
+    reason = "klutter-plugins file should be created";
+    expect(registry.existsSync(), true, reason: reason);
   });
 }

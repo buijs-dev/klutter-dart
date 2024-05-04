@@ -210,8 +210,10 @@ void main() {
   test(
       "When kradle.env contains cache property and the directory is not found then it is created",
       () {
-        final dotKradleDirectory = Directory.systemTemp.resolveFolder(".kradle")..createSync();
-        final cacheDirectory = Directory("${dotKradleDirectory.absolutePath}/cache".normalize);
+    final dotKradleDirectory = Directory.systemTemp.resolveFolder(".kradle")
+      ..createSync();
+    final cacheDirectory =
+        Directory("${dotKradleDirectory.absolutePath}/cache".normalize);
     final rootDirectory = _newProjectFolder;
     setPlatformMacos(rootDirectory);
     createCacheFolder(rootDirectory);
@@ -220,7 +222,7 @@ void main() {
       contents: "cache=${cacheDirectory.absolutePath}",
     );
 
-    if(cacheDirectory.existsSync()) {
+    if (cacheDirectory.existsSync()) {
       cacheDirectory.deleteSync();
     }
 
@@ -230,7 +232,7 @@ void main() {
     rootDirectory.kradleCache;
 
     // then
-        expect(cacheDirectory.existsSync(), true);
+    expect(cacheDirectory.existsSync(), true);
   });
 
   tearDownAll(() {

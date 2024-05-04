@@ -117,9 +117,10 @@ void main() {
   test("Verify exception is thrown if root does not exist", () {
     expect(
         () => writeRootBuildGradleFile(
-          pathToRoot: "fake",
-          pluginName: "some_plugin",
-          klutterBomVersion: "2023.3.1",),
+              pathToRoot: "fake",
+              pluginName: "some_plugin",
+              klutterBomVersion: "2023.3.1",
+            ),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
@@ -157,7 +158,8 @@ void main() {
                   classpath("dev.buijs.klutter:gradle")
               }
           }
-      """.replaceAll(" ", ""));
+      """
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
   });
@@ -194,7 +196,8 @@ void main() {
                   classpath("dev.buijs.klutter:gradle")
               }
           }
-      """.replaceAll(" ", ""));
+      """
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
   });
@@ -262,8 +265,7 @@ void main() {
 
     root.resolveFile("kradle.yaml")
       ..maybeCreate
-      ..writeAsStringSync("flutter-version: '3.0.5.macos.arm64'")
-    ;
+      ..writeAsStringSync("flutter-version: '3.0.5.macos.arm64'");
 
     createPlatformModule(
       pathToRoot: root.path,
@@ -428,7 +430,8 @@ void main() {
               mustRunAfter(tasks.named("kspCommonMainKotlinMetadata"))
           }
      }
-      """.replaceAll(" ", ""),
+      """
+          .replaceAll(" ", ""),
       platformBuildGradle.readAsStringSync().replaceAll(" ", ""),
     );
 

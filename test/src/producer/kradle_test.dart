@@ -45,12 +45,9 @@ void main() {
     final env = File("${root.path}/kradle.env").normalizeToFile;
     final yaml = File("${root.path}/kradle.yaml").normalizeToFile;
 
-    expect(env.existsSync(), true,
-        reason: "kradle.env should exist");
-    expect(yaml.existsSync(), true,
-        reason: "kradle.yaml should exist");
+    expect(env.existsSync(), true, reason: "kradle.env should exist");
+    expect(yaml.existsSync(), true, reason: "kradle.yaml should exist");
 
     root.deleteSync(recursive: true);
   });
-
 }

@@ -33,13 +33,18 @@ void main() {
   });
 
   test("Verify parsing get flutter context", () {
-    final context = toContextOrNull(Directory.current, ["get", "flutter=3.10.6.macos.x64"]);
+    final context =
+        toContextOrNull(Directory.current, ["get", "flutter=3.10.6.macos.x64"]);
 
     expect(context != null, true);
   });
 
   test("Verify parsing producer init context", () {
-    final context = toContextOrNull(Directory.current, ["init", "bom=2023.1.1.beta", "flutter=3.10.6.macos.arm64",]);
+    final context = toContextOrNull(Directory.current, [
+      "init",
+      "bom=2023.1.1.beta",
+      "flutter=3.10.6.macos.arm64",
+    ]);
 
     expect(context != null, true);
     expect(context!.taskName, TaskName.init);
@@ -49,33 +54,48 @@ void main() {
   });
 
   test("When more than 2 arguments are supplied then context is null", () {
-    final context = toContextOrNull(Directory.current, ["init", "bom=2023.1.1.beta", "flutter=3.10.6.macos.arm64", "x=y"]);
+    final context = toContextOrNull(Directory.current,
+        ["init", "bom=2023.1.1.beta", "flutter=3.10.6.macos.arm64", "x=y"]);
 
-    expect(context == null, true, reason: "context should be null because too many arguments");
+    expect(context == null, true,
+        reason: "context should be null because too many arguments");
   });
 
   test("When an argument is not a valid option value then context is null", () {
-    final context = toContextOrNull(Directory.current, ["init", "woot=2023.1.1.beta", "flutter=3.10.6.macos.arm64",]);
+    final context = toContextOrNull(Directory.current, [
+      "init",
+      "woot=2023.1.1.beta",
+      "flutter=3.10.6.macos.arm64",
+    ]);
 
-    expect(context == null, true, reason: "context should be null because argument is invalid");
+    expect(context == null, true,
+        reason: "context should be null because argument is invalid");
   });
 
   test("When get context has more than 1 argument, context is null", () {
-    final context = toContextOrNull(Directory.current, ["get", "this", "and" ]);
+    final context = toContextOrNull(Directory.current, ["get", "this", "and"]);
 
-    expect(context == null, true, reason: "context should be null because get can only have one argument");
+    expect(context == null, true,
+        reason:
+            "context should be null because get can only have one argument");
   });
 
-  for (final value in ["3.10=6=10", "'3.10=6=10'", '"3.10=6=10"', "    3.10  "]) {
+  for (final value in [
+    "3.10=6=10",
+    "'3.10=6=10'",
+    '"3.10=6=10"',
+    "    3.10  "
+  ]) {
     test("Verify parsing options", () {
       final options = toTaskOptionsOrNull(["flutter=$value"]);
-      expect(options != null, true, reason: "options should be parsed successfully");
+      expect(options != null, true,
+          reason: "options should be parsed successfully");
       final flutter = options![TaskOption.flutter];
       expect(flutter, value.trim(), reason: "value should be stored");
     });
   }
 
-  for (final value in ["", "    ","=", "=    ", "   =  "]) {
+  for (final value in ["", "    ", "=", "=    ", "   =  "]) {
     test("Verify parsing options fails on missing value", () {
       expect(toTaskOptionsOrNull(["flutter$value"]), null);
     });
@@ -104,8 +124,11 @@ void main() {
 
   test("Verify copyWith merges options maps", () {
     final map1 = {TaskOption.bom: "da-bom", TaskOption.name: "name"};
-    final map2 = {TaskOption.bom: "not-da-bom", TaskOption.klutterui:"union"};
-    final context = Context(workingDirectory: Directory(""), taskName: TaskName.build, taskOptions: map1);
+    final map2 = {TaskOption.bom: "not-da-bom", TaskOption.klutterui: "union"};
+    final context = Context(
+        workingDirectory: Directory(""),
+        taskName: TaskName.build,
+        taskOptions: map1);
     final copied = context.copyWith(taskOptions: map2);
     final copiedMap = copied.taskOptions;
     expect(copiedMap.length, 3);
@@ -113,5 +136,4 @@ void main() {
     expect(copiedMap[TaskOption.name], map1[TaskOption.name]);
     expect(copiedMap[TaskOption.klutterui], map2[TaskOption.klutterui]);
   });
-
 }

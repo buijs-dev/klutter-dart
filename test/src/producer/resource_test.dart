@@ -22,18 +22,22 @@ import "package:klutter/src/producer/resource.dart";
 import "package:test/test.dart";
 
 void main() {
-  test("When Platform is windows then first '/' character of a resource path is removed", () async {
+  test(
+      "When Platform is windows then first '/' character of a resource path is removed",
+      () async {
     final resource = await loadResource(
-        uri: Uri.parse("package:klutter/res/gradlew.bat"),
-        targetRelativeToRoot: "",
-        filename: "gradlew.bat",
-        isWindows: true,
-      );
+      uri: Uri.parse("package:klutter/res/gradlew.bat"),
+      targetRelativeToRoot: "",
+      filename: "gradlew.bat",
+      isWindows: true,
+    );
 
     expect(resource.pathToSource.startsWith("/"), false);
   });
 
-  test("When Platform is NOT windows then first '/' character of a resource path is NOT removed", () async {
+  test(
+      "When Platform is NOT windows then first '/' character of a resource path is NOT removed",
+      () async {
     final resource = await loadResource(
       uri: Uri.parse("package:klutter/res/gradlew.bat"),
       targetRelativeToRoot: "",

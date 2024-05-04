@@ -23,24 +23,31 @@ import "package:test/test.dart";
 
 void main() {
   test("Valid Flutter versions are returned as VerifiedFlutterVersion", () {
-    for(final version in supportedFlutterVersions.keys) {
-      expect(version.verifyFlutterVersion != null, true, reason: "Version should be valid: $version");
-      expect("$version.windows.x64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.windows.x64");
-      expect("$version.macos.x64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.macos.x64");
-      expect("$version.linux.x64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.linux.x64");
-      expect("$version.windows.arm64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.windows.arm64");
-      expect("$version.macos.arm64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.macos.arm64");
-      expect("$version.linux.arm64".verifyFlutterVersion != null, true, reason: "Version should be valid: $version.linux.arm64");
+    for (final version in supportedFlutterVersions.keys) {
+      expect(version.verifyFlutterVersion != null, true,
+          reason: "Version should be valid: $version");
+      expect("$version.windows.x64".verifyFlutterVersion != null, true,
+          reason: "Version should be valid: $version.windows.x64");
+      expect("$version.macos.x64".verifyFlutterVersion != null, true,
+          reason: "Version should be valid: $version.macos.x64");
+      expect("$version.linux.x64".verifyFlutterVersion != null, true,
+          reason: "Version should be valid: $version.linux.x64");
+      expect("$version.windows.arm64".verifyFlutterVersion != null, true,
+          reason: "Version should be valid: $version.windows.arm64");
+      expect("$version.macos.arm64".verifyFlutterVersion != null, true,
+          reason: "Version should be valid: $version.macos.arm64");
+      expect("$version.linux.arm64".verifyFlutterVersion != null, true,
+          reason: "Version should be valid: $version.linux.arm64");
     }
   });
 
   test("Invalid Flutter versions are returned as null", () {
-      expect("thisIsNotAFlutterVersion".verifyFlutterVersion == null, true);
+    expect("thisIsNotAFlutterVersion".verifyFlutterVersion == null, true);
   });
 
   group("Verify version sort order is descending by default", () {
     void testSorting(String a, String b, List<String> expected) {
-      test("$a > $b",() {
+      test("$a > $b", () {
         final sortedList = [a.toVersion, b.toVersion]..sort();
         expect(sortedList.map((e) => e.prettyPrint).toList(), expected);
       });
@@ -51,7 +58,6 @@ void main() {
     testSorting("1.0.0", "1.0.1", ["1.0.1", "1.0.0"]);
     testSorting("0.1.0", "0.0.1", ["0.1.0", "0.0.1"]);
   });
-
 }
 
 extension on String {
