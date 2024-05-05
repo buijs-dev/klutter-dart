@@ -33,6 +33,25 @@ void main() {
     expect(result.isOk, false);
     expect(result.message, "BOOM!");
   });
+
+  test("An exception is thrown when an option value is invalid", () async {
+    final result = await _InvalidTask().execute(Context(
+        workingDirectory: Directory.current,
+        taskName: TaskName.build,
+        taskOptions: {}));
+    expect(result.isOk, false);
+    expect(result.message, "unsupported value: Instance of \'FakeInput\'");
+  });
+
+  test("An exception is thrown when unsupported options are present", () async {
+    final result = await CreateProject().execute(Context(
+        workingDirectory: Directory.current,
+        taskName: TaskName.build,
+        taskOptions: {TaskOption.overwrite: "false"}));
+    expect(result.isOk, false);
+    expect(result.message,
+        "unable to run task create because: [option not supported for task create: overwrite]");
+  });
 }
 
 class _ExplodingTask extends Task {
@@ -42,4 +61,22 @@ class _ExplodingTask extends Task {
   Future<void> toBeExecuted(Context context, Map<TaskOption, dynamic> options) {
     throw KlutterException("BOOM!");
   }
+}
+
+class _InvalidTask extends Task {
+  _InvalidTask() : super(TaskName.add, {TaskOption.group: FakeInput()});
+
+  @override
+  Future<String> toBeExecuted(
+      Context context, Map<TaskOption, dynamic> options) {
+    return Future.value("");
+  }
+}
+
+class FakeInput extends Input<String> {
+  @override
+  String convertOrThrow(String value) => "bar";
+
+  @override
+  String get description => "foo";
 }

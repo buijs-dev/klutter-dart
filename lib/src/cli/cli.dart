@@ -48,10 +48,9 @@
 /// - Option: <I>android</I>
 library cli;
 
+import "../../klutter.dart";
 import "../common/utilities.dart";
 import "context.dart";
-import "task_service.dart" as service;
-
 export "flutter.dart";
 export "option.dart";
 export "task.dart";
@@ -65,7 +64,9 @@ export "task_result.dart";
 export "task_service.dart";
 
 /// Main entrypoint for executing Klutter command line tasks.
-Future<String> execute(Context context) async {
+Future<String> execute(Context context, [TaskService? taskService]) async {
+  final service = taskService ?? TaskService();
+
   /// Retrieve all tasks for the specified command.
   ///
   /// Set is empty if command is null or task processing failed.
@@ -92,13 +93,15 @@ Future<String> execute(Context context) async {
   });
 
   final result = await task.execute(context);
-  return result.isOk
-      ? "KLUTTER: Task '$t$o' finished successful.".format.ok
-      : """
+  final msgOk = "KLUTTER: Task '$t$o' finished successful.";
+  final msgNok = """
         |KLUTTER: ${result.message}
-        |KLUTTER: Task '$t$o' finished unsuccessfully."""
-          .format
-          .nok;
+        |KLUTTER: Task '$t$o' finished unsuccessfully.""";
+  if (result.isOk) {
+    return msgOk.format.ok;
+  } else {
+    return msgNok.format.nok;
+  }
 }
 
 /// Output log message to console.

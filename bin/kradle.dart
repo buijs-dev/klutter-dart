@@ -22,7 +22,6 @@
 
 import "dart:io";
 
-import "package:args/command_runner.dart";
 import "package:klutter/klutter.dart";
 import "package:klutter/src/cli/context.dart";
 
@@ -44,8 +43,9 @@ Future<void> main(List<String> args) async {
   final firstArgument = arguments.removeAt(0);
   final taskName = firstArgument.toTaskNameOrNull;
   final taskOptions = toTaskOptionsOrNull(arguments);
+  final taskService = TaskService();
   if (firstArgument.toLowerCase() == "help") {
-    print(displayKradlewHelpText);
+    print(taskService.displayKradlewHelpText);
   } else if (taskName == null) {
     print("received unknown task name: $firstArgument");
     print("use kradlew help for more information");

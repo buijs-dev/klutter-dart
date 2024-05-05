@@ -72,11 +72,10 @@ class CleanCachResult {
 /// Wrapper to provide the kradle cache directory
 /// based on [Context] and [TaskOption] input.
 class CacheProvider {
-
   /// Return the files and directory in the kradle cache directory.
-  List<FileSystemEntity> getCacheContent(Context context, Map<TaskOption, dynamic> options) {
+  List<FileSystemEntity> getCacheContent(
+      Context context, Map<TaskOption, dynamic> options) {
     final cache = Directory(findPathToRoot(context, options)).kradleCache;
     return cache.listSync(recursive: true);
   }
-
 }

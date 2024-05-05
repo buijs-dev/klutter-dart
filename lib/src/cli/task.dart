@@ -76,7 +76,7 @@ abstract class Task<T> {
       } else if (value is UserInputOrDefault) {
         options[key] = value.defaultValue;
       } else {
-        throw KlutterException("unsupported value: $value");
+        throw InputException("unsupported value: $value");
       }
     });
 

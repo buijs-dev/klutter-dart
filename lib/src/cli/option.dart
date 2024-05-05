@@ -90,12 +90,9 @@ abstract class Input<T> {
 /// Exception indicating an error in the user input.
 ///
 /// This exception occurs when the user input can not be mapped to [Input].
-class InputException implements Exception {
+class InputException extends KlutterException {
   /// Create instance of [InputException] with a message [cause].
-  InputException(this.cause);
-
-  /// Message explaining the cause of the exception.
-  String cause;
+  const InputException(super.cause);
 
   @override
   String toString() => "InputException with cause: '$cause'";
@@ -222,7 +219,7 @@ class PluginNameOption extends UserInputOrDefault<String> {
   @override
   String convertOrThrow(String value) {
     if (!RegExp(r"""^[a-z][a-z0-9_]+$""").hasMatch(value)) {
-      throw KlutterException("pluginName error: Should only contain"
+      throw const InputException("pluginName error: Should only contain"
           " lowercase alphabetic, numeric and or _ characters"
           " and start with an alphabetic character ('my_plugin').");
     }
@@ -241,22 +238,22 @@ class GroupNameOption extends UserInputOrDefault<String> {
   @override
   String convertOrThrow(String value) {
     if (!value.contains(".")) {
-      throw InputException(
+      throw const InputException(
           "GroupName error: Should contain at least 2 parts ('com.example').");
     }
 
     if (value.contains("_.")) {
-      throw InputException(
+      throw const InputException(
           "GroupName error: Characters . and _ can not precede each other.");
     }
 
     if (value.contains("._")) {
-      throw InputException(
+      throw const InputException(
           "GroupName error: Characters . and _ can not precede each other.");
     }
 
     if (!RegExp(r"""^[a-z][a-z0-9._]+[a-z]$""").hasMatch(value)) {
-      throw InputException(
+      throw const InputException(
           "GroupName error: Should be lowercase alphabetic separated by dots ('com.example').");
     }
 

@@ -26,9 +26,8 @@ import "package:meta/meta.dart";
 import "package:test/test.dart";
 
 void main() {
-
-  Future<TaskResult> runTest(Directory workingDirectory,
-      Directory cachingDirectory,
+  Future<TaskResult> runTest(
+      Directory workingDirectory, Directory cachingDirectory,
       [CleanCache? cc]) {
     final task = cc ?? CleanCache();
 
@@ -44,9 +43,12 @@ void main() {
     return task.execute(context);
   }
 
-  test("Verify clean cache is successful when cache contains nothing", () async {
-    final workingDirectory = Directory.systemTemp.resolveFolder("foo1")..maybeCreate;
-    final cachingDirectory = Directory.systemTemp.resolveFolder("foo1/.kradle/cache")..maybeCreate;
+  test("Verify clean cache is successful when cache contains nothing",
+      () async {
+    final workingDirectory = Directory.systemTemp.resolveFolder("foo1")
+      ..maybeCreate;
+    final cachingDirectory =
+        Directory.systemTemp.resolveFolder("foo1/.kradle/cache")..maybeCreate;
     expect(cachingDirectory.isEmpty, true);
     final result = await runTest(workingDirectory, cachingDirectory);
     expect(result.isOk, true);
@@ -54,8 +56,10 @@ void main() {
   });
 
   test("Verify clean cache deletes all cache entries", () async {
-    final workingDirectory = Directory.systemTemp.resolveFolder("foo1")..maybeCreate;
-    final cachingDirectory = Directory.systemTemp.resolveFolder("foo1/.kradle/cache")..maybeCreate;
+    final workingDirectory = Directory.systemTemp.resolveFolder("foo1")
+      ..maybeCreate;
+    final cachingDirectory =
+        Directory.systemTemp.resolveFolder("foo1/.kradle/cache")..maybeCreate;
     cachingDirectory.resolveFolder("3.10.6.linux.arm").createSync();
     expect(cachingDirectory.isEmpty, false);
     final result = await runTest(workingDirectory, cachingDirectory);
@@ -67,27 +71,31 @@ void main() {
   });
 
   test("Verify exceptions are caught when deleting entities", () async {
-    final workingDirectory = Directory.systemTemp.resolveFolder("foo2")..maybeCreate;
+    final workingDirectory = Directory.systemTemp.resolveFolder("foo2")
+      ..maybeCreate;
     final cachingDirectory = DirectoryStub();
     expect(cachingDirectory.isEmpty, false);
     final cacheProvider = CacheProviderStub();
     final cleanCache = CleanCache(cacheProvider);
-    final result = await runTest(workingDirectory, cachingDirectory, cleanCache);
+    final result =
+        await runTest(workingDirectory, cachingDirectory, cleanCache);
     expect(result.isOk, true);
     expect(cachingDirectory.isEmpty, false);
     final CleanCachResult ccr = result.output;
     expect(ccr.deleted.length, 0);
     expect(ccr.notDeletedByError.isNotEmpty, true);
-    expect(ccr.notDeletedByError[DirectoryStub()], "KlutterException with cause: 'BOOM!'");
+    expect(ccr.notDeletedByError[DirectoryStub()],
+        "KlutterException with cause: 'BOOM!'");
   });
 }
 
 class CacheProviderStub extends CacheProvider {
   @override
   List<FileSystemEntity> getCacheContent(
-      Context context,
-      Map<TaskOption, dynamic> options,
-      ) => [DirectoryStub()];
+    Context context,
+    Map<TaskOption, dynamic> options,
+  ) =>
+      [DirectoryStub()];
 }
 
 @immutable
@@ -107,8 +115,7 @@ class DirectoryStub implements Directory {
   }
 
   @override
-  void createSync({bool recursive = false}) {
-  }
+  void createSync({bool recursive = false}) {}
 
   @override
   Future<Directory> createTemp([String? prefix]) {
@@ -140,11 +147,13 @@ class DirectoryStub implements Directory {
   bool get isAbsolute => throw UnimplementedError();
 
   @override
-  Stream<FileSystemEntity> list({bool recursive = false, bool followLinks = true}) =>
+  Stream<FileSystemEntity> list(
+          {bool recursive = false, bool followLinks = true}) =>
       Stream.value(DirectoryStub());
 
   @override
-  List<FileSystemEntity> listSync({bool recursive = false, bool followLinks = true}) =>
+  List<FileSystemEntity> listSync(
+          {bool recursive = false, bool followLinks = true}) =>
       [DirectoryStub()];
 
   @override
@@ -187,8 +196,8 @@ class DirectoryStub implements Directory {
   Uri get uri => throw UnimplementedError();
 
   @override
-  Stream<FileSystemEvent> watch({int events = FileSystemEvent.all, bool recursive = false}) {
+  Stream<FileSystemEvent> watch(
+      {int events = FileSystemEvent.all, bool recursive = false}) {
     throw UnimplementedError();
   }
-
 }

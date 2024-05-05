@@ -120,10 +120,8 @@ extension FileUtil on FileSystemEntity {
 
 /// Utils for easier Directory handling.
 extension DirectoryUtil on Directory {
-
   /// Check if directory contains items.
   bool get isEmpty => listSync().isEmpty;
-
 }
 
 /// Utils for easier String manipulation.

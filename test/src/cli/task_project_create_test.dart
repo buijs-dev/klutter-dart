@@ -66,7 +66,6 @@ void main() {
     expect(result.isOk, false);
     expect(result.message, "BOOM!");
   });
-
 }
 
 class NoFlutterSDK extends GetFlutterSDK {

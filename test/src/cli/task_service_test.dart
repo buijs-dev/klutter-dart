@@ -21,13 +21,14 @@
 import "dart:io";
 
 import "package:klutter/src/cli/cli.dart";
-import "package:klutter/src/cli/task_service.dart" as service;
 import "package:klutter/src/common/common.dart";
 import "package:test/test.dart";
 
 void main() {
   final pathToRoot = Directory("${Directory.systemTemp.path}/tst1".normalize)
     ..maybeCreate;
+
+  final service = TaskService();
 
   group("Test allTasks", () {
     test("Verify allTasks returns 7 tasks", () {
@@ -63,7 +64,7 @@ void main() {
   });
 
   test("Verify displayKradlewHelpText output", () {
-    final help = displayKradlewHelpText;
+    final help = service.displayKradlewHelpText;
     const expected = "Manage your klutter project."
         "\n"
         "\n"

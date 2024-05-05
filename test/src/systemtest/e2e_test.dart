@@ -46,6 +46,16 @@ void main() {
 
   try {
     test("end-to-end test", () async {
+      final help = await sut.execute(
+          Context(
+            workingDirectory: Directory.systemTemp,
+            taskName: TaskName.create,
+            taskOptions: {},
+          ),
+          FakeTaskService());
+
+      expect(help.contains("Usage: kradlew <command> [option=value]"), true);
+
       /// Run a Klutter task without an existing Flutter project
       final result = await sut
           .execute(toContextOrNull(producerPlugin, ["add", "lib=foo"])!);
@@ -57,7 +67,7 @@ void main() {
       );
 
       /// Create Flutter plugin project.
-      await createFlutterPlugin(
+      final createResult = await createFlutterPlugin(
         organisation: organisation,
         pluginName: pluginName,
         root: Directory(pathToRoot.absolutePath)
@@ -65,6 +75,7 @@ void main() {
             .absolutePath,
       );
 
+      expect(createResult.contains("finished successful"), true);
       expect(producerPlugin.existsSync(), true,
           reason:
               "Plugin should be created in: '${producerPlugin.absolute.path}'");
@@ -193,7 +204,7 @@ void main() {
 }
 
 /// Create Flutter plugin project.
-Future<void> createFlutterPlugin({
+Future<String> createFlutterPlugin({
   required String organisation,
   required String pluginName,
   required String root,
@@ -211,8 +222,10 @@ Future<void> createFlutterPlugin({
             "local@${Directory.current.resolveFolder("./../".normalize).absolutePath}",
       });
 
-  final res = await sut.toTask(context)!.execute(context);
-  if (!res.isOk) {
-    assert(res.isOk, res.message);
-  }
+  return sut.execute(context);
+}
+
+class FakeTaskService extends TaskService {
+  @override
+  Task? toTask(Context context) => null;
 }

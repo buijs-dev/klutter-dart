@@ -22,10 +22,10 @@
 /// either internally or by faulty configuration.
 class KlutterException implements Exception {
   /// Create instance of [KlutterException] with a message [cause].
-  KlutterException(this.cause);
+  const KlutterException(this.cause);
 
   /// Message explaining the cause of the exception.
-  String cause;
+  final String cause;
 
   @override
   String toString() => "KlutterException with cause: '$cause'";

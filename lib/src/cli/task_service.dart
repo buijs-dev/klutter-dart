@@ -29,53 +29,56 @@ import "task_get_flutter.dart";
 import "task_project_create.dart";
 import "task_project_init.dart";
 
-/// Output all tasks and options with descriptions.
-String get displayKradlewHelpText {
-  final buffer = StringBuffer("""
+/// Service for available tasks.
+class TaskService {
+  /// Get the [Task] which matches [Context] details or null.
+  Task? toTask(Context context) {
+    final matching =
+        allTasks().where((task) => task.taskName == context.taskName);
+    return matching.isNotEmpty ? matching.first : null;
+  }
+
+  /// Output all tasks and options with descriptions.
+  String get displayKradlewHelpText {
+    final buffer = StringBuffer("""
   |Manage your klutter project.
   |
   |Usage: kradlew <command> [option=value]
   |
   |"""
-      .format);
+        .format);
 
-  for (final task in allTasks()) {
-    buffer.writeln(task.toString());
+    for (final task in allTasks()) {
+      buffer.writeln(task.toString());
+    }
+
+    return buffer.toString();
   }
 
-  return buffer.toString();
-}
+  /// List of all [Task] objects.
+  ///
+  /// A task may contain one or more sub-task implementations.
+  ///
+  /// {@category producer}
+  /// {@category consumer}
+  Set<Task> allTasks(
 
-/// Get the [Task] which matches [Context] details or null.
-Task? toTask(Context context) {
-  final matching =
-      allTasks().where((task) => task.taskName == context.taskName);
-  return matching.isNotEmpty ? matching.first : null;
-}
-
-/// List of all [Task] objects.
-///
-/// A task may contain one or more sub-task implementations.
-///
-/// {@category producer}
-/// {@category consumer}
-Set<Task> allTasks(
-
-    /// Injectable Task List for testing purposes.
-    /// Any calling class should omit this parameter
-    /// and let the function default to [allTasks].
-    [List<Task>? tasks]) {
-  final list = tasks ??
-      [
-        AddLibrary(),
-        ProjectInit(),
-        GetFlutterSDK(),
-        CreateProject(),
-        BuildProject(),
-        CleanCache()
-      ]
-    ..verifyNoDuplicates;
-  return list.toSet();
+      /// Injectable Task List for testing purposes.
+      /// Any calling class should omit this parameter
+      /// and let the function default to [allTasks].
+      [List<Task>? tasks]) {
+    final list = tasks ??
+        [
+          AddLibrary(),
+          ProjectInit(),
+          GetFlutterSDK(),
+          CreateProject(),
+          BuildProject(),
+          CleanCache()
+        ]
+      ..verifyNoDuplicates;
+    return list.toSet();
+  }
 }
 
 extension on List<Task> {
