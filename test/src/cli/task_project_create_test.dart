@@ -18,7 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import "dart:io";
+
 import "package:klutter/klutter.dart";
+import "package:klutter/src/cli/context.dart";
 import "package:test/test.dart";
 
 void main() {
@@ -50,4 +53,25 @@ void main() {
             e is KlutterException &&
             e.cause == "invalid dependency notations: 1.2.beta")));
   });
+
+  test("Verify an exception is thrown if flutter sdk is not found", () async {
+    final getFlutterTask = NoFlutterSDK();
+    final task = CreateProject(getFlutterSDK: getFlutterTask);
+    final result = await task.execute(Context(
+      workingDirectory: Directory.systemTemp,
+      taskName: TaskName.create,
+      taskOptions: {},
+    ));
+
+    expect(result.isOk, false);
+    expect(result.message, "BOOM!");
+  });
+
+}
+
+class NoFlutterSDK extends GetFlutterSDK {
+  @override
+  Future<TaskResult<Directory>> execute(Context context) async {
+    return const TaskResult(isOk: false, message: "BOOM!");
+  }
 }

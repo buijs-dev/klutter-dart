@@ -18,38 +18,65 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "dart:ffi";
 import "dart:io";
 
-import "package:meta/meta.dart";
-
 import "../common/common.dart";
-import "../producer/kradle.dart";
 import "cli.dart";
 import "context.dart";
 
 /// Clean the kradle cache by deleting contents recursively.
 class CleanCache extends Task {
   /// Create new Task.
-  CleanCache()
+  CleanCache([CacheProvider? cacheProvider])
       : super(TaskName.clean, {
           TaskOption.root: RootDirectoryInput(),
-        });
+        }) {
+    _cacheProvider = cacheProvider ?? CacheProvider();
+  }
+
+  late final CacheProvider _cacheProvider;
 
   @override
-  Future<void> toBeExecuted(
+  Future<CleanCachResult> toBeExecuted(
       Context context, Map<TaskOption, dynamic> options) async {
+    final deleted = <FileSystemEntity>[];
+    final notDeletedByError = <FileSystemEntity, String>{};
     void deleteIfExists(FileSystemEntity entity) {
       if (entity.existsSync()) {
         try {
           entity.deleteSync();
-        } on Exception {
-          // ignore
+          deleted.add(entity);
+        } on Exception catch (e) {
+          notDeletedByError[entity] = e.toString();
         }
       }
     }
 
-    final cache = Directory(findPathToRoot(context, options)).kradleCache;
-    cache.listSync(recursive: true).forEach(deleteIfExists);
+    _cacheProvider.getCacheContent(context, options).forEach(deleteIfExists);
+    return CleanCachResult(deleted, notDeletedByError);
   }
+}
+
+/// Result of task [CleanCache].
+class CleanCachResult {
+  /// Create a new instance of [CleanCacheResult].
+  const CleanCachResult(this.deleted, this.notDeletedByError);
+
+  /// List of deleted entities.
+  final List<FileSystemEntity> deleted;
+
+  /// Map of not deleted entities and the corresponding error message.
+  final Map<FileSystemEntity, String> notDeletedByError;
+}
+
+/// Wrapper to provide the kradle cache directory
+/// based on [Context] and [TaskOption] input.
+class CacheProvider {
+
+  /// Return the files and directory in the kradle cache directory.
+  List<FileSystemEntity> getCacheContent(Context context, Map<TaskOption, dynamic> options) {
+    final cache = Directory(findPathToRoot(context, options)).kradleCache;
+    return cache.listSync(recursive: true);
+  }
+
 }

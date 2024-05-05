@@ -118,6 +118,14 @@ extension FileUtil on FileSystemEntity {
   }
 }
 
+/// Utils for easier Directory handling.
+extension DirectoryUtil on Directory {
+
+  /// Check if directory contains items.
+  bool get isEmpty => listSync().isEmpty;
+
+}
+
 /// Utils for easier String manipulation.
 extension StringUtil on String {
   /// Create an absolute path to the given file or folder.
