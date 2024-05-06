@@ -40,12 +40,7 @@ void main() {
 
     final pathToConsumer = project.resolveFolder("example");
     final task = ProjectInit();
-    final context = Context(
-      workingDirectory: pathToConsumer,
-      taskName: TaskName.init,
-      taskOptions: {},
-    );
-
+    final context = Context(pathToConsumer, {});
     final result = await task.execute(context);
     expect(result.isOk, true);
     final file = pathToConsumer.resolveFile("/lib/main.dart");

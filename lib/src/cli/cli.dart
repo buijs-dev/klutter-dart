@@ -50,6 +50,7 @@ library cli;
 
 import "../common/common.dart";
 import "context.dart";
+import "task.dart";
 import "task_service.dart";
 
 export "flutter.dart";
@@ -65,13 +66,14 @@ export "task_result.dart";
 export "task_service.dart";
 
 /// Main entrypoint for executing Klutter command line tasks.
-Future<String> execute(Context context, [TaskService? taskService]) async {
+Future<String> execute(TaskName taskName, Context context,
+    [TaskService? taskService]) async {
   final service = taskService ?? TaskService();
 
   /// Retrieve all tasks for the specified command.
   ///
   /// Set is empty if command is null or task processing failed.
-  final task = service.toTask(context);
+  final task = service.toTask(taskName);
 
   /// When there are no tasks then the user input is incorrect.
   ///
@@ -86,7 +88,7 @@ Future<String> execute(Context context, [TaskService? taskService]) async {
         .nok;
   }
 
-  final t = context.taskName.name;
+  final t = task.taskName;
   var o = "";
 
   context.taskOptions.forEach((key, value) {

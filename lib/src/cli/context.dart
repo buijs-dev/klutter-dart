@@ -5,41 +5,18 @@ import "task.dart";
 
 /// The context in which a command should be executed.
 class Context {
-  ///
-  const Context({
-    required this.workingDirectory,
-    required this.taskName,
-    required this.taskOptions,
-  });
+  /// Create a new [Context] instance.
+  const Context(this.workingDirectory, this.taskOptions);
 
+  /// The current working directory.
   ///
+  /// The working directory is used as root
+  /// when running project tasks, when no
+  /// [TaskOption.root] option is specified.
   final Directory workingDirectory;
 
-  ///
-  final TaskName taskName;
-
-  ///
+  /// All user input mapped as [TaskOption].
   final Map<TaskOption, String> taskOptions;
-}
-
-/// Copy utilities for [Context] objects.
-extension CopyContext on Context {
-  /// Create a new [Context] instance where existing
-  /// fields are overwritten with the given data.
-  Context copyWith({
-    Directory? workingDirectory,
-    TaskName? taskName,
-    Map<TaskOption, String> taskOptions = const {},
-  }) {
-    this.taskOptions.forEach((key, value) {
-      taskOptions.putIfAbsent(key, () => value);
-    });
-
-    return Context(
-        workingDirectory: workingDirectory ?? this.workingDirectory,
-        taskName: taskName ?? this.taskName,
-        taskOptions: taskOptions);
-  }
 }
 
 /// Parse user input and return the [Context] or null if input is invalid.
@@ -48,20 +25,28 @@ Context? toContextOrNull(Directory workingDirectory, List<String> arguments) {
     return null;
   }
 
-  final taskName = arguments.removeAt(0).toTaskNameOrNull;
-  if (taskName == null) {
-    return null;
-  }
-
   final taskOptions = toTaskOptionsOrNull(arguments);
   if (taskOptions == null) {
     return null;
   }
 
-  return Context(
-      workingDirectory: workingDirectory,
-      taskName: taskName,
-      taskOptions: taskOptions);
+  return Context(workingDirectory, taskOptions);
+}
+
+/// Copy utilities for [Context] objects.
+extension CopyContext on Context {
+  /// Create a new [Context] instance where existing
+  /// fields are overwritten with the given data.
+  Context copyWith({
+    Directory? workingDirectory,
+    Map<TaskOption, String> taskOptions = const {},
+  }) {
+    this.taskOptions.forEach((key, value) {
+      taskOptions.putIfAbsent(key, () => value);
+    });
+
+    return Context(workingDirectory ?? this.workingDirectory, taskOptions);
+  }
 }
 
 /// Parse the arguments to map of [TaskOption] or null if input is invalid.

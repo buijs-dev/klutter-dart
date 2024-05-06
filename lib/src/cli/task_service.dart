@@ -20,7 +20,6 @@
 
 import "../common/exception.dart";
 import "../common/utilities.dart";
-import "context.dart";
 import "task.dart";
 import "task_add.dart";
 import "task_build.dart";
@@ -31,10 +30,9 @@ import "task_project_init.dart";
 
 /// Service for available tasks.
 class TaskService {
-  /// Get the [Task] which matches [Context] details or null.
-  Task? toTask(Context context) {
-    final matching =
-        allTasks().where((task) => task.taskName == context.taskName);
+  /// Get the [Task] with [TaskName] or null.
+  Task? toTask(TaskName taskName) {
+    final matching = allTasks().where((task) => task.taskName == taskName);
     return matching.isNotEmpty ? matching.first : null;
   }
 

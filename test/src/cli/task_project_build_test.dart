@@ -36,13 +36,7 @@ void main() {
         expectedPathToWorkingDirectory: pathToRoot.absolutePath,
         expectedCommand: "gradlew clean build -p platform");
 
-    BuildProject(executor: executor).toBeExecuted(
-        Context(
-          workingDirectory: pathToRoot,
-          taskName: TaskName.build,
-          taskOptions: {},
-        ),
-        {});
+    BuildProject(executor: executor).toBeExecuted(Context(pathToRoot, {}), {});
 
     expect(executor.run().stdout, "Test OK!");
   });

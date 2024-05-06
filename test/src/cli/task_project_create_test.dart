@@ -57,12 +57,7 @@ void main() {
   test("Verify an exception is thrown if flutter sdk is not found", () async {
     final getFlutterTask = NoFlutterSDK();
     final task = CreateProject(getFlutterSDK: getFlutterTask);
-    final result = await task.execute(Context(
-      workingDirectory: Directory.systemTemp,
-      taskName: TaskName.create,
-      taskOptions: {},
-    ));
-
+    final result = await task.execute(Context(Directory.systemTemp, {}));
     expect(result.isOk, false);
     expect(result.message, "BOOM!");
   });

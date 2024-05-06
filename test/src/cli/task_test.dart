@@ -26,28 +26,22 @@ import "package:test/test.dart";
 
 void main() {
   test("When a task fails with a KlutterException, it is caught", () async {
-    final result = await _ExplodingTask().execute(Context(
-        workingDirectory: Directory.current,
-        taskName: TaskName.build,
-        taskOptions: {}));
+    final result =
+        await _ExplodingTask().execute(Context(Directory.systemTemp, {}));
     expect(result.isOk, false);
     expect(result.message, "BOOM!");
   });
 
   test("An exception is thrown when an option value is invalid", () async {
-    final result = await _InvalidTask().execute(Context(
-        workingDirectory: Directory.current,
-        taskName: TaskName.build,
-        taskOptions: {}));
+    final result =
+        await _InvalidTask().execute(Context(Directory.systemTemp, {}));
     expect(result.isOk, false);
     expect(result.message, "unsupported value: Instance of \'FakeInput\'");
   });
 
   test("An exception is thrown when unsupported options are present", () async {
-    final result = await CreateProject().execute(Context(
-        workingDirectory: Directory.current,
-        taskName: TaskName.build,
-        taskOptions: {TaskOption.overwrite: "false"}));
+    final result = await CreateProject().execute(
+        Context(Directory.systemTemp, {TaskOption.overwrite: "false"}));
     expect(result.isOk, false);
     expect(result.message,
         "unable to run task create because: [option not supported for task create: overwrite]");
@@ -59,7 +53,7 @@ class _ExplodingTask extends Task {
 
   @override
   Future<void> toBeExecuted(Context context, Map<TaskOption, dynamic> options) {
-    throw KlutterException("BOOM!");
+    throw const KlutterException("BOOM!");
   }
 }
 

@@ -31,10 +31,7 @@ void main() {
       [CleanCache? cc]) {
     final task = cc ?? CleanCache();
 
-    final context = Context(
-        workingDirectory: workingDirectory,
-        taskName: TaskName.clean,
-        taskOptions: {});
+    final context = Context(workingDirectory, {});
 
     workingDirectory
         .resolveFile("kradle.env")

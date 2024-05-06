@@ -90,10 +90,8 @@ void main() {
   });
 }
 
-Context context(Map<TaskOption, String> options) => Context(
-    taskName: TaskName.get,
-    workingDirectory: Directory.current,
-    taskOptions: options);
+Context context(Map<TaskOption, String> options) =>
+    Context(Directory.current, options);
 
 class UnknownPlatform extends PlatformWrapper {
   @override

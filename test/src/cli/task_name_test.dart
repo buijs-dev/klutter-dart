@@ -26,6 +26,12 @@ void main() {
     <String?, TaskName?>{
       "add": TaskName.add,
       " add ": TaskName.add,
+      "build": TaskName.build,
+      "clean": TaskName.clean,
+      "create": TaskName.create,
+      "get": TaskName.get,
+      "gradle": TaskName.gradle,
+      "flutter": TaskName.flutter,
       " init": TaskName.init,
       "INIT": TaskName.init,
       "i n i t": null,

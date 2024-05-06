@@ -21,7 +21,6 @@
 // ignore_for_file: avoid_print
 
 import "dart:io";
-
 import "package:klutter/klutter.dart";
 import "package:klutter/src/cli/context.dart";
 
@@ -42,21 +41,17 @@ Future<void> main(List<String> args) async {
   final arguments = [...args];
   final firstArgument = arguments.removeAt(0);
   final taskName = firstArgument.toTaskNameOrNull;
-  final taskOptions = toTaskOptionsOrNull(arguments);
+  final context = toContextOrNull(Directory.current, arguments);
   final taskService = TaskService();
   if (firstArgument.toLowerCase() == "help") {
     print(taskService.displayKradlewHelpText);
   } else if (taskName == null) {
     print("received unknown task name: $firstArgument");
     print("use kradle help for more information");
-  } else if (taskOptions == null) {
+  } else if (context == null) {
     print("received invalid task options: $args");
     print("use kradle help for more information");
   } else {
-    print(await execute(Context(
-      workingDirectory: Directory.current,
-      taskName: taskName,
-      taskOptions: taskOptions,
-    )));
+    print(await execute(taskName, context));
   }
 }

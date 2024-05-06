@@ -26,10 +26,8 @@ import "package:test/test.dart";
 
 void main() {
   test("ConsumerAdd fails when option is not set", () async {
-    final result = await AddLibrary().execute(Context(
-        taskName: TaskName.add,
-        workingDirectory: Directory.current,
-        taskOptions: <TaskOption, String>{}));
+    final result = await AddLibrary()
+        .execute(Context(Directory.current, <TaskOption, String>{}));
     expect(result.isOk, false);
     expect(result.message,
         "unable to run task add because: [missing value for option: lib]");
