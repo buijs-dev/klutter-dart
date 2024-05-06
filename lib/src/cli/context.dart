@@ -22,7 +22,7 @@ class Context {
 /// Parse user input and return the [Context] or null if input is invalid.
 Context? toContextOrNull(Directory workingDirectory, List<String> arguments) {
   if (arguments.isEmpty) {
-    return null;
+    return Context(workingDirectory, {});
   }
 
   final taskOptions = toTaskOptionsOrNull(arguments);

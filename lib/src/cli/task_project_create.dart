@@ -30,7 +30,7 @@ class CreateProject extends Task {
   CreateProject({Executor? executor, GetFlutterSDK? getFlutterSDK})
       : super(TaskName.create, {
           TaskOption.name: const PluginNameOption(),
-          TaskOption.group: GroupNameOption(),
+          TaskOption.group: const GroupNameOption(),
           TaskOption.flutter: FlutterVersionOption(),
           TaskOption.root: RootDirectoryInput(),
           TaskOption.klutter: const KlutterPubVersion(),

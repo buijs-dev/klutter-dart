@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// ignore_for_file: avoid_print
+
 import "dart:ffi";
 import "dart:io";
 
@@ -82,8 +84,8 @@ class GetFlutterSDK extends Task<Directory> {
   /// Download the flutter sdk or throw [KlutterException] on failure.
   Future<void> downloadOrThrow(
       String endpoint, File zip, Directory target) async {
-    // ignore: avoid_print
-    print("starting flutter download: $endpoint");
+
+    print("flutter download started: $endpoint");
     await download(endpoint, zip);
     if (zip.existsSync()) {
       await unzip(zip, target..maybeCreate);
@@ -91,9 +93,9 @@ class GetFlutterSDK extends Task<Directory> {
     }
 
     if (!target.existsSync()) {
-      throw KlutterException("Failed to download Flutter SDK");
+      throw const KlutterException("Failed to download Flutter SDK");
     }
-    // ignore: avoid_print
+
     print("flutter download finished: ${target.absolutePath}");
   }
 

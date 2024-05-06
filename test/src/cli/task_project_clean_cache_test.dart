@@ -62,7 +62,7 @@ void main() {
     final result = await runTest(workingDirectory, cachingDirectory);
     expect(result.isOk, true);
     expect(cachingDirectory.isEmpty, true);
-    final CleanCachResult ccr = result.output;
+    final CleanCacheResult ccr = result.output;
     expect(ccr.deleted.length, 1);
     expect(ccr.notDeletedByError.isEmpty, true);
   });
@@ -78,7 +78,7 @@ void main() {
         await runTest(workingDirectory, cachingDirectory, cleanCache);
     expect(result.isOk, true);
     expect(cachingDirectory.isEmpty, false);
-    final CleanCachResult ccr = result.output;
+    final CleanCacheResult ccr = result.output;
     expect(ccr.deleted.length, 0);
     expect(ccr.notDeletedByError.isNotEmpty, true);
     expect(ccr.notDeletedByError[DirectoryStub()],

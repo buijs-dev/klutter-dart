@@ -200,7 +200,7 @@ class KlutterGradleVersionOption extends UserInputOrDefault<String> {
   const KlutterGradleVersionOption() : super(klutterGradleVersion);
 
   @override
-  String get description => "the klutter gradle version";
+  String get description => "klutter gradle version";
 
   @override
   String convertOrThrow(String value) =>
@@ -230,7 +230,7 @@ class PluginNameOption extends UserInputOrDefault<String> {
 /// Option to specify group_name which defaults to dev.buijs.klutter.example.
 class GroupNameOption extends UserInputOrDefault<String> {
   /// Construct a new [GroupNameOption] instance with default value dev.buijs.klutter.example.
-  GroupNameOption() : super("dev.buijs.klutter.example");
+  const GroupNameOption() : super("dev.buijs.klutter.example");
 
   @override
   String get description => "the plugin group name";

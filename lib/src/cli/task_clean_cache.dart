@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// ignore_for_file: avoid_print
+
 import "dart:io";
 
 import "../common/common.dart";
@@ -37,14 +39,14 @@ class CleanCache extends Task {
   late final CacheProvider _cacheProvider;
 
   @override
-  Future<CleanCachResult> toBeExecuted(
+  Future<CleanCacheResult> toBeExecuted(
       Context context, Map<TaskOption, dynamic> options) async {
     final deleted = <FileSystemEntity>[];
     final notDeletedByError = <FileSystemEntity, String>{};
     void deleteIfExists(FileSystemEntity entity) {
       if (entity.existsSync()) {
         try {
-          entity.deleteSync();
+          entity.deleteSync(recursive: true);
           deleted.add(entity);
         } on Exception catch (e) {
           notDeletedByError[entity] = e.toString();
@@ -53,14 +55,22 @@ class CleanCache extends Task {
     }
 
     _cacheProvider.getCacheContent(context, options).forEach(deleteIfExists);
-    return CleanCachResult(deleted, notDeletedByError);
+    for (final element in deleted) {
+      print("deleted: ${element.absolutePath}");
+    }
+
+    notDeletedByError.forEach((key, value) {
+      print("failed to delete $key, because $value");
+    });
+
+    return CleanCacheResult(deleted, notDeletedByError);
   }
 }
 
 /// Result of task [CleanCache].
-class CleanCachResult {
+class CleanCacheResult {
   /// Create a new instance of [CleanCacheResult].
-  const CleanCachResult(this.deleted, this.notDeletedByError);
+  const CleanCacheResult(this.deleted, this.notDeletedByError);
 
   /// List of deleted entities.
   final List<FileSystemEntity> deleted;
