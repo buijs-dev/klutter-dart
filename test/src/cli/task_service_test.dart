@@ -39,12 +39,12 @@ void main() {
       expect(
         tasks.getTask(TaskName.add).toString(),
         "add\n  lib               (Required) name of the library to add.\n"
-        "  root              (Optional) the klutter project root directory. Defaults to \'current working directory\'.\n",
+        "  root              (Optional) klutter project root directory. Defaults to \'current working directory\'.\n",
       );
 
       expect(
         tasks.getTask(TaskName.init).toString(),
-        "init\n  bom               (Optional) the klutter gradle version. Defaults to '2024.1.1.beta'.\n  flutter           (Optional) the flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n  root              (Optional) the klutter project root directory. Defaults to \'current working directory\'.\n",
+        "init\n  bom               (Optional) klutter gradle version. Defaults to '2024.1.1.beta'.\n  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n  root              (Optional) klutter project root directory. Defaults to \'current working directory\'.\n",
       );
     });
 
@@ -72,34 +72,34 @@ void main() {
         "\n"
         "add\n"
         "  lib               (Required) name of the library to add.\n"
-        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
         "\n"
         "init\n"
-        "  bom               (Optional) the klutter gradle version. Defaults to '2024.1.1.beta'.\n"
-        "  flutter           (Optional) the flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
-        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
+        "  bom               (Optional) klutter gradle version. Defaults to '2024.1.1.beta'.\n"
+        "  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
         "\n"
         "get\n"
-        "  flutter           (Optional) the flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
+        "  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
         "  overwrite         (Optional) overwrite existing distribution when found. Defaults to 'false'.\n"
         "  dryRun            (Optional) skip downloading of libraries. Defaults to 'false'.\n"
-        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
         "\n"
         "create\n"
-        "  name              (Optional) the plugin name. Defaults to 'my_plugin'.\n"
-        "  group             (Optional) the plugin group name. Defaults to 'dev.buijs.klutter.example'.\n"
-        "  flutter           (Optional) the flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
-        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
-        "  klutter           (Optional) the klutter pub version. Defaults to '3.0.0'.\n"
-        "  klutterui         (Optional) the klutter_ui pub version. Defaults to '1.1.0'.\n"
-        "  bom               (Optional) the klutter gradle version. Defaults to '2024.1.1.beta'.\n"
-        "  squint            (Optional) the squint_json pub version. Defaults to '0.1.2'.\n"
+        "  name              (Optional) plugin name. Defaults to 'my_plugin'.\n"
+        "  group             (Optional) plugin group name. Defaults to 'dev.buijs.klutter.example'.\n"
+        "  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
+        "  klutter           (Optional) klutter pub version. Defaults to '3.0.0'.\n"
+        "  klutterui         (Optional) klutter_ui pub version. Defaults to '1.1.0'.\n"
+        "  bom               (Optional) klutter gradle version. Defaults to '2024.1.1.beta'.\n"
+        "  squint            (Optional) squint_json pub version. Defaults to '0.1.2'.\n"
         "\n"
         "build\n"
-        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
         "\n"
         "clean\n"
-        "  root              (Optional) the klutter project root directory. Defaults to 'current working directory'.\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
         "\n"
         "";
     expect(help, expected);

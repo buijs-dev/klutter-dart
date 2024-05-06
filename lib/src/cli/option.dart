@@ -113,7 +113,7 @@ class RootDirectoryInput
   String get defaultValueToString => "current working directory";
 
   @override
-  String get description => "the klutter project root directory";
+  String get description => "klutter project root directory";
 }
 
 /// Option specifying the flutter version to use.
@@ -124,8 +124,7 @@ class FlutterVersionOption extends UserInputOrDefault<VerifiedFlutterVersion> {
   FlutterVersionOption() : super("3.10.6".verifyFlutterVersion!);
 
   @override
-  String get description =>
-      "the flutter sdk version in format major.minor.patch";
+  String get description => "flutter sdk version in format major.minor.patch";
 
   @override
   String get defaultValueToString => defaultValue.version.prettyPrint;
@@ -164,7 +163,7 @@ class SquintPubVersion extends UserInputOrDefault<String> {
   const SquintPubVersion() : super(squintPubVersion);
 
   @override
-  String get description => "the squint_json pub version";
+  String get description => "squint_json pub version";
 
   @override
   String convertOrThrow(String value) => value;
@@ -176,7 +175,7 @@ class KlutterPubVersion extends UserInputOrDefault<String> {
   const KlutterPubVersion() : super(klutterPubVersion);
 
   @override
-  String get description => "the klutter pub version";
+  String get description => "klutter pub version";
 
   @override
   String convertOrThrow(String value) => value;
@@ -188,7 +187,7 @@ class KlutteruiPubVersion extends UserInputOrDefault<String> {
   const KlutteruiPubVersion() : super(klutterUIPubVersion);
 
   @override
-  String get description => "the klutter_ui pub version";
+  String get description => "klutter_ui pub version";
 
   @override
   String convertOrThrow(String value) => value;
@@ -214,7 +213,7 @@ class PluginNameOption extends UserInputOrDefault<String> {
   const PluginNameOption() : super("my_plugin");
 
   @override
-  String get description => "the plugin name";
+  String get description => "plugin name";
 
   @override
   String convertOrThrow(String value) {
@@ -233,7 +232,7 @@ class GroupNameOption extends UserInputOrDefault<String> {
   const GroupNameOption() : super("dev.buijs.klutter.example");
 
   @override
-  String get description => "the plugin group name";
+  String get description => "plugin group name";
 
   @override
   String convertOrThrow(String value) {

@@ -84,7 +84,6 @@ class GetFlutterSDK extends Task<Directory> {
   /// Download the flutter sdk or throw [KlutterException] on failure.
   Future<void> downloadOrThrow(
       String endpoint, File zip, Directory target) async {
-
     print("flutter download started: $endpoint");
     await download(endpoint, zip);
     if (zip.existsSync()) {

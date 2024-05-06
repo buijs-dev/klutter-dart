@@ -19,8 +19,8 @@ jobs:
       - name: Install dependencies
         run: dart pub get
       - name: Build executable
-        run: dart compile exe bin/kradle.dart -o kradlew
+        run: dart compile exe bin/kradle.dart -o kradle
       - uses: actions/upload-artifact@v4
         with:
-          name: kradlew-${{ matrix.os }}-${{ matrix.version }}
-          path: kradlew
+          name: kradle-${{ matrix.os }}-${{ matrix.version }}
+          path: kradle
