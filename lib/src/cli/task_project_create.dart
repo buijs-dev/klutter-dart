@@ -71,12 +71,12 @@ class CreateProject extends Task {
       group: group,
     );
 
-    final rootPubspecFile = root.resolveFile("pubspec.yaml")..verifyExists;
+    final rootPubspecFile = root.resolveFile("pubspec.yaml")..verifyFileExists;
 
-    final exampleFolder = root.resolveFolder("example")..verifyFolderExists;
+    final exampleFolder = root.resolveFolder("example")..verifyDirectoryExists;
 
     final examplePubspecFile = exampleFolder.resolveFile("pubspec.yaml")
-      ..verifyExists;
+      ..verifyFileExists;
 
     final flutterSDK = dist.folderNameString.source;
 
@@ -141,7 +141,7 @@ class CreateProject extends Task {
       final iosWorkingDirectory = root
           .resolveFolder("example")
           .resolveFolder("ios")
-        ..verifyFolderExists;
+        ..verifyDirectoryExists;
 
       for (final step in ["install", "update"]) {
         _executor

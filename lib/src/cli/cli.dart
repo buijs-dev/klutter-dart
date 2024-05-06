@@ -48,9 +48,10 @@
 /// - Option: <I>android</I>
 library cli;
 
-import "../../klutter.dart";
-import "../common/utilities.dart";
+import "../common/common.dart";
 import "context.dart";
+import "task_service.dart";
+
 export "flutter.dart";
 export "option.dart";
 export "task.dart";

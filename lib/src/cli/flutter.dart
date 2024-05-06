@@ -44,5 +44,5 @@ Future<Directory> createFlutterProjectOrThrow({
     ..run();
 
   return Directory(pathToRoot.normalize).resolveFolder(name)
-    ..verifyFolderExists;
+    ..verifyDirectoryExists;
 }

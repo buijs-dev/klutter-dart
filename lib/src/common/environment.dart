@@ -40,4 +40,7 @@ class PlatformWrapper {
 
   /// Check if current platform is macos.
   bool get isMacos => Platform.isMacOS;
+
+  /// Check if current platform is linux.
+  bool get isLinux => Platform.isLinux;
 }

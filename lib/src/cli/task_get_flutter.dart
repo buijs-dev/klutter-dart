@@ -57,7 +57,7 @@ class GetFlutterSDK extends Task<Directory> {
           ..maybeDelete
           ..createSync(recursive: true);
         await downloadOrThrow(endpoint, zip, target);
-        return target..verifyFolderExists;
+        return target..verifyDirectoryExists;
       }
     }
     return target;

@@ -165,20 +165,21 @@ String findDependencyPath({
 
 /// Find applicable [FlutterDistribution] for the current
 /// [OperatingSystem] and [Architecture] or throw [KlutterException].
-FlutterDistribution toFlutterDistributionOrThrow({
-  required VerifiedFlutterVersion version,
-  required String pathToRoot,
-}) {
-  OperatingSystem? platform;
+FlutterDistribution toFlutterDistributionOrThrow(
+    {required VerifiedFlutterVersion version,
+    required String pathToRoot,
+    PlatformWrapper? platformWrapper}) {
+  final p = platformWrapper ?? platform;
+  OperatingSystem? os;
 
   if (version.os != null) {
-    platform = version.os;
-  } else if (Platform.isWindows) {
-    platform = OperatingSystem.windows;
-  } else if (Platform.isMacOS) {
-    platform = OperatingSystem.macos;
-  } else if (Platform.isLinux) {
-    platform = OperatingSystem.linux;
+    os = version.os;
+  } else if (p.isWindows) {
+    os = OperatingSystem.windows;
+  } else if (p.isMacos) {
+    os = OperatingSystem.macos;
+  } else if (p.isLinux) {
+    os = OperatingSystem.linux;
   } else {
     throw KlutterException(
         "Current OS is not supported (supported: macos, windows or linux): ${Platform.operatingSystem}");
@@ -189,8 +190,7 @@ FlutterDistribution toFlutterDistributionOrThrow({
           ? Architecture.arm64
           : Architecture.x64);
 
-  return FlutterDistribution(
-      version: version.version, os: platform!, arch: arch);
+  return FlutterDistribution(version: version.version, os: os!, arch: arch);
 }
 
 extension on String {
@@ -311,9 +311,6 @@ extension ProjectFile on Directory {
         ? envFile.defaultKradleCache
         : envFile.configuredKradleCache(cacheProperty);
   }
-
-  /// File kradle.yaml which contains klutter project data.
-  File get kradleYaml => resolveFile("kradle.yaml");
 
   /// File kradle.env which contains user-specific klutter project data.
   File get kradleEnv => resolveFile("kradle.env");

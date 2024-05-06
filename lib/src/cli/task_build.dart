@@ -18,13 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "dart:ffi";
 import "dart:io";
 
-import "package:meta/meta.dart";
-
 import "../common/common.dart";
-import "../producer/kradle.dart";
 import "cli.dart";
 import "context.dart";
 

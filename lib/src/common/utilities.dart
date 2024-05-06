@@ -40,7 +40,7 @@ extension FileUtil on FileSystemEntity {
   /// Create an absolute path to the given file.
   ///
   /// If the path does not exist throw a [KlutterException].
-  File get verifyExists => File(absolutePath)
+  File get verifyFileExists => File(absolutePath)
     ..ifNotExists((file) {
       throw KlutterException("Path does not exist: ${file.absolute.path}");
     });
@@ -48,7 +48,7 @@ extension FileUtil on FileSystemEntity {
   /// Create an absolute path to the given folder.
   ///
   /// If the path does not exist throw a [KlutterException].
-  Directory get verifyFolderExists => Directory(absolutePath)
+  Directory get verifyDirectoryExists => Directory(absolutePath)
     ..ifNotExists((dir) {
       throw KlutterException("Path does not exist: ${dir.absolute.path}");
     });

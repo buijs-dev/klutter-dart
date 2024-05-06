@@ -18,20 +18,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import '../common/common.dart';
-import '../consumer/consumer.dart';
-import "../common/exception.dart";
-import "../common/project.dart";
-import "cli.dart";
 import "dart:io";
 
+import "../common/common.dart";
 import "../consumer/android.dart";
+import "../consumer/consumer.dart";
 import "../producer/android.dart";
 import "../producer/gradle.dart";
 import "../producer/ios.dart";
 import "../producer/kradle.dart";
 import "../producer/platform.dart";
 import "../producer/project.dart";
+import "cli.dart";
 import "context.dart";
 
 /// Task to prepare a flutter project for using klutter plugins.
