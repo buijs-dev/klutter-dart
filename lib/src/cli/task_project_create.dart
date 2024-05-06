@@ -79,7 +79,6 @@ class CreateProject extends Task {
       ..verifyFileExists;
 
     final flutterSDK = dist.folderNameString.source;
-
     final bomVersion = options[TaskOption.bom];
     final klutterVersion = options[TaskOption.klutter];
     final klutterUIVersion = options[TaskOption.klutterui];
@@ -121,11 +120,13 @@ class CreateProject extends Task {
       TaskOption.bom: bomVersion,
       TaskOption.flutter: flutterSDK,
     });
+
     await ProjectInit().execute(initContext);
     final addContext = context.copyWith(taskOptions: {
       TaskOption.root: exampleFolder.absolutePath,
       TaskOption.lib: name,
     });
+
     await AddLibrary().execute(addContext);
 
     exampleFolder

@@ -20,21 +20,25 @@
 
 // ignore_for_file: avoid_print
 
-import "package:klutter/klutter.dart";
+import "dart:io";
 
-/// Run kradle tasks.
-Future<void> main(List<String> args) async {
-  print("""
-  ════════════════════════════════════════════
-     KRADLE (v$klutterPubVersion)                               
-  ════════════════════════════════════════════
-  """
-      .ok);
+import "cli.dart";
+import "context.dart";
 
-  if (args.isEmpty) {
-    // TODO start interactive mode
-    return;
+/// Run the user command.
+Future<String> run(List<String> args, [TaskService? taskServiceOrNull]) async {
+  final arguments = [...args];
+  final firstArgument = arguments.removeAt(0);
+  final taskName = firstArgument.toTaskNameOrNull;
+  final context = toContextOrNull(Directory.current, arguments);
+  final taskService = taskServiceOrNull ?? TaskService();
+  if (firstArgument.toLowerCase() == "help") {
+    return taskService.displayKradlewHelpText;
+  } else if (taskName == null) {
+    return "received unknown task name: $firstArgument\nuse kradle help for more information";
+  } else if (context == null) {
+    return "received invalid task options: $args\nuse kradle help for more information";
+  } else {
+    return execute(taskName, context, taskService);
   }
-
-  print(await run(args));
 }

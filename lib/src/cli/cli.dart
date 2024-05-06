@@ -55,6 +55,7 @@ import "task_service.dart";
 
 export "flutter.dart";
 export "option.dart";
+export "runner.dart";
 export "task.dart";
 export "task_add.dart";
 export "task_build.dart";
