@@ -76,9 +76,32 @@ void main() {
     expect(task.requiresDownload(realDirectory, false), false);
     expect(task.requiresDownload(realDirectory, true), true);
   });
+
+  test(
+      "Verify toFlutterDistributionOrThrow throws exception for unsupported platform",
+      () {
+    expect(
+        () => toFlutterDistributionOrThrow(
+            platformWrapper: UnknownPlatform(),
+            pathToRoot: Directory.systemTemp.resolveFolder("foo").absolutePath,
+            version: const VerifiedFlutterVersion(
+                Version(major: 1, minor: 1, patch: 1))),
+        throwsA(predicate((e) => e is KlutterException)));
+  });
 }
 
 Context context(Map<TaskOption, String> options) => Context(
     taskName: TaskName.get,
     workingDirectory: Directory.current,
     taskOptions: options);
+
+class UnknownPlatform extends PlatformWrapper {
+  @override
+  bool get isWindows => false;
+
+  @override
+  bool get isMacos => false;
+
+  @override
+  bool get isLinux => false;
+}

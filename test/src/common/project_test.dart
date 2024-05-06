@@ -282,28 +282,5 @@ void main() {
         "${s}foo${s}bar$s.pub-cache${s}hosted${s}pub.dartlang.org${s}awesome_plugin${s}android${s}klutter");
   });
 
-  test(
-      "Verify toFlutterDistributionOrThrow throws exception for unsupported platform",
-      () {
-    expect(
-        () => toFlutterDistributionOrThrow(
-            platformWrapper: UnknownPlatform(),
-            pathToRoot: Directory.systemTemp.resolveFolder("foo").absolutePath,
-            version: const VerifiedFlutterVersion(
-                Version(major: 1, minor: 1, patch: 1))),
-        throwsA(predicate((e) => e is KlutterException)));
-  });
-
   tearDownAll(() => root.deleteSync(recursive: true));
-}
-
-class UnknownPlatform extends PlatformWrapper {
-  @override
-  bool get isWindows => false;
-
-  @override
-  bool get isMacos => false;
-
-  @override
-  bool get isLinux => false;
 }

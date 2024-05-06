@@ -18,13 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "dart:ffi";
 import "dart:io";
 
-import "../../klutter.dart";
-import "environment.dart";
-import "exception.dart";
-import "utilities.dart";
+import "common.dart";
 
 /// Create and/or append the .klutter-plugins file to register a Klutter plugin.
 ///
@@ -161,36 +157,6 @@ String findDependencyPath({
 
   /// Create an absolute path to the the default pub-cache folder.
   return cachePath.normalize;
-}
-
-/// Find applicable [FlutterDistribution] for the current
-/// [OperatingSystem] and [Architecture] or throw [KlutterException].
-FlutterDistribution toFlutterDistributionOrThrow(
-    {required VerifiedFlutterVersion version,
-    required String pathToRoot,
-    PlatformWrapper? platformWrapper}) {
-  final p = platformWrapper ?? platform;
-  OperatingSystem? os;
-
-  if (version.os != null) {
-    os = version.os;
-  } else if (p.isWindows) {
-    os = OperatingSystem.windows;
-  } else if (p.isMacos) {
-    os = OperatingSystem.macos;
-  } else if (p.isLinux) {
-    os = OperatingSystem.linux;
-  } else {
-    throw KlutterException(
-        "Current OS is not supported (supported: macos, windows or linux): ${Platform.operatingSystem}");
-  }
-
-  final arch = version.arch ??
-      (Abi.current().toString().contains("arm")
-          ? Architecture.arm64
-          : Architecture.x64);
-
-  return FlutterDistribution(version: version.version, os: os!, arch: arch);
 }
 
 extension on String {

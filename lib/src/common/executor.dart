@@ -19,9 +19,9 @@
 // SOFTWARE.
 
 import "dart:io";
-import "package:klutter/klutter.dart";
 
 import "exception.dart";
+import "utilities.dart";
 
 /// Wrapper for using the commandline.
 class Executor {

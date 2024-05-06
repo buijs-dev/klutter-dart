@@ -48,10 +48,10 @@ Future<void> main(List<String> args) async {
     print(taskService.displayKradlewHelpText);
   } else if (taskName == null) {
     print("received unknown task name: $firstArgument");
-    print("use kradlew help for more information");
+    print("use kradle help for more information");
   } else if (taskOptions == null) {
     print("received invalid task options: $args");
-    print("use kradlew help for more information");
+    print("use kradle help for more information");
   } else {
     print(await execute(Context(
       workingDirectory: Directory.current,
