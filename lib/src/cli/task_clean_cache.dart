@@ -54,6 +54,7 @@ class CleanCache extends Task {
       }
     }
 
+    print("cleaning .kradle cache");
     _cacheProvider.getCacheContent(context, options).forEach(deleteIfExists);
     for (final element in deleted) {
       print("deleted: ${element.absolutePath}");

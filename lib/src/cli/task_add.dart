@@ -47,6 +47,8 @@ class AddLibrary extends Task {
       pathToSDK: findFlutterSDK("$pathToRoot/android".normalize),
     );
 
+    // ignore: avoid_print
+    print("adding klutter library: $pluginName");
     registerPlugin(
       pathToRoot: pathToRoot,
       pluginName: ":klutter:$pluginName",

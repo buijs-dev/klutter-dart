@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// ignore_for_file: avoid_print
+
 import "dart:io";
 
 import "../common/common.dart";
@@ -48,6 +50,7 @@ class ProjectInit extends Task {
   @override
   Future<void> toBeExecuted(
       Context context, Map<TaskOption, dynamic> options) async {
+    print("initializing klutter project");
     final pathToRoot = findPathToRoot(context, options);
     bool isProducerProject;
     try {
@@ -61,11 +64,13 @@ class ProjectInit extends Task {
     }
 
     if (isProducerProject) {
+      print("initializing klutter project as producer");
       final bom = options[TaskOption.bom];
       final flutter = options[TaskOption.flutter] as VerifiedFlutterVersion;
       await _producerInit(pathToRoot, bom, flutter);
       _consumerInit("$pathToRoot/example".normalize);
     } else {
+      print("initializing klutter project as consumer");
       _consumerInit(pathToRoot);
     }
   }

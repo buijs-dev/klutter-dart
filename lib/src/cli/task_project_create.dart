@@ -48,6 +48,8 @@ class CreateProject extends Task {
   @override
   Future<void> toBeExecuted(
       Context context, Map<TaskOption, dynamic> options) async {
+    // ignore: avoid_print
+    print("creating new klutter project");
     final pathToRoot = findPathToRoot(context, options);
     final name = options[TaskOption.name];
     final group = options[TaskOption.group];

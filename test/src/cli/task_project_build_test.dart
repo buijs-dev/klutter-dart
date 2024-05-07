@@ -34,7 +34,8 @@ void main() {
 
     final executor = FakeExecutor(
         expectedPathToWorkingDirectory: pathToRoot.absolutePath,
-        expectedCommand: "gradlew clean build -p platform");
+        expectedCommand:
+            "${pathToRoot.resolveFile("gradlew").absolutePath} clean build -p platform");
 
     BuildProject(executor: executor).toBeExecuted(Context(pathToRoot, {}), {});
 

@@ -49,11 +49,11 @@ class Executor {
   /// would result in command "./Users/Foo/gradlew clean build -p platform".
   ProcessResult run() {
     if (executable == null) {
-      throw KlutterException("Executor field 'executable' is null");
+      throw const KlutterException("Executor field 'executable' is null");
     }
 
     if (workingDirectory == null) {
-      throw KlutterException("Executor field 'workingDirectory' is null");
+      throw const KlutterException("Executor field 'workingDirectory' is null");
     }
 
     final result = Process.runSync(

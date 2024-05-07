@@ -49,10 +49,15 @@ class BuildProject extends Task {
   @override
   Future<void> toBeExecuted(
       Context context, Map<TaskOption, dynamic> options) async {
+    final workingDirectory = Directory(findPathToRoot(context, options));
+    // ignore: avoid_print
+    print("building platform module");
     _executor
-      ..workingDirectory = Directory(findPathToRoot(context, options))
+      ..workingDirectory = workingDirectory
       ..arguments = ["clean", "build", "-p", "platform"]
-      ..executable = "gradlew"
+      ..executable = Directory(findPathToRoot(context, options))
+          .resolveFile("gradlew")
+          .absolutePath
       ..run();
   }
 }
