@@ -124,13 +124,21 @@ class CreateProject extends Task {
       TaskOption.flutter: flutterSDK,
     });
 
-    await ProjectInit().execute(initContext);
+    final init = await ProjectInit().execute(initContext);
+    if (!init.isOk) {
+      throw KlutterException(init.message ?? "project init failed");
+    }
+
     final addContext = context.copyWith(taskOptions: {
       TaskOption.root: exampleFolder.absolutePath,
       TaskOption.lib: name,
     });
 
-    await AddLibrary().execute(addContext);
+    final addLibrary = await AddLibrary().execute(addContext);
+    if (!addLibrary.isOk) {
+      throw KlutterException(
+          addLibrary.message ?? "adding library to example project failed");
+    }
 
     exampleFolder
       ..deleteTestFolder

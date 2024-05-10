@@ -58,6 +58,8 @@ extension FileUtil on FileSystemEntity {
     ifNotExists((fse) {
       if (fse is Directory) {
         fse.createSync(recursive: true);
+      } else if (fse is File) {
+        fse.createSync(recursive: true);
       }
     });
     return this;

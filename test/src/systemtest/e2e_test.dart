@@ -60,6 +60,27 @@ void main() {
         reason: "can't run a task without a project",
       );
 
+      final downloadFlutterResult = await run(["get", "flutter=3.10.6"]);
+      expect(
+          downloadFlutterResult.contains(
+              "Task 'TaskName.get flutter=3.10.6' finished successful"),
+          true,
+          reason: downloadFlutterResult);
+
+      final temp = Directory.systemTemp.resolveDirectory("foo")
+        ..maybeDelete
+        ..maybeCreate;
+      final cache = temp.kradleCache;
+      final cachedSdks = cache
+          .listSync()
+          .where((fte) => fte.path.contains("3.10.6"))
+          .toList();
+
+      expect(cachedSdks.isNotEmpty, true, reason: "there should be a cached flutter SDK");
+      final cachedSdk = Directory(cachedSdks.first.absolutePath);
+      expect(cachedSdk.existsSync(), true, reason: "the cached sdk should exist");
+      expect(cachedSdk.isEmpty, false, reason: "the cached sdk should not be empty");
+
       /// Create Flutter plugin project.
       final createResult = await createFlutterPlugin(
         organisation: organisation,
@@ -69,68 +90,68 @@ void main() {
             .absolutePath,
       );
 
-      expect(createResult.contains("finished successful"), true);
+      expect(createResult.contains("finished successful"), true,
+          reason: createResult);
       expect(producerPlugin.existsSync(), true,
           reason:
               "Plugin should be created in: '${producerPlugin.absolute.path}'");
 
       /// Gradle files should be copied to root folder.
-      // final gradlew = File("${producerPlugin.absolutePath}/gradlew".normalize);
-      // expect(gradlew.existsSync(),
-      //     true,
-      //     reason: "${gradlew.absolutePath} should exist");
-      // expect(
-      //     File("${producerPlugin.absolutePath}/gradlew.bat".normalize)
-      //         .existsSync(),
-      //     true,
-      //     reason: "root/gradlew.bat should exist");
-      // expect(
-      //     File("${producerPlugin.absolutePath}/gradle.properties".normalize)
-      //         .existsSync(),
-      //     true,
-      //     reason: "root/gradle.properties should exist");
-      // expect(
-      //     File("${producerPlugin.absolutePath}/gradle/wrapper/gradle-wrapper.jar"
-      //             .normalize)
-      //         .existsSync(),
-      //     true,
-      //     reason: "root/gradle/wrapper/gradle-wrapper.jar should exist");
-      // expect(
-      //     File("${producerPlugin.absolutePath}/gradle/wrapper/gradle-wrapper.properties"
-      //             .normalize)
-      //         .existsSync(),
-      //     true,
-      //     reason: "root/gradle/wrapper/gradle-wrapper.properties should exist");
-      //
-      // /// Gradle files should be copied to android folder.
-      // expect(
-      //     File("${producerPlugin.absolutePath}/android/gradlew".normalize)
-      //         .existsSync(),
-      //     true,
-      //     reason: "root/gradlew should exist");
-      // expect(
-      //     File("${producerPlugin.absolutePath}/android/gradlew.bat".normalize)
-      //         .existsSync(),
-      //     true,
-      //     reason: "root/gradlew.bat should exist");
-      // expect(
-      //     File("${producerPlugin.absolutePath}/android/gradle.properties"
-      //             .normalize)
-      //         .existsSync(),
-      //     true,
-      //     reason: "root/gradle.properties should exist");
-      // expect(
-      //     File("${producerPlugin.absolutePath}/android/gradle/wrapper/gradle-wrapper.jar"
-      //             .normalize)
-      //         .existsSync(),
-      //     true,
-      //     reason: "root/gradle/wrapper/gradle-wrapper.jar should exist");
-      // expect(
-      //     File("${producerPlugin.absolutePath}/android/gradle/wrapper/gradle-wrapper.properties"
-      //             .normalize)
-      //         .existsSync(),
-      //     true,
-      //     reason: "root/gradle/wrapper/gradle-wrapper.properties should exist");
+      final gradlew = File("${producerPlugin.absolutePath}/gradlew".normalize);
+      expect(gradlew.existsSync(), true,
+          reason: "${gradlew.absolutePath} should exist");
+      expect(
+          File("${producerPlugin.absolutePath}/gradlew.bat".normalize)
+              .existsSync(),
+          true,
+          reason: "root/gradlew.bat should exist");
+      expect(
+          File("${producerPlugin.absolutePath}/gradle.properties".normalize)
+              .existsSync(),
+          true,
+          reason: "root/gradle.properties should exist");
+      expect(
+          File("${producerPlugin.absolutePath}/gradle/wrapper/gradle-wrapper.jar"
+                  .normalize)
+              .existsSync(),
+          true,
+          reason: "root/gradle/wrapper/gradle-wrapper.jar should exist");
+      expect(
+          File("${producerPlugin.absolutePath}/gradle/wrapper/gradle-wrapper.properties"
+                  .normalize)
+              .existsSync(),
+          true,
+          reason: "root/gradle/wrapper/gradle-wrapper.properties should exist");
+
+      /// Gradle files should be copied to android folder.
+      expect(
+          File("${producerPlugin.absolutePath}/android/gradlew".normalize)
+              .existsSync(),
+          true,
+          reason: "root/gradlew should exist");
+      expect(
+          File("${producerPlugin.absolutePath}/android/gradlew.bat".normalize)
+              .existsSync(),
+          true,
+          reason: "root/gradlew.bat should exist");
+      expect(
+          File("${producerPlugin.absolutePath}/android/gradle.properties"
+                  .normalize)
+              .existsSync(),
+          true,
+          reason: "root/gradle.properties should exist");
+      expect(
+          File("${producerPlugin.absolutePath}/android/gradle/wrapper/gradle-wrapper.jar"
+                  .normalize)
+              .existsSync(),
+          true,
+          reason: "root/gradle/wrapper/gradle-wrapper.jar should exist");
+      expect(
+          File("${producerPlugin.absolutePath}/android/gradle/wrapper/gradle-wrapper.properties"
+                  .normalize)
+              .existsSync(),
+          true,
+          reason: "root/gradle/wrapper/gradle-wrapper.properties should exist");
 
       /// Root build.gradle file should be created.
       expect(

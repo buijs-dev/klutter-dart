@@ -110,22 +110,21 @@ Future<void> _producerInit(
 
 /// Download [_resourceZipUrl] and return the unzipped directory.
 Future<Directory> _downloadResourcesZipOrThrow() async {
-  final zip = Directory.systemTemp.resolveFile("resources.zip")
-    ..maybeDelete
-    ..createSync(recursive: true);
-
   final target = Directory.systemTemp.resolveDirectory("resources_unpacked")
     ..maybeDelete
-    ..createSync(recursive: true);
-
+    ..maybeCreate
+    ..verifyDirectoryExists;
+  final zip = target.resolveFile("resources.zip")
+    ..maybeDelete
+    ..maybeCreate
+    ..verifyFileExists;
   await download(_resourceZipUrl, zip);
-  if (zip.existsSync()) {
-    await unzip(zip, target);
-    zip.deleteSync();
-  }
+  await unzip(zip, target);
+  zip.deleteSync();
+  target.verifyDirectoryExists;
 
-  if (!target.existsSync()) {
-    throw const KlutterException("Failed to download resources");
+  if(target.isEmpty) {
+    throw const KlutterException("Failed to download resources (no content found)");
   }
 
   return target;
