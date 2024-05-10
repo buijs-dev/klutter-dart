@@ -43,6 +43,6 @@ Future<Directory> createFlutterProjectOrThrow({
     ]
     ..run();
 
-  return Directory(pathToRoot.normalize).resolveFolder(name)
+  return Directory(pathToRoot.normalize).resolveDirectory(name)
     ..verifyDirectoryExists;
 }

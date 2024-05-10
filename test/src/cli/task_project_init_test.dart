@@ -38,7 +38,7 @@ void main() {
       group: "my.org",
     );
 
-    final pathToConsumer = project.resolveFolder("example");
+    final pathToConsumer = project.resolveDirectory("example");
     final task = ProjectInit();
     final context = Context(pathToConsumer, {});
     final result = await task.execute(context);

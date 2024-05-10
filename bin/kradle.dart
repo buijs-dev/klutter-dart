@@ -64,8 +64,8 @@ Future<void> interactiveMode() async {
   final prompt = Select(prompt: "choose task", options: tasks).interact();
   final selection = tasks[prompt];
   if (selection == addLibrary) {
-    final name = interact.Input(prompt: "library name").interact();
-    await runTaskWithSpinner(TaskName.add, {TaskOption.name: name});
+    final lib = interact.Input(prompt: "library name").interact();
+    await runTaskWithSpinner(TaskName.add, {TaskOption.lib: lib});
   } else if (selection == getFlutter) {
     final version = askForFlutterVersion();
     final overwrite = askConfirmation("overwrite existing distribution?");
@@ -106,7 +106,7 @@ Future<void> interactiveMode() async {
     final flutterVersion = askForFlutterVersion();
     await runTaskWithSpinner(TaskName.init, {
       TaskOption.flutter: flutterVersion,
-      TaskOption.klutter: gradleVersion,
+      TaskOption.bom: gradleVersion,
     });
   } else if (selection == quit) {
     return;

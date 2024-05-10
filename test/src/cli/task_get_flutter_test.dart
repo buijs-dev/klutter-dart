@@ -83,7 +83,8 @@ void main() {
     expect(
         () => toFlutterDistributionOrThrow(
             platformWrapper: UnknownPlatform(),
-            pathToRoot: Directory.systemTemp.resolveFolder("foo").absolutePath,
+            pathToRoot:
+                Directory.systemTemp.resolveDirectory("foo").absolutePath,
             version: const VerifiedFlutterVersion(
                 Version(major: 1, minor: 1, patch: 1))),
         throwsA(predicate((e) => e is KlutterException)));

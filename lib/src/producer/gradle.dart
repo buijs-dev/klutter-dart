@@ -36,77 +36,45 @@ import "resource.dart";
 /// {@category gradle}
 class Gradle {
   /// Create a Gradle instance based of the Flutter project root folder.
-  Gradle(this.pathToRoot);
+  Gradle(this.pathToRoot, this.resourcesDirectory) {
+    _gradleProperties = LocalResource(
+        pathToSource:
+            resourcesDirectory.resolveFile("gradle.properties").absolutePath,
+        filename: "gradle.properties",
+        targetRelativeToRoot: "");
+    _gradlew = LocalResource(
+        pathToSource: resourcesDirectory.resolveFile("gradlew").absolutePath,
+        filename: "gradlew",
+        targetRelativeToRoot: "");
+    _gradlewBat = LocalResource(
+        pathToSource:
+            resourcesDirectory.resolveFile("gradlew.bat").absolutePath,
+        filename: "gradlew.bat",
+        targetRelativeToRoot: "");
+    _gradlewJar = LocalResource(
+        pathToSource:
+            resourcesDirectory.resolveFile("gradle-wrapper.jar").absolutePath,
+        filename: "gradle-wrapper.jar",
+        targetRelativeToRoot: "gradle/wrapper".normalize);
+    _gradlewProperties = LocalResource(
+        pathToSource: resourcesDirectory
+            .resolveFile("gradle-wrapper.properties")
+            .absolutePath,
+        filename: "gradle-wrapper.properties",
+        targetRelativeToRoot: "gradle/wrapper".normalize);
+  }
 
   /// The Flutter project root folder.
   final String pathToRoot;
 
-  final bool _isWindows = Platform.isWindows;
+  /// The directory containing the gradle-wrapper files.
+  final Directory resourcesDirectory;
 
   late final LocalResource _gradlew;
   late final LocalResource _gradlewBat;
   late final LocalResource _gradlewJar;
   late final LocalResource _gradlewProperties;
   late final LocalResource _gradleProperties;
-
-  late final Future<bool> _isInitialized =
-      Future.wait([_init]).then((_) => true);
-
-  /// Read all resources from the klutter package lib/res folder.
-  Future<void> get _init async {
-    await Future.wait([
-      _loadGradlew,
-      _loadGradlewBat,
-      _loadGradlewJar,
-      _loadGradlewProperties,
-      _loadGradleProperties,
-    ]);
-  }
-
-  Future<void> get _loadGradlew async {
-    _gradlew = await loadResource(
-      uri: "package:klutter/res/gradlew".toUri,
-      targetRelativeToRoot: "",
-      filename: "gradlew",
-      isWindows: _isWindows,
-    );
-  }
-
-  Future<void> get _loadGradlewBat async {
-    _gradlewBat = await loadResource(
-      uri: "package:klutter/res/gradlew.bat".toUri,
-      targetRelativeToRoot: "",
-      filename: "gradlew.bat",
-      isWindows: _isWindows,
-    );
-  }
-
-  Future<void> get _loadGradlewJar async {
-    _gradlewJar = await loadResource(
-      uri: "package:klutter/res/gradle-wrapper.jar".toUri,
-      targetRelativeToRoot: "gradle/wrapper".normalize,
-      filename: "gradle-wrapper.jar",
-      isWindows: _isWindows,
-    );
-  }
-
-  Future<void> get _loadGradlewProperties async {
-    _gradlewProperties = await loadResource(
-      uri: "package:klutter/res/gradle-wrapper.properties".toUri,
-      targetRelativeToRoot: "gradle/wrapper".normalize,
-      filename: "gradle-wrapper.properties",
-      isWindows: _isWindows,
-    );
-  }
-
-  Future<void> get _loadGradleProperties async {
-    _gradleProperties = await loadResource(
-      uri: "package:klutter/res/gradle.properties".toUri,
-      targetRelativeToRoot: "",
-      filename: "gradle.properties",
-      isWindows: _isWindows,
-    );
-  }
 
   /// Copy Gradle files to the project root folder.
   ///
@@ -117,13 +85,12 @@ class Gradle {
   /// - gradle/wrapper/gradle-wrapper.jar
   /// - gradle/wrapper/gradle-wrapper.properties
   Future<void> get copyToRoot async {
-    await _isInitialized;
     pathToRoot.verifyExists.rootFolder.copyFiles([
-      _gradlewBat,
       _gradlew,
-      _gradleProperties,
+      _gradlewBat,
       _gradlewJar,
-      _gradlewProperties,
+      _gradleProperties,
+      _gradlewProperties
     ]);
   }
 
@@ -136,7 +103,6 @@ class Gradle {
   /// - gradle/wrapper/gradle-wrapper.jar
   /// - gradle/wrapper/gradle-wrapper.properties
   Future<void> get copyToAndroid async {
-    await _isInitialized;
     pathToRoot.verifyExists.androidFolder.copyFiles([
       _gradlewBat,
       _gradlew,
@@ -148,8 +114,6 @@ class Gradle {
 }
 
 extension on String {
-  Uri get toUri => Uri.parse(this);
-
   Directory get rootFolder => Directory(this);
 
   Directory get androidFolder =>

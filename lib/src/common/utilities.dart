@@ -87,7 +87,7 @@ extension FileUtil on FileSystemEntity {
       File("$absolutePath/$filename").normalizeToFile;
 
   /// Return a normalized path of this folder to the given filename.
-  Directory resolveFolder(String folder) =>
+  Directory resolveDirectory(String folder) =>
       Directory("$absolutePath/$folder").normalizeToDirectory;
 
   /// Convert a path String by removing all '..' and moving up a folder for each.
@@ -175,8 +175,8 @@ extension StringUtil on String {
   /// with forward slashes ('/') replaced for the platform specific separator.
   String get normalize => replaceAll("/", Platform.pathSeparator);
 
-  /// Return current String value with 'Plugin' postfix if not present.
-  String get postfixedWithPlugin {
+  /// Return current String value with 'Plugin' suffix if not present.
+  String get suffixedWithPlugin {
     if (endsWith("Plugin")) {
       return this;
     } else {

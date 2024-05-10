@@ -200,9 +200,9 @@ class PlatformModule {
       ..ifNotExists((folder) => Directory(folder.absolutePath).createSync());
 
     final kotlinSource = "kotlin/${packageName.replaceAll(".", "/")}/platform";
-    final androidMain = root.resolveFolder("src/androidMain/$kotlinSource");
-    final commonMain = root.resolveFolder("src/commonMain/$kotlinSource");
-    final iosMain = root.resolveFolder("src/iosMain/$kotlinSource");
+    final androidMain = root.resolveDirectory("src/androidMain/$kotlinSource");
+    final commonMain = root.resolveDirectory("src/commonMain/$kotlinSource");
+    final iosMain = root.resolveDirectory("src/iosMain/$kotlinSource");
 
     return PlatformModule(
       root: root,

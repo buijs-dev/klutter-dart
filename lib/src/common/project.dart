@@ -91,7 +91,7 @@ String toPluginClassName(String pluginName, {bool postfixWithPlugin = false}) {
       .map((e) => "${e[0].toUpperCase()}${e.substring(1, e.length)}")
       .join();
 
-  return postfixWithPlugin ? className.postfixedWithPlugin : className;
+  return postfixWithPlugin ? className.suffixedWithPlugin : className;
 }
 
 /// Get the relative path of a plugin dependency.

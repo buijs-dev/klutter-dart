@@ -35,56 +35,34 @@ import "resource.dart";
 /// {@category producer}
 class Kradle {
   /// Create a Kradle instance based of the Flutter project root folder.
-  Kradle(this.pathToRoot);
+  Kradle(this.pathToRoot, this.resourcesDirectory) {
+    _kradleEnv = LocalResource(
+        pathToSource: resourcesDirectory.resolveFile("kradle.env").absolutePath,
+        filename: "kradle.env",
+        targetRelativeToRoot: "");
+    _kradleYaml = LocalResource(
+        pathToSource:
+            resourcesDirectory.resolveFile("kradle.yaml").absolutePath,
+        filename: "kradle.yaml",
+        targetRelativeToRoot: "");
+  }
 
   /// The Flutter project root folder.
   final String pathToRoot;
 
-  final bool _isWindows = Platform.isWindows;
+  /// The directory containing the kradle files.
+  final Directory resourcesDirectory;
 
   late final LocalResource _kradleEnv;
 
   late final LocalResource _kradleYaml;
 
-  late final Future<bool> _isInitialized =
-      Future.wait([_init]).then((_) => true);
-
-  /// Read all resources from the klutter package lib/res folder.
-  Future<void> get _init async {
-    await Future.wait([
-      _loadKradleEnv,
-      _loadKradleYaml,
-    ]);
-  }
-
-  Future<void> get _loadKradleEnv async {
-    _kradleEnv = await loadResource(
-      uri: "package:klutter/res/kradle.env".toUri,
-      targetRelativeToRoot: "".normalize,
-      filename: "kradle.env",
-      isWindows: _isWindows,
-    );
-  }
-
-  Future<void> get _loadKradleYaml async {
-    _kradleYaml = await loadResource(
-      uri: "package:klutter/res/kradle.yaml".toUri,
-      targetRelativeToRoot: "".normalize,
-      filename: "kradle.yaml",
-      isWindows: _isWindows,
-    );
-  }
-
-  /// Copy Kradlew files to the project root folder.
+  /// Copy Kradle files to the project root folder.
   ///
   /// Copies the following files:
   /// - kradle.yaml
-  /// - kradlew
-  /// - kradlew.bat
   /// - kradle.env
-  /// - kradle/kradle-wrapper.jar
   Future<void> get copyToRoot async {
-    await _isInitialized;
     pathToRoot.verifyExists.rootFolder.copyFiles([
       _kradleYaml,
       _kradleEnv,
@@ -93,7 +71,5 @@ class Kradle {
 }
 
 extension on String {
-  Uri get toUri => Uri.parse(this);
-
   Directory get rootFolder => Directory(this);
 }

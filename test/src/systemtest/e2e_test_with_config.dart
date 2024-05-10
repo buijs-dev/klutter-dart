@@ -35,7 +35,8 @@ const appName = "my_flutter_app";
 
 void main() {
   final pathToRoot = Directory(
-      "${Directory.systemTemp.absolute.path}/createklutterpluginit".normalize)
+      "${Directory.systemTemp.absolute.path}/createklutterpluginit2".normalize)
+    ..maybeDelete
     ..createSync();
 
   final producerPlugin =

@@ -75,7 +75,8 @@ class CreateProject extends Task {
 
     final rootPubspecFile = root.resolveFile("pubspec.yaml")..verifyFileExists;
 
-    final exampleFolder = root.resolveFolder("example")..verifyDirectoryExists;
+    final exampleFolder = root.resolveDirectory("example")
+      ..verifyDirectoryExists;
 
     final examplePubspecFile = exampleFolder.resolveFile("pubspec.yaml")
       ..verifyFileExists;
@@ -142,8 +143,8 @@ class CreateProject extends Task {
         ..deleteRunnerXCWorkspace;
 
       final iosWorkingDirectory = root
-          .resolveFolder("example")
-          .resolveFolder("ios")
+          .resolveDirectory("example")
+          .resolveDirectory("ios")
         ..verifyDirectoryExists;
 
       for (final step in ["install", "update"]) {
@@ -303,15 +304,15 @@ String _toPathDependencyNotation(String dependency, String name) {
 
 extension on Directory {
   void get deleteTestFolder {
-    resolveFolder("test").deleteSync(recursive: true);
+    resolveDirectory("test").deleteSync(recursive: true);
   }
 
   void get deleteIntegrationTestFolder {
-    resolveFolder("integration_test").deleteSync(recursive: true);
+    resolveDirectory("integration_test").deleteSync(recursive: true);
   }
 
   void get clearLibFolder {
-    resolveFolder("lib").listSync(recursive: true).forEach((fse) {
+    resolveDirectory("lib").listSync(recursive: true).forEach((fse) {
       if (fse is File) {
         fse.deleteSync();
       }
@@ -319,15 +320,15 @@ extension on Directory {
   }
 
   void get deleteIosPodfileLock {
-    resolveFolder("ios").resolveFile("Podfile.lock").maybeDelete;
+    resolveDirectory("ios").resolveFile("Podfile.lock").maybeDelete;
   }
 
   void get deleteIosPods {
-    resolveFolder("ios").resolveFolder("Pods").maybeDelete;
+    resolveDirectory("ios").resolveDirectory("Pods").maybeDelete;
   }
 
   void get deleteRunnerXCWorkspace {
-    resolveFolder("ios").resolveFolder("Runner.xcworkspace").maybeDelete;
+    resolveDirectory("ios").resolveDirectory("Runner.xcworkspace").maybeDelete;
   }
 
   void overwriteReadmeFile(String pluginName) {

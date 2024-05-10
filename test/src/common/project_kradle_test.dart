@@ -26,7 +26,7 @@ import "package:test/test.dart";
 final _platform = FakePlatformWrapper();
 
 Directory get _newProjectFolder => Directory.systemTemp
-    .resolveFolder("project_test${Random().nextInt(999999)}")
+    .resolveDirectory("project_test${Random().nextInt(999999)}")
   ..createSync();
 
 void setPlatform(String os, String homeKey, String homeValue) {
@@ -48,7 +48,7 @@ void setPlatformWindows(Directory rootDirectory) {
 }
 
 void createCacheFolder(Directory rootDirectory) {
-  rootDirectory.resolveFolder(".kradle/cache".normalize).maybeCreate;
+  rootDirectory.resolveDirectory(".kradle/cache".normalize).maybeCreate;
 }
 
 void createKradleEnv(Directory rootDirectory, {String? contents}) {
@@ -210,7 +210,7 @@ void main() {
   test(
       "When kradle.env contains cache property and the directory is not found then it is created",
       () {
-    final dotKradleDirectory = Directory.systemTemp.resolveFolder(".kradle")
+    final dotKradleDirectory = Directory.systemTemp.resolveDirectory(".kradle")
       ..createSync();
     final cacheDirectory =
         Directory("${dotKradleDirectory.absolutePath}/cache".normalize);

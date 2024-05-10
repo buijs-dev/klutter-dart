@@ -34,6 +34,7 @@ const appName = "my_flutter_app";
 void main() {
   final pathToRoot = Directory(
       "${Directory.systemTemp.absolute.path}/createklutterpluginit".normalize)
+    ..maybeDelete
     ..createSync();
 
   final producerPlugin =
@@ -74,10 +75,10 @@ void main() {
               "Plugin should be created in: '${producerPlugin.absolute.path}'");
 
       /// Gradle files should be copied to root folder.
-      expect(
-          File("${producerPlugin.absolutePath}/gradlew".normalize).existsSync(),
+      final gradlew = File("${producerPlugin.absolutePath}/gradlew".normalize);
+      expect(gradlew.existsSync(),
           true,
-          reason: "root/gradlew should exist");
+          reason: "${gradlew.absolutePath} should exist");
       expect(
           File("${producerPlugin.absolutePath}/gradlew.bat".normalize)
               .existsSync(),
@@ -209,7 +210,7 @@ Future<String> createFlutterPlugin({
       "group=$organisation",
       "name=$pluginName",
       "flutter=3.10.6",
-      "klutter=local@${Directory.current.resolveFolder("./../".normalize).absolutePath}"
+      "klutter=local@${Directory.current.resolveDirectory("./../".normalize).absolutePath}"
     ]);
 
 class FakeTaskService extends TaskService {

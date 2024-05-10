@@ -34,6 +34,9 @@ import "../producer/project.dart";
 import "cli.dart";
 import "context.dart";
 
+const _resourceZipUrl =
+    "https://github.com/buijs-dev/klutter-dart/raw/develop/resources.zip";
+
 /// Task to prepare a flutter project for using klutter plugins.
 ///
 /// {@category consumer}
@@ -50,8 +53,8 @@ class ProjectInit extends Task {
   @override
   Future<void> toBeExecuted(
       Context context, Map<TaskOption, dynamic> options) async {
-    print("initializing klutter project");
     final pathToRoot = findPathToRoot(context, options);
+    print("initializing klutter project: $pathToRoot");
     bool isProducerProject;
     try {
       // will throw exception if unable to find
@@ -89,7 +92,9 @@ void _consumerInit(String pathToRoot) {
 
 Future<void> _producerInit(
     String pathToRoot, String bom, VerifiedFlutterVersion flutter) async {
+  final resources = await _downloadResourcesZipOrThrow();
   final producer = _Producer(
+      resourcesDirectory: resources,
       pathToRoot: pathToRoot,
       bomVersion: bom,
       flutterVersion: flutter.version.prettyPrint);
@@ -103,12 +108,37 @@ Future<void> _producerInit(
     ..setupExample;
 }
 
+/// Download [_resourceZipUrl] and return the unzipped directory.
+Future<Directory> _downloadResourcesZipOrThrow() async {
+  final zip = Directory.systemTemp.resolveFile("resources.zip")
+    ..maybeDelete
+    ..createSync(recursive: true);
+
+  final target = Directory.systemTemp.resolveDirectory("resources_unpacked")
+    ..maybeDelete
+    ..createSync(recursive: true);
+
+  await download(_resourceZipUrl, zip);
+  if (zip.existsSync()) {
+    await unzip(zip, target);
+    zip.deleteSync();
+  }
+
+  if (!target.existsSync()) {
+    throw const KlutterException("Failed to download resources");
+  }
+
+  return target;
+}
+
 class _Producer {
   _Producer(
-      {required this.bomVersion,
+      {required this.resourcesDirectory,
+      required this.bomVersion,
       required this.flutterVersion,
       required this.pathToRoot});
 
+  final Directory resourcesDirectory;
   final String bomVersion;
   final String flutterVersion;
   final String pathToRoot;
@@ -201,7 +231,7 @@ extension on _Producer {
   }
 
   Future<void> get addGradle async {
-    final gradle = Gradle(pathToRoot);
+    final gradle = Gradle(pathToRoot, resourcesDirectory);
     await Future.wait([
       gradle.copyToRoot,
       gradle.copyToAndroid,
@@ -209,6 +239,6 @@ extension on _Producer {
   }
 
   Future<void> get addKradle async {
-    await Future.wait([Kradle(pathToRoot).copyToRoot]);
+    await Future.wait([Kradle(pathToRoot, resourcesDirectory).copyToRoot]);
   }
 }

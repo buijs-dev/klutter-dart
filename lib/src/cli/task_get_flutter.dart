@@ -52,7 +52,7 @@ class GetFlutterSDK extends Task<Directory> {
     final dist = toFlutterDistributionOrThrow(
         version: flutterVersion, pathToRoot: pathToRoot);
     final cache = Directory(pathToRoot.normalize).kradleCache..maybeCreate;
-    final target = cache.resolveFolder("${dist.folderNameString}");
+    final target = cache.resolveDirectory("${dist.folderNameString}");
     if (requiresDownload(target, overwrite)) {
       final endpoint = downloadEndpointOrThrow(dist);
       if (!skipDownload(options[TaskOption.dryRun])) {

@@ -51,7 +51,7 @@ class BuildProject extends Task {
       Context context, Map<TaskOption, dynamic> options) async {
     final workingDirectory = Directory(findPathToRoot(context, options));
     // ignore: avoid_print
-    print("building platform module");
+    print("building platform module...");
     _executor
       ..workingDirectory = workingDirectory
       ..arguments = ["clean", "build", "-p", "platform"]

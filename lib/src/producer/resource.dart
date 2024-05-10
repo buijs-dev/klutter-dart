@@ -19,7 +19,6 @@
 // SOFTWARE.
 
 import "dart:io";
-import "dart:isolate";
 
 import "../common/utilities.dart";
 
@@ -28,13 +27,15 @@ extension ResourceCopy on Directory {
   /// Copy a File from lib/res folder to a project folder.
   void copyFiles(List<LocalResource> resources) {
     for (final resource in resources) {
-      final from = File(resource.pathToSource.verifyExists);
-      final pathTo = Directory(
-        "$absolutePath/${resource.targetRelativeToRoot}".normalize,
-      ).maybeCreate;
+      final from = File(resource.pathToSource.normalize)..verifyFileExists;
+      final pathTo =
+          Directory("$absolutePath/${resource.targetRelativeToRoot}".normalize)
+            ..maybeCreate
+            ..verifyDirectoryExists;
       final to = pathTo.resolveFile(resource.filename);
       from.copySync(to.absolutePath);
       Process.runSync("chmod", runInShell: true, ["755", to.absolutePath]);
+      to.verifyFileExists;
     }
   }
 }
@@ -58,20 +59,3 @@ class LocalResource {
   /// Path to the source File.
   final String pathToSource;
 }
-
-/// Load resource files from lib/res folder.
-Future<LocalResource> loadResource({
-  required Uri uri,
-  required String filename,
-  required String targetRelativeToRoot,
-  required bool isWindows,
-}) =>
-    Isolate.resolvePackageUri(uri).then((pathToSource) {
-      return LocalResource(
-        pathToSource: isWindows
-            ? pathToSource!.path.replaceFirst("/", "")
-            : pathToSource!.path,
-        filename: filename,
-        targetRelativeToRoot: targetRelativeToRoot,
-      );
-    });

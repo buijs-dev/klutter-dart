@@ -42,10 +42,11 @@ void main() {
 
   test("Verify clean cache is successful when cache contains nothing",
       () async {
-    final workingDirectory = Directory.systemTemp.resolveFolder("foo1")
+    final workingDirectory = Directory.systemTemp.resolveDirectory("foo1")
       ..maybeCreate;
-    final cachingDirectory =
-        Directory.systemTemp.resolveFolder("foo1/.kradle/cache")..maybeCreate;
+    final cachingDirectory = Directory.systemTemp
+        .resolveDirectory("foo1/.kradle/cache")
+      ..maybeCreate;
     expect(cachingDirectory.isEmpty, true);
     final result = await runTest(workingDirectory, cachingDirectory);
     expect(result.isOk, true);
@@ -53,11 +54,12 @@ void main() {
   });
 
   test("Verify clean cache deletes all cache entries", () async {
-    final workingDirectory = Directory.systemTemp.resolveFolder("foo1")
+    final workingDirectory = Directory.systemTemp.resolveDirectory("foo1")
       ..maybeCreate;
-    final cachingDirectory =
-        Directory.systemTemp.resolveFolder("foo1/.kradle/cache")..maybeCreate;
-    cachingDirectory.resolveFolder("3.10.6.linux.arm").createSync();
+    final cachingDirectory = Directory.systemTemp
+        .resolveDirectory("foo1/.kradle/cache")
+      ..maybeCreate;
+    cachingDirectory.resolveDirectory("3.10.6.linux.arm").createSync();
     expect(cachingDirectory.isEmpty, false);
     final result = await runTest(workingDirectory, cachingDirectory);
     expect(result.isOk, true);
@@ -68,7 +70,7 @@ void main() {
   });
 
   test("Verify exceptions are caught when deleting entities", () async {
-    final workingDirectory = Directory.systemTemp.resolveFolder("foo2")
+    final workingDirectory = Directory.systemTemp.resolveDirectory("foo2")
       ..maybeCreate;
     final cachingDirectory = DirectoryStub();
     expect(cachingDirectory.isEmpty, false);
@@ -157,7 +159,7 @@ class DirectoryStub implements Directory {
   Directory get parent => throw UnimplementedError();
 
   @override
-  String get path => Directory.systemTemp.resolveFolder("stub").absolutePath;
+  String get path => Directory.systemTemp.resolveDirectory("stub").absolutePath;
 
   @override
   Future<Directory> rename(String newPath) {

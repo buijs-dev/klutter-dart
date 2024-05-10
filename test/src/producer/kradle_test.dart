@@ -29,7 +29,7 @@ void main() {
 
   test("Verify exception is thrown if root does not exist", () {
     expect(
-        () => Kradle("fake").copyToRoot,
+        () => Kradle("fake", Directory.systemTemp).copyToRoot,
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
@@ -39,15 +39,16 @@ void main() {
   test("Verify Kradle files are copied to the root folder", () async {
     final root = Directory("${Directory.systemTemp.path}${s}kradle10")
       ..createSync(recursive: true);
-
-    await Kradle(root.normalizeToDirectory.absolutePath).copyToRoot;
-
+    final resources =
+        Directory("${Directory.systemTemp.path}${s}kradle10resources")
+          ..createSync(recursive: true);
+    resources.resolveFile("kradle.env").createSync();
+    resources.resolveFile("kradle.yaml").createSync();
+    await Kradle(root.normalizeToDirectory.absolutePath, resources).copyToRoot;
     final env = File("${root.path}/kradle.env").normalizeToFile;
     final yaml = File("${root.path}/kradle.yaml").normalizeToFile;
-
     expect(env.existsSync(), true, reason: "kradle.env should exist");
     expect(yaml.existsSync(), true, reason: "kradle.yaml should exist");
-
     root.deleteSync(recursive: true);
   });
 }
