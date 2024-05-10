@@ -92,7 +92,7 @@ void _consumerInit(String pathToRoot) {
 
 Future<void> _producerInit(
     String pathToRoot, String bom, VerifiedFlutterVersion flutter) async {
-  final resources = await _downloadResourcesZipOrThrow();
+  final resources = await _downloadResourcesZipOrThrow(pathToRoot);
   final producer = _Producer(
       resourcesDirectory: resources,
       pathToRoot: pathToRoot,
@@ -109,25 +109,41 @@ Future<void> _producerInit(
 }
 
 /// Download [_resourceZipUrl] and return the unzipped directory.
-Future<Directory> _downloadResourcesZipOrThrow() async {
-  final target = Directory.systemTemp.resolveDirectory("resources_unpacked")
-    ..maybeDelete
-    ..maybeCreate
-    ..verifyDirectoryExists;
+Future<Directory> _downloadResourcesZipOrThrow(String pathToRoot) async {
+  final cache = Directory(pathToRoot.normalize).kradleCache..maybeCreate;
+  final target = cache.resolveDirectory("init.resources");
   final zip = target.resolveFile("resources.zip")
     ..maybeDelete
-    ..maybeCreate
-    ..verifyFileExists;
-  await download(_resourceZipUrl, zip);
-  await unzip(zip, target);
-  zip.deleteSync();
-  target.verifyDirectoryExists;
+    ..createSync(recursive: true);
+  await downloadOrThrow(_resourceZipUrl, zip, target);
 
-  if(target.isEmpty) {
-    throw const KlutterException("Failed to download resources (no content found)");
+  if (!target.existsSync()) {
+    throw const KlutterException("Failed to download resources.zip");
+  }
+
+  if (target.isEmpty) {
+    throw const KlutterException(
+        "Failed to download resources (no content found)");
   }
 
   return target;
+}
+
+/// Download the flutter sdk or throw [KlutterException] on failure.
+Future<void> downloadOrThrow(
+    String endpoint, File zip, Directory target) async {
+  print("resources download started: $endpoint");
+  await download(endpoint, zip);
+  if (zip.existsSync()) {
+    await unzip(zip, target..maybeCreate);
+    zip.deleteSync();
+  }
+
+  if (!target.existsSync()) {
+    throw const KlutterException("Failed to download resources");
+  }
+
+  print("resources download finished: ${target.absolutePath}");
 }
 
 class _Producer {

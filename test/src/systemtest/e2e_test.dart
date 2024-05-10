@@ -71,15 +71,16 @@ void main() {
         ..maybeDelete
         ..maybeCreate;
       final cache = temp.kradleCache;
-      final cachedSdks = cache
-          .listSync()
-          .where((fte) => fte.path.contains("3.10.6"))
-          .toList();
+      final cachedSdks =
+          cache.listSync().where((fte) => fte.path.contains("3.10.6")).toList();
 
-      expect(cachedSdks.isNotEmpty, true, reason: "there should be a cached flutter SDK");
+      expect(cachedSdks.isNotEmpty, true,
+          reason: "there should be a cached flutter SDK");
       final cachedSdk = Directory(cachedSdks.first.absolutePath);
-      expect(cachedSdk.existsSync(), true, reason: "the cached sdk should exist");
-      expect(cachedSdk.isEmpty, false, reason: "the cached sdk should not be empty");
+      expect(cachedSdk.existsSync(), true,
+          reason: "the cached sdk should exist");
+      expect(cachedSdk.isEmpty, false,
+          reason: "the cached sdk should not be empty");
 
       /// Create Flutter plugin project.
       final createResult = await createFlutterPlugin(
