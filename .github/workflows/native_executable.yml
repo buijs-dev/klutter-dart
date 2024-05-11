@@ -22,5 +22,5 @@ jobs:
         run: dart compile exe bin/kradle.dart -o kradle
       - uses: actions/upload-artifact@v4
         with:
-          name: kradle-${{ matrix.os }}-${{ matrix.version }}
+          name: kradle-${{ matrix.os }}
           path: kradle

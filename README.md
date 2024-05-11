@@ -35,6 +35,27 @@ Use this plugin if you want to:
   - [Kradle](https://buijs.dev/kradle-1/) cli tool
 - For a step-by-step guide (doing everything manually), see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
 
+Using the IDE plugins or interactive kradle tool are the 
+preferred options to create projects, as opposed
+to doing everything manually. You can install
+the kradle tool from git or pub:
+
+```shell
+## Get from pub 
+dart pub global activate klutter
+
+## Get from git
+dart pub global activate --source git https://github.com/buijs-dev/klutter-dart.git
+
+## Use it globally
+dart pub global run klutter:kradle
+```
+
+A native kradle executable is added to the project workspace, 
+when creating a new project using an IDE plugin.
+
+See the kradle [tutorial](https://buijs.dev/kradle-1/) for usage instructions.
+
 # Installation
 <b>What's the point?</b></br>
 Plugins build with the Klutter Framework work slightly different from regular plugins. 
@@ -152,27 +173,20 @@ flutter create --org com.example --template=plugin --platforms=android,ios -a ko
 Install the Klutter Framework as dependency and then run:
 
 ```shell  
-flutter pub run klutter:producer init  
+dart run kradle:init  
 ```  
 
 Build the platform module by running the following in the root folder (takes a few minutes):
 
 ```shell
+dart run klutter:kradle build
+```
+
+Alternatively use gradle directly with the following command:
+
+```shell
 ./gradlew clean build -p "platform"
 ```
-
-It is also possible to import the kradle tool in your project using Gradle:
-
-```shell
-./gradlew klutterGetKradle
-```
-
-And then build the project with kradle:
-
-```shell
-./kradlew build
-```
-
 
 Now test the plugin by following the steps outlined [here](#Usage) in the root/example project. 
 When done you can run the example project from the root/example/lib folder and see your first plugin in action!
