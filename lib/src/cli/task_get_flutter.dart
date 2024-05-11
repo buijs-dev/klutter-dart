@@ -95,6 +95,12 @@ class GetFlutterSDK extends Task<Directory> {
       throw const KlutterException("Failed to download Flutter SDK");
     }
 
+    target.listSync(recursive: true).forEach((element) {
+      if(element is File) {
+        Process.runSync("chmod", runInShell: true, ["755", element.absolutePath]);
+      }
+    });
+
     print("flutter download finished: ${target.absolutePath}");
   }
 
