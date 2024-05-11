@@ -119,9 +119,7 @@ Future<Directory> _downloadResourcesZipOrThrow(String pathToRoot) async {
   final zip = target.resolveFile("resources.zip")
     ..maybeDelete
     ..createSync(recursive: true);
-  final endpoint = platform.isLinux
-      ? _resourceTarUrl
-      : _resourceZipUrl;
+  final endpoint = platform.isLinux ? _resourceTarUrl : _resourceZipUrl;
   await downloadOrThrow(endpoint, zip, target);
 
   if (!target.existsSync()) {
@@ -133,13 +131,7 @@ Future<Directory> _downloadResourcesZipOrThrow(String pathToRoot) async {
         "Failed to download resources (no content found)");
   }
 
-  print("content dowloaded:");
-  target.listSync(recursive: true)
-      .map((e) => e.path).toList()
-      .forEach(print);
-  return platform.isLinux
-    ? target.resolveDirectory("resources")
-    : target;
+  return platform.isLinux ? target.resolveDirectory("resources") : target;
 }
 
 /// Download the resources or throw [KlutterException] on failure.
@@ -147,11 +139,8 @@ Future<void> downloadOrThrow(
     String endpoint, File zip, Directory target) async {
   print("resources download started: $endpoint");
   await download(endpoint, zip);
-  print("resources download done: ${zip.lengthSync()}");
   if (zip.existsSync()) {
-    print("resources download unzipping");
     await unzip(zip, target..maybeCreate);
-    print("resources download unzipped");
     zip.deleteSync();
   }
 

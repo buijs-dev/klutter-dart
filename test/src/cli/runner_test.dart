@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2024 Buijs Software
+// Copyright (c) 2021 - 2023 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,28 +18,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// ignore_for_file: avoid_print
+import "package:klutter/klutter.dart";
+import "package:test/test.dart";
 
-import "dart:io";
+void main() {
+  test("Verify argument help returns help text", () async {
+    final output = await run(["help"]);
+    expect(output.contains("Usage: kradlew <command> [option=value]"), true,
+        reason: output);
+  });
 
-import "cli.dart";
-import "context.dart";
+  test("Verify invalid task is handled", () async {
+    final output = await run(["blabla"]);
+    expect(output.contains("received unknown task name"), true, reason: output);
+  });
 
-/// Run the user command.
-Future<String> run(List<String> args, [TaskService? taskServiceOrNull]) async {
-  final arguments = [...args];
-  final firstArgument = arguments.removeAt(0);
-  final taskName = firstArgument.toTaskNameOrNull;
-  final context = toContextOrNull(Directory.current, arguments);
-  final taskService = taskServiceOrNull ?? TaskService();
-  if (firstArgument.toLowerCase() == "help") {
-    return taskService.displayKradlewHelpText;
-  } else if (taskName == null) {
-    return "received unknown task name: $firstArgument\nuse kradle help for more information";
-  } else if (context == null) {
-    final arguments = args.sublist(1, args.length);
-    return "received invalid task options: $arguments\nuse kradle help for more information";
-  } else {
-    return execute(taskName, context, taskService);
-  }
+  test("Verify invalid arguments are handled", () async {
+    final output = await run(["gradle", "blabla"]);
+    expect(output.contains("received invalid task options: [blabla]"), true,
+        reason: output);
+  });
 }

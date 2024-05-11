@@ -46,6 +46,12 @@ void main() {
     expect(result.message,
         "unable to run task create because: [option not supported for task create: overwrite]");
   });
+
+  test("Verify toTaskOptionOrNull for valid options", () async {
+    TaskOption.values.forEach((value) {
+      expect(value.name.toTaskOptionOrNull, value, reason: "roundtrip $value");
+    });
+  });
 }
 
 class _ExplodingTask extends Task {

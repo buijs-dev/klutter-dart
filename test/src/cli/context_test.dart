@@ -83,6 +83,12 @@ void main() {
     });
   }
 
+  test("When arguments are null then toContextOrNull has no options", () {
+    final context = toContextOrNull(Directory.current, []);
+    expect(context != null, true);
+    expect(context!.taskOptions.isEmpty, true);
+  });
+
   test("Verify copyWith merges options maps", () {
     final map1 = {TaskOption.bom: "da-bom", TaskOption.name: "name"};
     final map2 = {TaskOption.bom: "not-da-bom", TaskOption.klutterui: "union"};
