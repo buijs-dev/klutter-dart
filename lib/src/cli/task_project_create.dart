@@ -27,7 +27,11 @@ import "context.dart";
 /// Task
 class CreateProject extends Task {
   /// Create new Task.
-  CreateProject({Executor? executor, GetFlutterSDK? getFlutterSDK})
+  CreateProject(
+      {Executor? executor,
+      GetFlutterSDK? getFlutterSDK,
+      AddLibrary? addLibrary,
+      ProjectInit? projectInit})
       : super(TaskName.create, {
           TaskOption.name: const PluginNameOption(),
           TaskOption.group: const GroupNameOption(),
@@ -40,10 +44,14 @@ class CreateProject extends Task {
         }) {
     _executor = executor ?? Executor();
     _getFlutterSDK = getFlutterSDK ?? GetFlutterSDK();
+    _projectInit = projectInit ?? ProjectInit();
+    _addLibrary = addLibrary ?? AddLibrary();
   }
 
   late final Executor _executor;
   late final GetFlutterSDK _getFlutterSDK;
+  late final ProjectInit _projectInit;
+  late final AddLibrary _addLibrary;
 
   @override
   Future<void> toBeExecuted(
@@ -59,12 +67,9 @@ class CreateProject extends Task {
     final dist = toFlutterDistributionOrThrow(
         version: flutterVersion, pathToRoot: pathToRoot);
 
-    final result = await _getFlutterSDK.execute(context);
-    final flutter = result.output
-            ?.resolveFile("flutter/bin/flutter".normalize)
-            .absolutePath ??
-        (throw KlutterException(result.message ?? "failed to get flutter sdk"));
-
+    final result = await _getFlutterSDK.executeOrThrow(context);
+    final flutter =
+        result.resolveFile("flutter/bin/flutter".normalize).absolutePath;
     final root = await createFlutterProjectOrThrow(
       executor: _executor,
       pathToFlutter: flutter,
@@ -118,27 +123,16 @@ class CreateProject extends Task {
       ..workingDirectory = exampleFolder
       ..run();
 
-    final initContext = context.copyWith(taskOptions: {
+    await _projectInit.executeOrThrow(context.copyWith(taskOptions: {
       TaskOption.root: root.absolutePath,
       TaskOption.bom: bomVersion,
       TaskOption.flutter: flutterSDK,
-    });
+    }));
 
-    final init = await ProjectInit().execute(initContext);
-    if (!init.isOk) {
-      throw KlutterException(init.message ?? "project init failed");
-    }
-
-    final addContext = context.copyWith(taskOptions: {
+    await _addLibrary.executeOrThrow(context.copyWith(taskOptions: {
       TaskOption.root: exampleFolder.absolutePath,
       TaskOption.lib: name,
-    });
-
-    final addLibrary = await AddLibrary().execute(addContext);
-    if (!addLibrary.isOk) {
-      throw KlutterException(
-          addLibrary.message ?? "adding library to example project failed");
-    }
+    }));
 
     exampleFolder
       ..deleteTestFolder

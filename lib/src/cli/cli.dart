@@ -89,7 +89,7 @@ Future<String> execute(TaskName taskName, Context context,
         .nok;
   }
 
-  final t = task.taskName;
+  final t = task.taskName.name;
   var o = "";
 
   context.taskOptions.forEach((key, value) {

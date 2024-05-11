@@ -65,7 +65,7 @@ void main() {
 
 class NoFlutterSDK extends GetFlutterSDK {
   @override
-  Future<TaskResult<Directory>> execute(Context context) async {
-    return const TaskResult(isOk: false, message: "BOOM!");
+  Future<Directory> executeOrThrow(Context context) async {
+    throw KlutterException("BOOM!");
   }
 }

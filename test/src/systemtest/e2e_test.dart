@@ -63,7 +63,7 @@ void main() {
       final downloadFlutterResult = await run(["get", "flutter=3.10.6"]);
       expect(
           downloadFlutterResult.contains(
-              "Task 'TaskName.get flutter=3.10.6' finished successful"),
+              "Task 'get flutter=3.10.6' finished successful"),
           true,
           reason: downloadFlutterResult);
 

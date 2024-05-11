@@ -70,7 +70,7 @@ Install Klutter as dependency as described [here](#Installation).
 Initialize Klutter in your project by running:
 
 ```shell  
-flutter pub run klutter:consumer init
+dart run klutter:kradle init
 ```  
 
 The init task will set up Klutter for both Android and iOS.
@@ -79,7 +79,7 @@ Klutter plugins can be added by running the add command.
 <B>Example</B>:</br> Add the library 'awesome_plugin' to your project:
 
 ```shell  
-flutter pub run klutter:consumer add lib=awesome_plugin 
+dart run klutter:kradle add lib=awesome_plugin 
 ```  
 
 <b>Background</b></br>
