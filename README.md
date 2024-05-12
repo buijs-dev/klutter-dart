@@ -201,10 +201,10 @@ Make sure you have followed all the following steps:
 - [klutter](https://pub.dev/packages/klutter) is added to the dependencies in your pubspec.yaml 
 (both the plugin and plugin/example for testing).
 - do flutter pub get in both root and root/example folder.
-- do flutter pub run klutter:producer init in the root folder.
+- do flutter pub run klutter:kradle init in the root folder.
 - do ./gradlew clean build -p "platform" in the root folder.
-- do flutter pub run klutter:consumer init in the root/example folder.
-- do flutter pub run klutter:consumer add lib=<your_plugin_name> in the root/example folder.
+- do flutter pub run klutter:kradle init in the root/example folder.
+- do flutter pub run klutter:kradle add lib=<your_plugin_name> in the root/example folder.
 
 ### For Android emulator:
 There should be a .klutter-plugins file in the root/example folder containing an entry for your plugin.

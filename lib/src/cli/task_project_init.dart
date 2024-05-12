@@ -23,7 +23,6 @@
 import "dart:io";
 
 import "../common/common.dart";
-import "../consumer/android.dart";
 import "../consumer/consumer.dart";
 import "../producer/android.dart";
 import "../producer/gradle.dart";
@@ -47,12 +46,17 @@ const _resourceTarUrl =
 /// {@category tasks}
 class ProjectInit extends Task {
   /// Create new Task based of the root folder.
-  ProjectInit()
+  ProjectInit({Executor? executor})
       : super(TaskName.init, {
           TaskOption.bom: const KlutterGradleVersionOption(),
           TaskOption.flutter: FlutterVersionOption(),
           TaskOption.root: RootDirectoryInput(),
-        });
+          TaskOption.ios: const IosVersionOption()
+        }) {
+    _executor = executor ?? Executor();
+  }
+
+  late final Executor _executor;
 
   @override
   Future<void> toBeExecuted(
@@ -70,32 +74,74 @@ class ProjectInit extends Task {
       isProducerProject = false;
     }
 
+    final ios = options[TaskOption.ios];
     if (isProducerProject) {
       print("initializing klutter project as producer");
       final bom = options[TaskOption.bom];
       final flutter = options[TaskOption.flutter] as VerifiedFlutterVersion;
-      await _producerInit(pathToRoot, bom, flutter);
-      _consumerInit("$pathToRoot/example".normalize);
+      await _producerInit(pathToRoot, bom, flutter, ios);
+      _consumerInit("$pathToRoot/example".normalize, ios);
     } else {
       print("initializing klutter project as consumer");
-      _consumerInit(pathToRoot);
+      _consumerInit(pathToRoot, ios);
     }
+  }
+
+  void _consumerInit(String pathToRoot, double iosVersion) {
+    final pathToAndroid = "$pathToRoot/android".normalize;
+    final sdk = findFlutterSDK(pathToAndroid);
+    final app = "$pathToAndroid/app".normalize;
+    writePluginLoaderGradleFile(sdk);
+    createRegistry(pathToRoot);
+    applyPluginLoader(pathToAndroid);
+    setAndroidSdkConstraints(app);
+    setKotlinVersionInBuildGradle(pathToAndroid);
+    if (platform.isMacos) {
+      _setupIOS(Directory(pathToRoot), iosVersion);
+    }
+  }
+
+  void _setupIOS(Directory exampleDirectory, double iosVersion) {
+    exampleDirectory
+      ..deleteIosPodfileLock
+      ..deleteIosPods
+      ..deleteRunnerXCWorkspace;
+
+    final iosWorkingDirectory = exampleDirectory.resolveDirectory("ios")
+      ..verifyDirectoryExists;
+
+    void doPodStep(String step) {
+      _executor
+        ..executable = "pod"
+        ..workingDirectory = iosWorkingDirectory
+        ..arguments = [step]
+        ..run();
+    }
+
+    doPodStep("install");
+    setIosVersionInPodFile(iosWorkingDirectory, iosVersion);
+    doPodStep("deintegrate");
+    doPodStep("install");
+    doPodStep("update");
   }
 }
 
-void _consumerInit(String pathToRoot) {
-  final pathToAndroid = "$pathToRoot/android".normalize;
-  final sdk = findFlutterSDK(pathToAndroid);
-  final app = "$pathToAndroid/app".normalize;
-  writePluginLoaderGradleFile(sdk);
-  createRegistry(pathToRoot);
-  applyPluginLoader(pathToAndroid);
-  setAndroidSdkConstraints(app);
-  setKotlinVersionInBuildGradle(pathToAndroid);
+extension on Directory {
+  void get deleteIosPodfileLock {
+    resolveDirectory("ios").resolveFile("Podfile.lock").maybeDelete;
+  }
+
+  void get deleteIosPods {
+    resolveDirectory("ios").resolveDirectory("Pods").maybeDelete;
+  }
+
+  void get deleteRunnerXCWorkspace {
+    resolveDirectory("ios").resolveDirectory("Runner.xcworkspace").maybeDelete;
+  }
 }
 
-Future<void> _producerInit(
-    String pathToRoot, String bom, VerifiedFlutterVersion flutter) async {
+Future<void> _producerInit(String pathToRoot, String bom,
+    VerifiedFlutterVersion flutter, double iosVersion) async {
   final resources = await _downloadResourcesZipOrThrow(pathToRoot);
   final producer = _Producer(
       resourcesDirectory: resources,
@@ -107,7 +153,7 @@ Future<void> _producerInit(
   producer
     ..setupRoot
     ..setupAndroid
-    ..setupIOS
+    ..setupIOS(iosVersion)
     ..setupPlatform
     ..setupExample;
 }
@@ -242,13 +288,13 @@ extension on _Producer {
     setGradleWrapperVersion(pathToAndroid: pathToAndroid);
   }
 
-  void get setupIOS {
+  void setupIOS(double iosVersion) {
     final pathToIos = "$pathToRoot/ios";
     createIosKlutterFolder(pathToIos);
     addFrameworkAndSetIosVersionInPodspec(
-      pathToIos: "$pathToRoot/ios",
-      pluginName: findPluginName(pathToRoot),
-    );
+        pathToIos: "$pathToRoot/ios",
+        pluginName: findPluginName(pathToRoot),
+        iosVersion: iosVersion);
   }
 
   Future<void> get addGradle async {

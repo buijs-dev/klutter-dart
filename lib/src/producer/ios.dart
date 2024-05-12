@@ -35,11 +35,13 @@ void createIosKlutterFolder(String pathToIos) => pathToIos.verifyExists
 /// The generated framework will be copied to the root/ios/Klutter folder.
 ///
 /// {@category producer}
-void addFrameworkAndSetIosVersionInPodspec({
-  required String pathToIos,
-  required String pluginName,
-}) =>
-    pathToIos.verifyExists.toPodspec(pluginName).addFrameworkAndSetIosVersion;
+void addFrameworkAndSetIosVersionInPodspec(
+        {required String pathToIos,
+        required String pluginName,
+        required double iosVersion}) =>
+    pathToIos.verifyExists
+        .toPodspec(pluginName)
+        .addFrameworkAndSetIosVersion(iosVersion);
 
 extension on String {
   void get createKlutterFolder {
@@ -58,7 +60,7 @@ extension on String {
 }
 
 extension on File {
-  void get addFrameworkAndSetIosVersion {
+  void addFrameworkAndSetIosVersion(double iosVersion) {
     final regex = RegExp("Pod::Spec.new.+?do.+?.([^|]+?).");
 
     /// Check the prefix used in the podspec or default to 's'.

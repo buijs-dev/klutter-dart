@@ -42,7 +42,7 @@ void main() {
     final task = ProjectInit();
     final context = Context(pathToConsumer, {});
     final result = await task.execute(context);
-    expect(result.isOk, true);
+    expect(result.isOk, true, reason: result.message);
     final file = pathToConsumer.resolveFile("/lib/main.dart");
     var reason = "example/lib/main.dart file should exist";
     expect(file.existsSync(), true, reason: reason);

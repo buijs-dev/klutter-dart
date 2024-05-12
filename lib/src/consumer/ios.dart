@@ -25,13 +25,15 @@ import "../common/common.dart";
 /// Create the root/ios/Klutter directory and add a readme file.
 ///
 /// {@category consumer}
-void setIosVersionInPodFile(Directory iosDirectory) =>
-    iosDirectory.resolveFile("Podfile")
-      ..verifyFileExists
-      ..setIosVersion;
+void setIosVersionInPodFile(Directory iosDirectory, double version) {
+  final podFile = iosDirectory.resolveFile("Podfile");
+  if (podFile.existsSync()) {
+    podFile.setIosVersion(version);
+  }
+}
 
 extension on File {
-  void get setIosVersion {
+  void setIosVersion(double version) {
     // INPUT
     final lines = readAsLinesSync();
 
@@ -46,7 +48,7 @@ extension on File {
       // Check if line sets ios platform version
       // and if so then update the version.
       if (trimmed.contains("platform:ios,")) {
-        newLines.add("platform :ios, '$iosVersion'");
+        newLines.add("platform :ios, '$version'");
         hasExplicitPlatformVersion = true;
       } else {
         newLines.add(line);
@@ -57,7 +59,7 @@ extension on File {
       throw const KlutterException("Failed to set ios version in Podfile.");
     }
 
-    // Write the editted line to the podspec file.
+    // Write the edited line to the podspec file.
     writeAsStringSync(newLines.join("\n"));
   }
 }

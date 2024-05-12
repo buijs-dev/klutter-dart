@@ -44,7 +44,7 @@ void main() {
 
   test("end-to-end test", () async {
     /// Create Flutter plugin project.
-    await createFlutterPlugin(
+    await createKlutterPlugin(
       organisation: organisation,
       pluginName: pluginName,
       root: pathToRoot.absolute.path,

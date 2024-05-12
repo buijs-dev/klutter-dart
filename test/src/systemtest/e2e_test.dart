@@ -83,7 +83,7 @@ void main() {
           reason: "the cached sdk should not be empty");
 
       /// Create Flutter plugin project.
-      final createResult = await createFlutterPlugin(
+      final createResult = await createKlutterPlugin(
         organisation: organisation,
         pluginName: pluginName,
         root: Directory(pathToRoot.absolutePath)
@@ -244,8 +244,8 @@ void main() {
   tearDownAll(() => pathToRoot.deleteSync(recursive: true));
 }
 
-/// Create Flutter plugin project.
-Future<String> createFlutterPlugin({
+/// Create klutter plugin project.
+Future<String> createKlutterPlugin({
   required String organisation,
   required String pluginName,
   required String root,
