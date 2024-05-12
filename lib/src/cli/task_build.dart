@@ -35,6 +35,7 @@ import "context.dart";
 /// and ios sub modules.
 ///
 /// {@category gradle}.
+/// {@category tasks}
 class BuildProject extends Task {
   /// Create new Task.
   BuildProject({Executor? executor})

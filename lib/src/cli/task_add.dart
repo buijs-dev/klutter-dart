@@ -28,6 +28,7 @@ import "task.dart";
 /// Task to add a Klutter-made Flutter plugin to a Flutter project.
 ///
 /// {@category consumer}
+/// {@category tasks}
 class AddLibrary extends Task {
   /// Create new Task based of the root folder.
   AddLibrary()

@@ -23,6 +23,7 @@ import "cli.dart";
 import "context.dart";
 
 /// Interface to encapsulate CLI task functionality.
+/// {@category tasks}
 abstract class Task<T> {
   /// Create a new [Task].
   Task(this.taskName, this.taskOptions);
@@ -123,6 +124,7 @@ abstract class Task<T> {
 /// List of available tasks.
 ///
 /// The task functionality depends on the calling script.
+/// {@category tasks}
 enum TaskName {
   /// Tasks which adds libraries.
   add,
@@ -150,6 +152,7 @@ enum TaskName {
 }
 
 /// Convert a String value to a [TaskName].
+/// {@category tasks}
 extension TaskNameParser on String? {
   /// Find a [TaskName] that matches the current
   /// (trimmed) String value or return null.
@@ -187,6 +190,7 @@ extension TaskNameParser on String? {
 ///
 /// {@category consumer}
 /// {@category producer}
+/// {@category tasks}
 enum TaskOption {
   /// The Klutter (Gradle) BOM version.
   bom,

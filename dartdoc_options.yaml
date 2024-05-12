@@ -9,4 +9,7 @@ dartdoc:
     "gradle":
       markdown: doc/gradle.md
       name: gradle
-  categoryOrder: ["consumer", "producer", "gradle"]
+    "tasks":
+      markdown: doc/tasks.md
+      name: tasks
+  categoryOrder: ["consumer", "producer", "gradle", "tasks"]

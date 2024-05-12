@@ -33,6 +33,7 @@ import "context.dart";
 ///
 /// {@category consumer}
 /// {@category producer}
+/// {@category tasks}
 class GetFlutterSDK extends Task<Directory> {
   /// Create new Task.
   GetFlutterSDK()
@@ -96,8 +97,9 @@ class GetFlutterSDK extends Task<Directory> {
     }
 
     target.listSync(recursive: true).forEach((element) {
-      if(element is File) {
-        Process.runSync("chmod", runInShell: true, ["755", element.absolutePath]);
+      if (element is File) {
+        Process.runSync(
+            "chmod", runInShell: true, ["755", element.absolutePath]);
       }
     });
 
@@ -113,6 +115,7 @@ class GetFlutterSDK extends Task<Directory> {
 
 /// Find applicable [FlutterDistribution] for the current
 /// [OperatingSystem] and [Architecture] or throw [KlutterException].
+/// {@category tasks}
 FlutterDistribution toFlutterDistributionOrThrow(
     {required VerifiedFlutterVersion version,
     required String pathToRoot,
@@ -141,6 +144,7 @@ FlutterDistribution toFlutterDistributionOrThrow(
   return FlutterDistribution(version: version.version, os: os!, arch: arch);
 }
 
+/// {@category tasks}
 Map<FlutterDistribution, String> get _compatibleFlutterVersions {
   final dist = [
     _windows(
@@ -203,6 +207,7 @@ Map<FlutterDistribution, String> get _compatibleFlutterVersions {
 }
 
 /// A flutter distribution which is compatible with klutter.
+/// {@category tasks}
 @immutable
 class FlutterDistribution {
   /// Create a new [FlutterDistribution] instance.
@@ -266,6 +271,7 @@ class FlutterDistribution {
 ///The full Flutter distribution version in format major.minor.patch (platform architecture).
 ///
 /// Example: 3.0.5 MACOS (ARM64).
+/// {@category tasks}
 @immutable
 class PrettyPrintedFlutterDistribution {
   /// Create a new [PrettyPrintedFlutterDistribution] instance.
@@ -283,6 +289,7 @@ class PrettyPrintedFlutterDistribution {
 /// The full Flutter distribution version in format major.minor.patch.platform.architecture.
 ///
 /// Example: 3.0.5.windows.x64.
+/// {@category tasks}
 @immutable
 class FlutterDistributionFolderName {
   /// Create a new [FlutterDistributionFolderName] instance.

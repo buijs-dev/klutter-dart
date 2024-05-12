@@ -44,6 +44,7 @@ const _resourceTarUrl =
 ///
 /// {@category consumer}
 /// {@category producer}
+/// {@category tasks}
 class ProjectInit extends Task {
   /// Create new Task based of the root folder.
   ProjectInit()

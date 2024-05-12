@@ -22,6 +22,7 @@
 ///
 /// [isOk] is true when task is finished without exceptions or false when not.
 /// [message] contains the exception message or is null when task was successful.
+/// {@category tasks}
 class TaskResult<T> {
   /// Create a new result with a message if there was an exception.
   const TaskResult({

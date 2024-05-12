@@ -27,6 +27,7 @@ import "cli.dart";
 import "context.dart";
 
 /// Clean the kradle cache by deleting contents recursively.
+/// {@category tasks}
 class CleanCache extends Task {
   /// Create new Task.
   CleanCache([CacheProvider? cacheProvider])
@@ -69,6 +70,7 @@ class CleanCache extends Task {
 }
 
 /// Result of task [CleanCache].
+/// {@category tasks}
 class CleanCacheResult {
   /// Create a new instance of [CleanCacheResult].
   const CleanCacheResult(this.deleted, this.notDeletedByError);
@@ -82,6 +84,7 @@ class CleanCacheResult {
 
 /// Wrapper to provide the kradle cache directory
 /// based on [Context] and [TaskOption] input.
+/// {@category tasks}
 class CacheProvider {
   /// Return the files and directory in the kradle cache directory.
   List<FileSystemEntity> getCacheContent(

@@ -24,7 +24,9 @@ import "../common/common.dart";
 import "cli.dart";
 import "context.dart";
 
-/// Task
+/// Task to create a new klutter project.
+/// {@category tasks}
+/// {@category producer}
 class CreateProject extends Task {
   /// Create new Task.
   CreateProject(

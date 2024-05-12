@@ -29,6 +29,7 @@ import "task_project_create.dart";
 import "task_project_init.dart";
 
 /// Service for available tasks.
+/// {@category tasks}
 class TaskService {
   /// Get the [Task] with [TaskName] or null.
   Task? toTask(TaskName taskName) {
@@ -59,6 +60,7 @@ class TaskService {
   ///
   /// {@category producer}
   /// {@category consumer}
+  /// {@category tasks}
   Set<Task> allTasks(
 
       /// Injectable Task List for testing purposes.

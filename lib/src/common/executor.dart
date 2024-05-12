@@ -37,14 +37,14 @@ class Executor {
 
   /// An (optional) list of arguments.
   ///
-  /// For example: ["clean", "build"] with [executable] "gradlew"
+  /// For example: "clean", "build" with [executable] "gradlew"
   /// would result in a gradlew clean build to be executed from the [workingDirectory].
   List<String> arguments = const [];
 
   /// Run the command.
   ///
   /// For example an [executable] 'gradlew'
-  /// with [arguments] '["clean", "build", "-p", "platform"]'
+  /// with [arguments] "clean", "build", "-p", "platform"
   /// and [workingDirectory] './Users/Foo'
   /// would result in command "./Users/Foo/gradlew clean build -p platform".
   ProcessResult run() {
