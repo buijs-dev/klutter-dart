@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2024 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,30 +18,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// It should print doh...
-// ignore_for_file: avoid_print
-
+import "dart:core";
 import "dart:io";
 
-import "package:klutter/klutter.dart";
+/// Wrapper for [Platform] to access Operating System properties.
+PlatformWrapper platform = PlatformWrapper();
 
-/// Run tasks for a Consumer project.
-Future<void> main(List<String> args) async {
-  print("""
-  ════════════════════════════════════════════
-     KLUTTER (v$klutterPubVersion)                               
-  ════════════════════════════════════════════
-  """
-      .ok);
+/// Wrapper for [Platform].
+class PlatformWrapper {
+  /// Stub for environment properties.
+  Map<String, String> environmentMap = Platform.environment;
 
-  print("This might take a while. Just a moment please...".boring);
+  /// Get the current Operating System through [Platform.operatingSystem].
+  String get operatingSystem => Platform.operatingSystem;
 
-  final pathToRoot = Directory.current.absolutePath;
-  final result = await execute(
-    script: ScriptName.consumer,
-    pathToRoot: pathToRoot,
-    arguments: args,
-  );
+  /// Get the environment variables through [Platform.environment].
+  Map<String, String> get environment => environmentMap;
 
-  print(result);
+  /// Check if current platform is windows.
+  bool get isWindows => Platform.isWindows;
+
+  /// Check if current platform is macos.
+  bool get isMacos => Platform.isMacOS;
+
+  /// Check if current platform is linux.
+  bool get isLinux => Platform.isLinux;
 }

@@ -18,30 +18,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// It should print doh...
-// ignore_for_file: avoid_print
-
 import "dart:io";
 
 import "package:klutter/klutter.dart";
+import "package:klutter/src/cli/context.dart";
+import "package:test/test.dart";
 
-/// Run tasks for a Producer project.
-Future<void> main(List<String> args) async {
-  print("""
-  ════════════════════════════════════════════
-     KLUTTER (v$klutterPubVersion)                               
-  ════════════════════════════════════════════
-  """
-      .ok);
-
-  print("This might take a while. Just a moment please...".boring);
-
-  final pathToRoot = Directory.current.absolutePath;
-  final result = await execute(
-    script: ScriptName.producer,
-    pathToRoot: pathToRoot,
-    arguments: args,
-  );
-
-  print(result);
+void main() {
+  test("ConsumerAdd fails when option is not set", () async {
+    final result = await AddLibrary()
+        .execute(Context(Directory.current, <TaskOption, String>{}));
+    expect(result.isOk, false);
+    expect(result.message,
+        "unable to run task add because: [missing value for option: lib]");
+  });
 }

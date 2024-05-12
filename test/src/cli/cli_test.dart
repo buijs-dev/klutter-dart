@@ -18,21 +18,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import "dart:io";
+
 import "package:klutter/klutter.dart";
+import "package:klutter/src/cli/context.dart";
 import "package:test/test.dart";
 
 void main() {
-  test("When command is invalid then no tasks are executed", () {
-    execute(
-      script: ScriptName.consumer,
-      pathToRoot: "",
-      arguments: [],
-    );
-  });
-
   test("Verify colored messages", () {
     expect("msg".ok, "\x1B[32mmsg");
     expect("msg".nok, "\x1B[31mmsg");
     expect("msg".boring, "\x1B[49mmsg");
+  });
+
+  test("Execute task using main execute entrypoint", () async {
+    final task = TaskName.gradle;
+    final context = Context(Directory.systemTemp, {});
+    final result = await execute(task, context);
+    expect(result.contains("Received invalid command"), true);
   });
 }

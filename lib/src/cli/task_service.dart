@@ -20,169 +20,89 @@
 
 import "../common/exception.dart";
 import "../common/utilities.dart";
-import "cli.dart";
+import "task.dart";
+import "task_add.dart";
+import "task_build.dart";
+import "task_clean_cache.dart";
 import "task_get_flutter.dart";
+import "task_project_create.dart";
+import "task_project_init.dart";
 
-const _prefix = "|flutter pub run klutter:";
-
-/// List of all [Task] objects.
-///
-/// A task may contain one or more sub-task implementations.
-///
-/// {@category producer}
-/// {@category consumer}
-Set<Task> allTasks(
-
-    /// Injectable Task List for testing purposes.
-    /// Any calling class should omit this parameter
-    /// and let the function default to [allTasks].
-    [List<Task>? tasks]) {
-  final list = tasks ??
-      [
-        ConsumerAdd(),
-        ConsumerInit(),
-        ProducerInit(),
-        GetFlutterSDK(),
-      ]
-    ..verifyNoDuplicates
-    ..verifyNoCircularDependencies;
-  return list.toSet();
-}
-
-/// Get the Task and all tasks it relies on
-/// or return empty list if command is invalid.
-Set<Task> tasksOrEmptyList(Command command,
-
-    /// Injectable Task List for testing purposes.
-    /// Any calling class should omit this parameter
-    /// and let the function default to [allTasks].
-    [Set<Task>? tasks]) {
-  /// Get all Tasks for this ScriptName.
-  final tasksForScript = (tasks ?? allTasks())
-      .where((task) => task.scriptName == command.scriptName)
-      .toList();
-
-  /// Find TaskName or return emptyList if not present.
-  ///
-  /// If TaskName is not found then the command was invalid.
-  final hasTask =
-      tasksForScript.map((e) => e.taskName).contains(command.taskName);
-
-  if (!hasTask) {
-    return <Task>{};
+/// Service for available tasks.
+/// {@category tasks}
+class TaskService {
+  /// Get the [Task] with [TaskName] or null.
+  Task? toTask(TaskName taskName) {
+    final matching = allTasks().where((task) => task.taskName == taskName);
+    return matching.isNotEmpty ? matching.first : null;
   }
 
-  /// Retrieve the Task which at this point always exists.
-  final primaryTask = tasksForScript.firstWhere((task) {
-    return task.taskName == command.taskName;
-  })
-    ..options = command.options;
+  /// Output all tasks and options with descriptions.
+  String get displayKradlewHelpText {
+    final buffer = StringBuffer("""
+  |Manage your klutter project.
+  |
+  |Usage: kradlew <command> [option=value]
+  |
+  |"""
+        .format);
 
-  final taskList = [primaryTask];
-
-  /// Find al dependencies and add them to the taskList.
-  for (final task in primaryTask.dependsOn()) {
-    if (!taskList.map((e) => e.taskName).contains(task.taskName)) {
-      taskList.add(task..options = command.options);
+    for (final task in allTasks()) {
+      buffer.writeln(task.toString());
     }
+
+    return buffer.toString();
   }
 
-  /// Sort the taskList to make sure the Tasks are executed in
-  /// the correct order e.g. tasks without dependencies before
-  /// those with dependencies.
-  taskList.sort(compareByDependsOn);
+  /// List of all [Task] objects.
+  ///
+  /// A task may contain one or more sub-task implementations.
+  ///
+  /// {@category producer}
+  /// {@category consumer}
+  /// {@category tasks}
+  Set<Task> allTasks(
 
-  return taskList.toSet();
+      /// Injectable Task List for testing purposes.
+      /// Any calling class should omit this parameter
+      /// and let the function default to [allTasks].
+      [List<Task>? tasks]) {
+    final list = tasks ??
+        [
+          AddLibrary(),
+          ProjectInit(),
+          GetFlutterSDK(),
+          CreateProject(),
+          BuildProject(),
+          CleanCache()
+        ]
+      ..verifyNoDuplicates;
+    return list.toSet();
+  }
 }
 
 extension on List<Task> {
   /// Verify there are no overlapping tasks e.g.
-  /// multiple tasks that have the same ScriptName
-  /// and TaskName.
+  /// multiple tasks that have the same TaskName.
   ///
-  /// ScriptName + TaskName should be unique.
+  /// TaskName should be unique.
   /// Any sub-tasks should be defined in the
   /// Task Class implementation.
   ///
   /// Throws [KlutterException] if duplicates are found.
   void get verifyNoDuplicates {
-    final map = <ScriptName, List<TaskName>>{};
-
-    for (final name in ScriptName.values) {
-      map.putIfAbsent(name, () => TaskName.values.toList(growable: true));
-    }
-
+    final tasks = TaskName.values.toList(growable: true);
     for (final taskEntry in this) {
-      final hasTask = map[taskEntry.scriptName]!.remove(taskEntry.taskName);
-
-      if (!hasTask) {
+      if (!tasks.remove(taskEntry.taskName)) {
         throw KlutterException(
           """
             |TaskService configuration failure.
             |Invalid or duplicate TaskName encountered. 
-            |- ScriptName: '${taskEntry.scriptName}'
             |- TaskName: '${taskEntry.taskName}'
             """
               .format,
         );
       }
     }
-  }
-
-  /// Verify dependencies between tasks only go one way.
-  ///
-  /// Two individual tasks may not directly
-  /// or indirectly depend to one another.
-  ///
-  /// Circular dependencies make it impossible
-  /// to determine which task should be executed first.
-  ///
-  /// Throws [KlutterException] if there are circular dependencies.
-  void get verifyNoCircularDependencies {
-    for (final taskEntry in this) {
-      final dependents = taskEntry.dependsOn();
-
-      while (dependents.isNotEmpty) {
-        if (dependents[0].scriptName != taskEntry.scriptName) {
-          dependents.remove(dependents[0]);
-          break;
-        }
-
-        if (dependents[0].taskName != taskEntry.taskName) {
-          dependents.remove(dependents[0]);
-          break;
-        }
-
-        /// Combination ScriptName + TaskName is unique
-        /// which means at this point the found dependent
-        /// is the same task.
-        throw KlutterException(
-          """
-            |TaskService configuration failure.
-            |Found circular dependency. 
-            |- ScriptName: '${taskEntry.scriptName}'
-            |- TaskName: '${taskEntry.taskName}'
-            """
-              .format,
-        );
-      }
-    }
-  }
-}
-
-/// Print all possible user input commands based of the available Tasks.
-String get printTasksAsCommands {
-  final output = <String>["The following commands are valid:"];
-
-  for (final task in allTasks()) {
-    task.exampleCommands().forEach(output.append);
-  }
-
-  return output.join("\n").format;
-}
-
-extension on List<String> {
-  void append(String command) {
-    add("$_prefix$command");
   }
 }

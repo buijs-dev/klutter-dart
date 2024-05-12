@@ -21,7 +21,6 @@
 import "dart:io";
 
 import "package:klutter/src/cli/cli.dart";
-import "package:klutter/src/cli/task_service.dart" as service;
 import "package:klutter/src/common/common.dart";
 import "package:test/test.dart";
 
@@ -29,52 +28,30 @@ void main() {
   final pathToRoot = Directory("${Directory.systemTemp.path}/tst1".normalize)
     ..maybeCreate;
 
+  final service = TaskService();
+
   group("Test allTasks", () {
-    test("Verify allTasks returns 3 tasks", () {
+    test("Verify allTasks returns 7 tasks", () {
       final tasks = service.allTasks();
 
-      // There should be 3 Tasks.
-      expect(tasks.length, 4);
+      expect(tasks.length, 6);
 
       expect(
-        tasks.getTask(ScriptName.consumer, TaskName.add).toString(),
-        "Instance of Task: ScriptName.consumer | TaskName.add | DependsOn: [Instance of Task: ScriptName.consumer | TaskName.init | DependsOn: []]",
-      );
-
-      expect(
-        tasks.getTask(ScriptName.consumer, TaskName.init).toString(),
-        "Instance of Task: ScriptName.consumer | TaskName.init | DependsOn: []",
+        tasks.getTask(TaskName.add).toString(),
+        "add\n  lib               (Required) name of the library to add.\n"
+        "  root              (Optional) klutter project root directory. Defaults to \'current working directory\'.\n",
       );
 
       expect(
-        tasks.getTask(ScriptName.producer, TaskName.init).toString(),
-        "Instance of Task: ScriptName.producer | TaskName.init | DependsOn: [Instance of Task: ScriptName.producer | TaskName.get | DependsOn: []]",
+        tasks.getTask(TaskName.init).toString(),
+        "init\n  bom               (Optional) klutter gradle version. Defaults to '2024.1.1.beta'.\n  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n  root              (Optional) klutter project root directory. Defaults to \'current working directory\'.\n",
       );
-
-    });
-
-    test(
-        "Verify identical TaskNames are ignored when the ScriptName is different",
-        () {
-      final dummy1 = _DummyTask(
-        taskName: TaskName.init,
-        scriptName: ScriptName.consumer,
-      );
-
-      final dummy2 = _DummyTask(
-        taskName: TaskName.init,
-        dependsOnList: [dummy1],
-      );
-
-      final tasks = [dummy1, dummy2];
-
-      expect(service.allTasks(tasks).length, 2);
     });
 
     test("Verify exception is thrown if duplicate tasks are found", () {
       final duplicateTasks = [
-        ConsumerInit(),
-        ConsumerInit(),
+        ProjectInit(),
+        ProjectInit(),
       ];
 
       expect(
@@ -84,182 +61,54 @@ void main() {
               e.cause.startsWith("TaskService configuration failure.") &&
               e.cause.contains("Invalid or duplicate TaskName encountered."))));
     });
-
-    test("Verify exception is thrown if tasks have circular dependencies", () {
-      final roundAndRoundWeGo = [_SelfDependingTask()];
-
-      expect(
-          () => service.allTasks(roundAndRoundWeGo),
-          throwsA(predicate((e) =>
-              e is KlutterException &&
-              e.cause.startsWith("TaskService configuration failure.") &&
-              e.cause.contains("Found circular dependency."))));
-    });
   });
 
-  group("Test tasksOrEmptyList", () {
-    test(
-        "Verify tasksOrEmptyList returns normalized list of requested Task and all dependents",
-        () {
-      const command = Command(
-        scriptName: ScriptName.consumer,
-        taskName: TaskName.add,
-        options: { ScriptOption.lib: "platform"},
-      );
-
-      final tasks = service.tasksOrEmptyList(command);
-
-      // Install Task depends on Init task so there should be 2 tasks.
-      expect(tasks.length, 2);
-
-      // Install depends on init so init should be the first task.
-      expect(tasks.first.taskName, TaskName.init);
-
-      // Install should be the final task.
-      expect(tasks.last.taskName, TaskName.add);
-    });
+  test("Verify displayKradlewHelpText output", () {
+    final help = service.displayKradlewHelpText;
+    const expected = "Manage your klutter project."
+        "\n"
+        "\n"
+        "Usage: kradlew <command> [option=value]\n"
+        "\n"
+        "add\n"
+        "  lib               (Required) name of the library to add.\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
+        "\n"
+        "init\n"
+        "  bom               (Optional) klutter gradle version. Defaults to '2024.1.1.beta'.\n"
+        "  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
+        "\n"
+        "get\n"
+        "  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
+        "  overwrite         (Optional) overwrite existing distribution when found. Defaults to 'false'.\n"
+        "  dryRun            (Optional) skip downloading of libraries. Defaults to 'false'.\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
+        "\n"
+        "create\n"
+        "  name              (Optional) plugin name. Defaults to 'my_plugin'.\n"
+        "  group             (Optional) plugin group name. Defaults to 'dev.buijs.klutter.example'.\n"
+        "  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
+        "  klutter           (Optional) klutter pub version. Defaults to '3.0.0'.\n"
+        "  klutterui         (Optional) klutter_ui pub version. Defaults to '1.1.0'.\n"
+        "  bom               (Optional) klutter gradle version. Defaults to '2024.1.1.beta'.\n"
+        "  squint            (Optional) squint_json pub version. Defaults to '0.1.2'.\n"
+        "\n"
+        "build\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
+        "\n"
+        "clean\n"
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
+        "\n"
+        "";
+    expect(help, expected);
   });
-
-  group("Test TaskComparator", () {
-    test("When task1 depends on task2, then t2 has higher priority", () {
-      final task2 = _DummyTask(
-        taskName: TaskName.init,
-      );
-
-      final task1 = _DummyTask(
-        taskName: TaskName.add,
-        dependsOnList: [task2],
-      );
-
-      final tasks = [task1, task2]..sort(compareByDependsOn);
-
-      expect(tasks.first, task2);
-    });
-
-    test("When task2 depends on task1, then t1 has higher priority", () {
-      final task1 = _DummyTask(
-        taskName: TaskName.add,
-      );
-
-      final task2 = _DummyTask(
-        taskName: TaskName.init,
-        dependsOnList: [task1],
-      );
-
-      final tasks = [task1, task2]..sort(compareByDependsOn);
-
-      expect(tasks.first, task1);
-    });
-
-    test("When both tasks depend on other tasks then t1 takes priority", () {
-      final taskNotInList = _DummyTask();
-
-      final task1 = _DummyTask(
-          taskName: TaskName.get, dependsOnList: [taskNotInList]);
-
-      final task2 =
-          _DummyTask(taskName: TaskName.init, dependsOnList: [taskNotInList]);
-
-      final tasks = [task1, task2]..sort(compareByDependsOn);
-      expect(tasks.first, task1);
-
-      final reversed = [task2, task1]..sort(compareByDependsOn);
-      expect(reversed.first, task2);
-    });
-
-    test("When both tasks depend on nothing then t1 takes priority", () {
-      final task1 = _DummyTask(taskName: TaskName.add, dependsOnList: []);
-
-      final task2 = _DummyTask(taskName: TaskName.init, dependsOnList: []);
-
-      final tasks = [task1, task2]..sort(compareByDependsOn);
-      expect(tasks.first, task1);
-
-      final reversed = [task2, task1]..sort(compareByDependsOn);
-      expect(reversed.first, task2);
-    });
-
-    test(
-        "When task1 depends on other tasks and task2 depends on nothing, then t2 takes priority",
-        () {
-      final taskNotInList = _DummyTask();
-
-      final task1 = _DummyTask(
-          taskName: TaskName.add, dependsOnList: [taskNotInList]);
-
-      final task2 = _DummyTask(taskName: TaskName.init, dependsOnList: []);
-
-      final tasks = [task1, task2]..sort(compareByDependsOn);
-      expect(tasks.first, task2);
-
-      final reversed = [task2, task1]..sort(compareByDependsOn);
-      expect(reversed.first, task2);
-    });
-
-    test(
-        "When task2 depends on other tasks and task1 depends on nothing, then t1 takes priority",
-        () {
-      final taskNotInList = _DummyTask();
-
-      final task1 = _DummyTask(taskName: TaskName.add, dependsOnList: []);
-
-      final task2 =
-          _DummyTask(taskName: TaskName.init, dependsOnList: [taskNotInList]);
-
-      final tasks = [task1, task2]..sort(compareByDependsOn);
-      expect(tasks.first, task1);
-
-      final reversed = [task2, task1]..sort(compareByDependsOn);
-      expect(reversed.first, task1);
-    });
-
-    test("Verify printTasksAsCommands outputs a readable overview", () {
-      expect(
-          printTasksAsCommands.replaceAll(" ", ""),
-          """
-          The following commands are valid:
-          flutter pub run klutter:consumer add lib=foo_example
-          flutter pub run klutter:consumer init
-          flutter pub run klutter:producer init
-          flutter pub run klutter:producer init bom=<version>(default is $klutterGradleVersion)
-          flutter pub run klutter:producer init flutter=<version>(default is $klutterFlutterVersion)
-          flutter pub run klutter:producer init flutter=<version> bom=<version> 
-          flutter pub run klutter:producer get flutter=<version> (one of versions: {3.0.5, 3.3.10, 3.7.12, 3.10.6 })"""
-              .replaceAll(" ", ""));
-    });
-  });
-
   tearDownAll(() => pathToRoot.deleteSync(recursive: true));
 }
 
-class _DummyTask extends Task {
-  _DummyTask({
-    ScriptName scriptName = ScriptName.producer,
-    TaskName taskName = TaskName.add,
-    this.dependsOnList = const [],
-  }) : super(scriptName, taskName);
-
-  List<Task> dependsOnList;
-
-  @override
-  List<Task> dependsOn() => dependsOnList;
-
-  @override
-  Future<void> toBeExecuted(String pathToRoot) async {}
-
-  @override
-  List<String> exampleCommands() => [];
-}
-
-class _SelfDependingTask extends _DummyTask {
-  _SelfDependingTask() : super();
-
-  @override
-  List<Task> dependsOn() => [_SelfDependingTask()];
-}
-
 extension on Set<Task> {
-  Task getTask(ScriptName scriptName, TaskName taskName) => firstWhere((task) {
-        return task.scriptName == scriptName && task.taskName == taskName;
+  Task getTask(TaskName taskName) => firstWhere((task) {
+        return task.taskName == taskName;
       });
 }

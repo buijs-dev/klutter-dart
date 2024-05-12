@@ -117,9 +117,10 @@ void main() {
   test("Verify exception is thrown if root does not exist", () {
     expect(
         () => writeRootBuildGradleFile(
-          pathToRoot: "fake",
-          pluginName: "some_plugin",
-          klutterBomVersion: "2023.3.1",),
+              pathToRoot: "fake",
+              pluginName: "some_plugin",
+              klutterBomVersion: "2023.3.1",
+            ),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
@@ -151,13 +152,14 @@ void main() {
                   maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
               }
               dependencies {
-                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
+                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
                   classpath("com.android.tools.build:gradle:8.0.2")
                   classpath(platform("dev.buijs.klutter:bom:2023.3.1"))
                   classpath("dev.buijs.klutter:gradle")
               }
           }
-      """.replaceAll(" ", ""));
+      """
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
   });
@@ -188,13 +190,14 @@ void main() {
                   maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
               }
               dependencies {
-                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
+                  classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
                   classpath("com.android.tools.build:gradle:8.0.2")
                   classpath(platform("dev.buijs.klutter:bom:2023.3.1"))
                   classpath("dev.buijs.klutter:gradle")
               }
           }
-      """.replaceAll(" ", ""));
+      """
+            .replaceAll(" ", ""));
 
     root.deleteSync(recursive: true);
   });
@@ -221,7 +224,6 @@ void main() {
        android.useAndroidX=true
         
        #MPP
-       kotlin.mpp.enableCInteropCommonization=true
        kotlin.mpp.stability.nowarn=true"""
             .replaceAll(" ", ""));
 
@@ -251,7 +253,6 @@ void main() {
        android.useAndroidX=true
         
        #MPP
-       kotlin.mpp.enableCInteropCommonization=true
        kotlin.mpp.stability.nowarn=true"""
             .replaceAll(" ", ""));
 
@@ -264,8 +265,7 @@ void main() {
 
     root.resolveFile("kradle.yaml")
       ..maybeCreate
-      ..writeAsStringSync("flutter-version: '3.0.5.macos.arm64'")
-    ;
+      ..writeAsStringSync("flutter-version: '3.0.5.macos.arm64'");
 
     createPlatformModule(
       pathToRoot: root.path,
@@ -294,12 +294,13 @@ void main() {
       """
      import dev.buijs.klutter.gradle.dsl.embedded
      import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
+     import dev.buijs.klutter.gradle.tasks.*
     
      plugins {
           id("com.android.library")
           id("dev.buijs.klutter")
           kotlin("multiplatform")
-          kotlin("plugin.serialization") version "1.6.10"
+          kotlin("plugin.serialization") version "1.9.0"
       }
       
       version = "1.0"
@@ -317,7 +318,7 @@ void main() {
       kotlin {
   
           jvmToolchain(17)
-          android()
+          androidTarget()
       
           val xcfName = "Platform"
           val xcFramework = XCFramework(xcfName)
@@ -326,7 +327,7 @@ void main() {
              binaries.framework { 
                   baseName = xcfName         
                   xcFramework.add(this)
-                  export("dev.buijs.klutter:flutter-engine:2023.1.1.beta")
+                  export("dev.buijs.klutter:flutter-engine:2024.1.1.beta")
               }
           }
       
@@ -334,7 +335,7 @@ void main() {
               binaries.framework {
                   baseName = xcfName
                   xcFramework.add(this)
-                  export("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2023.1.1.beta")
+                  export("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2024.1.1.beta")
               }
           }    
       
@@ -342,8 +343,9 @@ void main() {
       
               val commonMain by getting {
                   dependencies {
-                      implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                      implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+                      implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.6.3")
+                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
                   }
               }
       
@@ -353,18 +355,18 @@ void main() {
                       implementation(kotlin("test-annotations-common"))
                       implementation(kotlin("test-junit"))
                       implementation("junit:junit:4.13.2")
-                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
                   }
               }
       
               val androidMain by getting {
                   dependencies {
-                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
-                      embedded("dev.buijs.klutter:flutter-engine-kmp-android:2023.1.1.beta")
+                      implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+                      embedded("dev.buijs.klutter:flutter-engine-kmp-android:2024.1.1.beta")
                   }
               }
       
-              val androidTest by getting {
+              val androidUnitTest by getting {
                   dependencies {
                       implementation(kotlin("test-junit"))
                       implementation("junit:junit:4.13.2")
@@ -373,14 +375,14 @@ void main() {
       
               val iosMain by getting {
                   dependencies {
-                      api("dev.buijs.klutter:flutter-engine:2023.1.1.beta")
+                      api("dev.buijs.klutter:flutter-engine:2024.1.1.beta")
                   }
               }
               
               val iosSimulatorArm64Main by getting {
                   dependsOn(iosMain)
                   dependencies {
-                    api("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2023.1.1.beta")
+                    api("dev.buijs.klutter:flutter-engine-iosSimulatorArm64:2024.1.1.beta")
                   }
               }
       
@@ -394,24 +396,42 @@ void main() {
       android {
           namespace = "com.organisation.nigulp.platform"
           sourceSets["main"].kotlin { srcDirs("src/androidMain/kotlin") }
+          
           compileOptions {
               sourceCompatibility = JavaVersion.VERSION_17
               targetCompatibility = JavaVersion.VERSION_17
           }
+          
           defaultConfig {
               compileSdk = 33
               minSdk = 24
           }
+          
+          publishing {
+             singleVariant("release") {
+                  withSourcesJar()
+                  withJavadocJar()
+              }
+      
+              singleVariant("debug") {
+                  withSourcesJar()
+                  withJavadocJar()
+              }
+          }
       }
       
-      tasks.build.get()
-        .setFinalizedBy(listOf(
-            tasks.getByName("assemblePlatformReleaseXCFramework"),
-            tasks.getByName("klutterCopyAarFile")))
+      val gradleBuildInstanceClassLoader: ClassLoader = this::class.java.classLoader
+      tasks.register<GenerateProtoSchemasGradleTask>(GenerateProtoSchemasGradleTask.taskName) {
+          classLoader = gradleBuildInstanceClassLoader
+      }
     
-      tasks.getByName("assemblePlatformReleaseXCFramework")
-          .setFinalizedBy(listOf(tasks.getByName("klutterCopyFramework")))
-      """.replaceAll(" ", ""),
+      tasks.configureEach {
+          if (name.startsWith("compile")) {
+              mustRunAfter(tasks.named("kspCommonMainKotlinMetadata"))
+          }
+     }
+      """
+          .replaceAll(" ", ""),
       platformBuildGradle.readAsStringSync().replaceAll(" ", ""),
     );
 

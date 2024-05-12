@@ -1,0 +1,3 @@
+bom-version: '2024.1.1.beta'
+flutter-version: '3.10.6'
+feature-protobuf-enabled: false

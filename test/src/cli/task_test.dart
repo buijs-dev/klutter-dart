@@ -18,28 +18,65 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import "dart:io";
+
 import "package:klutter/klutter.dart";
+import "package:klutter/src/cli/context.dart";
 import "package:test/test.dart";
 
 void main() {
   test("When a task fails with a KlutterException, it is caught", () async {
-    final result = await _ExplodingTask().execute("");
+    final result =
+        await _ExplodingTask().execute(Context(Directory.systemTemp, {}));
     expect(result.isOk, false);
     expect(result.message, "BOOM!");
+  });
+
+  test("An exception is thrown when an option value is invalid", () async {
+    final result =
+        await _InvalidTask().execute(Context(Directory.systemTemp, {}));
+    expect(result.isOk, false);
+    expect(result.message, "unsupported value: Instance of \'FakeInput\'");
+  });
+
+  test("An exception is thrown when unsupported options are present", () async {
+    final result = await CreateProject().execute(
+        Context(Directory.systemTemp, {TaskOption.overwrite: "false"}));
+    expect(result.isOk, false);
+    expect(result.message,
+        "unable to run task create because: [option not supported for task create: overwrite]");
+  });
+
+  test("Verify toTaskOptionOrNull for valid options", () async {
+    TaskOption.values.forEach((value) {
+      expect(value.name.toTaskOptionOrNull, value, reason: "roundtrip $value");
+    });
   });
 }
 
 class _ExplodingTask extends Task {
-  _ExplodingTask() : super(ScriptName.producer, TaskName.add);
+  _ExplodingTask() : super(TaskName.add, {});
 
   @override
-  List<Task> dependsOn() => const [];
-
-  @override
-  Future<void> toBeExecuted(String pathToRoot) {
-    throw KlutterException("BOOM!");
+  Future<void> toBeExecuted(Context context, Map<TaskOption, dynamic> options) {
+    throw const KlutterException("BOOM!");
   }
+}
+
+class _InvalidTask extends Task {
+  _InvalidTask() : super(TaskName.add, {TaskOption.group: FakeInput()});
 
   @override
-  List<String> exampleCommands() => [];
+  Future<String> toBeExecuted(
+      Context context, Map<TaskOption, dynamic> options) {
+    return Future.value("");
+  }
+}
+
+class FakeInput extends Input<String> {
+  @override
+  String convertOrThrow(String value) => "bar";
+
+  @override
+  String get description => "foo";
 }

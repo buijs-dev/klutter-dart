@@ -15,7 +15,7 @@ roughly does two things:
 
 Gradle needs to be installed to be able to do all this.
 Even though Flutter installs gradle wrapper in the android folder, 
-Klutter adds it's own wrapper files to producer project.
+Klutter adds its own wrapper files to producer project.
 
 This is done to make sure all Gradle versions within the Klutter project
 are aligned and to make the Gradle distributions between consumer

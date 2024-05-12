@@ -18,13 +18,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "package:klutter/src/cli/cli.dart";
+import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 void main() {
-  test("ConsumerAdd fails when option is not set", () async {
-    final result = await ConsumerAdd().execute("");
-    expect(result.isOk, false);
-    expect(result.message, "Name of Flutter plugin to add not specified. Example: klutter consumer add lib=foo_example");
+  test("Verify argument help returns help text", () async {
+    final output = await run(["help"]);
+    expect(output.contains("Usage: kradlew <command> [option=value]"), true,
+        reason: output);
+  });
+
+  test("Verify invalid task is handled", () async {
+    final output = await run(["blabla"]);
+    expect(output.contains("received unknown task name"), true, reason: output);
+  });
+
+  test("Verify invalid arguments are handled", () async {
+    final output = await run(["gradle", "blabla"]);
+    expect(output.contains("received invalid task options: [blabla]"), true,
+        reason: output);
   });
 }

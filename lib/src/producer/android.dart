@@ -282,7 +282,7 @@ class _Configuration {
         |}
         |
         |dependencies {
-        |    runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+        |    runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
         |    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         |    implementation project(":klutter:${packageName.substring(1 + packageName.lastIndexOf("."))}")
         |}
@@ -305,7 +305,7 @@ extension on File {
     writeAsStringSync("""
 distributionBase=GRADLE_USER_HOME
     |distributionPath=wrapper/dists
-    |distributionUrl=https\://services.gradle.org/distributions/gradle-8.0-bin.zip
+    |distributionUrl=https://services.gradle.org/distributions/gradle-8.0-bin.zip
     |zipStoreBase=GRADLE_USER_HOME
     |zipStorePath=wrapper/dists
         """

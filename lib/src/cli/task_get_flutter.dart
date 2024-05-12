@@ -18,97 +18,134 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// ignore_for_file: avoid_print
+
 import "dart:ffi";
 import "dart:io";
 
+import "package:meta/meta.dart";
+
 import "../common/common.dart";
-import "../producer/kradle.dart";
 import "cli.dart";
+import "context.dart";
 
 /// Task to download a Flutter SDK to Klutter cache.
 ///
 /// {@category consumer}
 /// {@category producer}
-class GetFlutterSDK extends Task {
+/// {@category tasks}
+class GetFlutterSDK extends Task<Directory> {
   /// Create new Task.
-  GetFlutterSDK() : super(ScriptName.producer, TaskName.get);
-
+  GetFlutterSDK()
+      : super(TaskName.get, {
+          TaskOption.flutter: FlutterVersionOption(),
+          TaskOption.overwrite: OverwriteOption(),
+          TaskOption.dryRun: DryRunOption(),
+          TaskOption.root: RootDirectoryInput(),
+        });
   @override
-  Future<void> toBeExecuted(String pathToRoot) async {
-    final flutterVersion = options[ScriptOption.flutter]?.verifyFlutterVersion;
-
-    if (flutterVersion == null) {
-      throw KlutterException(
-          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $flutterVersion");
-    }
-
-    OperatingSystem? platform;
-
-    if (flutterVersion.os != null) {
-      platform = flutterVersion.os;
-    } else if (Platform.isWindows) {
-      platform = OperatingSystem.windows;
-    } else if (Platform.isMacOS) {
-      platform = OperatingSystem.macos;
-    } else if (Platform.isLinux) {
-      platform = OperatingSystem.linux;
-    }
-
-    if (platform == null) {
-      throw KlutterException(
-          "Current OS is not supported (supported: macos, windows or linux): ${Platform.operatingSystem}");
-    }
-
-    final cache = defaultKradleCacheFolder..maybeCreate;
-    final arch = flutterVersion.arch ??
-        (Abi.current().toString().contains("arm")
-            ? Architecture.arm64
-            : Architecture.x64);
-    final prettyPrintedSdk =
-        "${flutterVersion.version}.${platform.name}.${arch.name}".toLowerCase();
-    final cachedSDK = cache.resolveFolder(prettyPrintedSdk);
-
-    if (!cachedSDK.resolveFolder("flutter").existsSync()) {
-      cachedSDK.createSync();
-      final dist = _FlutterDistribution(
-          version: flutterVersion.version, os: platform, arch: arch);
-      final url = _compatibleFlutterVersions[dist];
-
-      if (url == null) {
-        throw KlutterException(
-            "Failed to determine download URL for Flutter SDK: $flutterVersion $platform $arch");
-      }
-
-      final skip = Platform.environment["GET_FLUTTER_SDK_SKIP"] != null ||
-          options[ScriptOption.dryRun] == "true";
-
-      if (skip) {
-        return;
-      }
-
-      final zip = cachedSDK.resolveFile("flutter.zip")
-        ..maybeDelete
-        ..createSync();
-
-      await download(url, zip);
-      if (zip.existsSync()) {
-        await unzip(zip, cachedSDK);
-        zip.deleteSync();
+  Future<Directory> toBeExecuted(
+      Context context, Map<TaskOption, dynamic> options) async {
+    final pathToRoot = findPathToRoot(context, options);
+    final flutterVersion =
+        options[TaskOption.flutter] as VerifiedFlutterVersion;
+    final overwrite = options[TaskOption.overwrite] as bool;
+    final dist = toFlutterDistributionOrThrow(
+        version: flutterVersion, pathToRoot: pathToRoot);
+    final cache = Directory(pathToRoot.normalize).kradleCache..maybeCreate;
+    final target = cache.resolveDirectory("${dist.folderNameString}");
+    if (requiresDownload(target, overwrite)) {
+      final endpoint = downloadEndpointOrThrow(dist);
+      if (!skipDownload(options[TaskOption.dryRun])) {
+        final zip = target.resolveFile("flutter.zip")
+          ..maybeDelete
+          ..createSync(recursive: true);
+        await downloadOrThrow(endpoint, zip, target);
+        return target..verifyDirectoryExists;
       }
     }
-
-    if (!cachedSDK.existsSync()) {
-      throw KlutterException("Failed to download Flutter SDK");
-    }
+    return target;
   }
 
-  @override
-  List<String> exampleCommands() => [
-        "producer get flutter=<version> (one of versions: $supportedFlutterVersions)",
-      ];
+  /// Skip downloading the flutter sdk if true.
+  ///
+  /// Is true when:
+  /// - environment contains property GET_FLUTTER_SDK_SKIP
+  /// - context [Context] contains [TaskOption.dryRun] with value true
+  ///
+  /// Defaults to false and will download flutter sdk.
+  bool skipDownload(dynamic dryRun) =>
+      platform.environment["GET_FLUTTER_SDK_SKIP"] != null || dryRun == true;
+
+  /// Downloading the sdk is not required when the sdk
+  /// already exists and [TaskOption.overwrite] is false.
+  bool requiresDownload(Directory directory, bool overwrite) =>
+      !directory.existsSync() || overwrite;
+
+  /// Download the flutter sdk or throw [KlutterException] on failure.
+  Future<void> downloadOrThrow(
+      String endpoint, File zip, Directory target) async {
+    print("flutter download started: $endpoint");
+    await download(endpoint, zip);
+    if (zip.existsSync()) {
+      await unzip(zip, target..maybeCreate);
+      zip.deleteSync();
+    }
+
+    if (!target.existsSync()) {
+      throw const KlutterException("Failed to download Flutter SDK");
+    }
+
+    target.listSync(recursive: true).forEach((element) {
+      if (element is File) {
+        Process.runSync(
+            "chmod", runInShell: true, ["755", element.absolutePath]);
+      }
+    });
+
+    print("flutter download finished: ${target.absolutePath}");
+  }
+
+  /// Get url to the flutter distribution or throw [KlutterException].
+  String downloadEndpointOrThrow(FlutterDistribution dist) =>
+      _compatibleFlutterVersions[dist] ??
+      (throw KlutterException(
+          "Failed to determine download URL for Flutter SDK: ${dist.prettyPrintedString}"));
 }
 
-Map<_FlutterDistribution, String> get _compatibleFlutterVersions {
+/// Find applicable [FlutterDistribution] for the current
+/// [OperatingSystem] and [Architecture] or throw [KlutterException].
+/// {@category tasks}
+FlutterDistribution toFlutterDistributionOrThrow(
+    {required VerifiedFlutterVersion version,
+    required String pathToRoot,
+    PlatformWrapper? platformWrapper}) {
+  final p = platformWrapper ?? platform;
+  OperatingSystem? os;
+
+  if (version.os != null) {
+    os = version.os;
+  } else if (p.isWindows) {
+    os = OperatingSystem.windows;
+  } else if (p.isMacos) {
+    os = OperatingSystem.macos;
+  } else if (p.isLinux) {
+    os = OperatingSystem.linux;
+  } else {
+    throw KlutterException(
+        "Current OS is not supported (supported: macos, windows or linux): ${Platform.operatingSystem}");
+  }
+
+  final arch = version.arch ??
+      (Abi.current().toString().contains("arm")
+          ? Architecture.arm64
+          : Architecture.x64);
+
+  return FlutterDistribution(version: version.version, os: os!, arch: arch);
+}
+
+/// {@category tasks}
+Map<FlutterDistribution, String> get _compatibleFlutterVersions {
   final dist = [
     _windows(
         "https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.0.5-stable.zip",
@@ -160,7 +197,8 @@ Map<_FlutterDistribution, String> get _compatibleFlutterVersions {
         "3.10.6"),
   ];
 
-  final versions = <_FlutterDistribution, String>{};
+  final versions = <FlutterDistribution, String>{};
+
   for (final entry in dist) {
     versions[entry.key] = entry.value;
   }
@@ -168,18 +206,46 @@ Map<_FlutterDistribution, String> get _compatibleFlutterVersions {
   return versions;
 }
 
-class _FlutterDistribution {
-  const _FlutterDistribution({
+/// A flutter distribution which is compatible with klutter.
+/// {@category tasks}
+@immutable
+class FlutterDistribution {
+  /// Create a new [FlutterDistribution] instance.
+  const FlutterDistribution({
     required this.version,
     required this.os,
     required this.arch,
   });
-  final String version;
+
+  /// The version in format major.minor.patch.
+  final Version version;
+
+  /// The operating system.
   final OperatingSystem os;
+
+  /// The architecture.
   final Architecture arch;
 
+  @override
+  String toString() => "FlutterDistribution $prettyPrintedString";
+
+  /// Generate a unique display name for this Flutter configuration.
+  ///
+  /// Example: "3.0.5 (MACOS ARM64)".
+  PrettyPrintedFlutterDistribution get prettyPrintedString =>
+      PrettyPrintedFlutterDistribution(
+          "${version.prettyPrint} (${os.name} ${arch.name})");
+
+  /// Generate a unique folder name for this Flutter configuration.
+  ///
+  /// Example: "3.0.5.macos.arm64".
+  FlutterDistributionFolderName get folderNameString =>
+      FlutterDistributionFolderName(
+          "${version.prettyPrint}.${os.name}.${arch.name}");
+
+  @override
   bool operator ==(Object other) {
-    if (other is! _FlutterDistribution) {
+    if (other is! FlutterDistribution) {
       return false;
     }
 
@@ -200,6 +266,44 @@ class _FlutterDistribution {
 
   @override
   int get hashCode => version.hashCode + os.index + arch.index;
+}
+
+///The full Flutter distribution version in format major.minor.patch (platform architecture).
+///
+/// Example: 3.0.5 MACOS (ARM64).
+/// {@category tasks}
+@immutable
+class PrettyPrintedFlutterDistribution {
+  /// Create a new [PrettyPrintedFlutterDistribution] instance.
+  const PrettyPrintedFlutterDistribution(this.source);
+
+  /// The formatted string representation for a specific distribution.
+  ///
+  /// Example: 3.0.5 MACOS (ARM64).
+  final String source;
+
+  @override
+  String toString() => source;
+}
+
+/// The full Flutter distribution version in format major.minor.patch.platform.architecture.
+///
+/// Example: 3.0.5.windows.x64.
+/// {@category tasks}
+@immutable
+class FlutterDistributionFolderName {
+  /// Create a new [FlutterDistributionFolderName] instance.
+  const FlutterDistributionFolderName(this.source);
+
+  /// The formatted string representation for a specific distribution.
+  ///
+  /// To be used as folder name.
+  ///
+  /// Example: 3.0.5 MACOS (ARM64).
+  final String source;
+
+  @override
+  String toString() => source;
 }
 
 /// The operating system compatible with Klutter.
@@ -223,35 +327,35 @@ enum Architecture {
   arm64,
 }
 
-MapEntry<_FlutterDistribution, String> _windows(String path, String version) =>
+MapEntry<FlutterDistribution, String> _windows(String path, String version) =>
     MapEntry(
-        _FlutterDistribution(
+        FlutterDistribution(
             os: OperatingSystem.windows,
             arch: Architecture.x64,
-            version: version),
+            version: Version.fromString(version)),
         path);
 
-MapEntry<_FlutterDistribution, String> _linux(String path, String version) =>
+MapEntry<FlutterDistribution, String> _linux(String path, String version) =>
     MapEntry(
-        _FlutterDistribution(
+        FlutterDistribution(
             os: OperatingSystem.linux,
             arch: Architecture.x64,
-            version: version),
+            version: Version.fromString(version)),
         path);
 
-MapEntry<_FlutterDistribution, String> _macosX64(String path, String version) =>
+MapEntry<FlutterDistribution, String> _macosX64(String path, String version) =>
     MapEntry(
-        _FlutterDistribution(
+        FlutterDistribution(
             os: OperatingSystem.macos,
             arch: Architecture.x64,
-            version: version),
+            version: Version.fromString(version)),
         path);
 
-MapEntry<_FlutterDistribution, String> _macosArm64(
+MapEntry<FlutterDistribution, String> _macosArm64(
         String path, String version) =>
     MapEntry(
-        _FlutterDistribution(
+        FlutterDistribution(
             os: OperatingSystem.macos,
             arch: Architecture.arm64,
-            version: version),
+            version: Version.fromString(version)),
         path);

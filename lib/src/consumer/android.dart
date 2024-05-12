@@ -250,7 +250,7 @@ buildscript {
 |
 |    dependencies {
 |        classpath 'com.android.tools.build:gradle:8.0.2'
-|        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
+|        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10"
 |    }
 |}
 |
@@ -350,7 +350,7 @@ def localProperties = new Properties()
 |}
 |
 |dependencies {
-|    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.20"
+|    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.10"
 |}
 |
 |kotlin {

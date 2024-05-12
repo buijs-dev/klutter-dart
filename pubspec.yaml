@@ -1,16 +1,24 @@
 name: klutter
 description: Write Flutter plugins for both Android and iOS using Kotlin only.
-version: 2.0.0
+version: 3.0.0
 homepage: https://buijs.dev
 repository: https://github.com/buijs-dev/klutter-dart
+
+executables:
+  kradle:
 
 environment:
   sdk: ">=2.17.6 <4.0.0"
 
 dependencies:
   dart_style: ^2.2.4 # can be bumped when min SDK is 2.19.0
+  interact: ^2.2.0
+  meta: ^1.9.1
 
 dev_dependencies:
+  build_runner: ^2.4.0
+  build_web_compilers: ^4.0.4
   coverage: ^1.6.4
   dartdoc: ^6.1.0 # can be bumped when min SDK is 2.19.0
+  pana: ^0.22.2
   test: ^1.24.1

@@ -20,8 +20,7 @@
 
 import "dart:io";
 
-import "exception.dart";
-import "utilities.dart";
+import "common.dart";
 
 /// Create and/or append the .klutter-plugins file to register a Klutter plugin.
 ///
@@ -92,7 +91,7 @@ String toPluginClassName(String pluginName, {bool postfixWithPlugin = false}) {
       .map((e) => "${e[0].toUpperCase()}${e.substring(1, e.length)}")
       .join();
 
-  return postfixWithPlugin ? className.postfixedWithPlugin : className;
+  return postfixWithPlugin ? className.suffixedWithPlugin : className;
 }
 
 /// Get the relative path of a plugin dependency.
@@ -255,4 +254,188 @@ extension on File {
                 ))[1]
         .trim();
   }
+}
+
+/// Property used in kradle.env to retrieve the user home directory.
+const kradleEnvPropertyUserHome = "{{system.user.home}}";
+
+/// Helper methods to find configuration files used by kradle.
+extension ProjectFile on Directory {
+  /// Find the cache folder.
+  ///
+  /// Get cache property from [kradleEnv] file or default to {{system.user.home}}/.kradle/cache (see [kradleEnvPropertyUserHome]).
+  Directory get kradleCache {
+    final envFile = kradleEnv;
+
+    if (!envFile.existsSync()) {
+      return defaultKradleCache;
+    }
+
+    final cacheProperty = envFile.findCacheProperty;
+
+    return cacheProperty == null
+        ? envFile.defaultKradleCache
+        : envFile.configuredKradleCache(cacheProperty);
+  }
+
+  /// File kradle.env which contains user-specific klutter project data.
+  File get kradleEnv => resolveFile("kradle.env");
+}
+
+/// Error message indicating the user home directory could not be determined
+/// by [_userHomeOrError] and no kradle.env file is found.
+String _defaultKradleCacheErrorMessage(String pathToRoot, String envError) =>
+    "Unable to determine kradle cache directory, because "
+    "$envError and there is no kradle.env in $pathToRoot. "
+    "Fix this issue by creating a kradle.env file in "
+    "$pathToRoot with property 'cache=/path/to/your/cache/folder'";
+
+/// Error message indicating the user home directory could not be determined
+/// by [_userHomeOrError] and the kradle.env file does not have the cache property.
+String _defaultKradleCacheBecauseCachePropertyNotFoundErrorMessage(
+        String pathToRoot, String envError) =>
+    "Unable to determine kradle cache directory, because "
+    "property 'cache' is not found in $pathToRoot and $envError. "
+    "Fix this issue by adding property "
+    "'cache=/path/to/your/cache/folder' to $pathToRoot";
+
+/// Error message indicating the user home directory could not be determined
+/// by [_userHomeOrError] and the kradle.env has a cache property which points
+/// to the user home directory.
+String _configuredKradleHomeErrorMessage(String pathToRoot, String envError) =>
+    "Unable to determine kradle cache directory, because "
+    "property 'cache' in $pathToRoot "
+    "contains system.user.home variable "
+    "and $envError. Fix this issue by "
+    "replacing $kradleEnvPropertyUserHome variable with "
+    "an absolute path in $pathToRoot";
+
+extension on Directory {
+  /// Get the default kradle home directory
+  /// which is the user home [_userHomeOrError]
+  /// directory resolved by .kradle.
+  ///
+  /// Throws [KlutterException] if the directory
+  /// is not resolved or does not exist.
+  Directory get defaultKradleCache {
+    final userHome = _userHomeOrError;
+
+    final kradleHome = _kradleCacheFromEnvironmentPropertyOrNull(
+      userHome.userHome,
+    );
+
+    final errorMessage = _defaultKradleCacheErrorMessage(
+      absolutePath,
+      userHome.error,
+    );
+
+    return _kradleCacheDirectory(
+        kradleHome, () => throw KlutterException(errorMessage));
+  }
+}
+
+extension on File {
+  /// Get the default kradle home directory
+  /// which is the user home [_userHomeOrError]
+  /// directory resolved by .kradle, because
+  /// the kradle.env file does not contain a
+  /// cache property.
+  ///
+  /// Throws [KlutterException] if the directory
+  /// is not resolved or does not exist.
+  Directory get defaultKradleCache {
+    final userHome = _userHomeOrError;
+    return _kradleCacheDirectory(
+        _kradleCacheFromEnvironmentPropertyOrNull(userHome.userHome), () {
+      throw KlutterException(
+          _defaultKradleCacheBecauseCachePropertyNotFoundErrorMessage(
+              absolutePath, userHome.error));
+    });
+  }
+
+  /// Get the kradle home directory from the kradle.env
+  /// file and resolve {{user.home}} variable with [_userHomeOrError].
+  ///
+  ///
+  /// Throws [KlutterException] if the directory
+  /// is not resolved or does not exist.
+  Directory configuredKradleCache(String cacheProperty) {
+    if (cacheProperty.contains(kradleEnvPropertyUserHome)) {
+      final userHome = _userHomeOrError;
+      final cachePropertyResolved = userHome.userHome != null
+          ? cacheProperty.replaceAll(
+              kradleEnvPropertyUserHome, userHome.userHome!)
+          : null;
+
+      return _kradleCacheDirectory(
+        cachePropertyResolved,
+        () => throw KlutterException(
+          _configuredKradleHomeErrorMessage(
+            absolutePath,
+            userHome.error,
+          ),
+        ),
+      );
+    }
+
+    return _kradleCacheDirectory(cacheProperty, () {});
+  }
+
+  /// Return value of property cache or null.
+  String? get findCacheProperty {
+    final properties =
+        readAsLinesSync().where(_startsWithCache).map(_extractPropertyValue);
+    return properties.isEmpty ? null : properties.first;
+  }
+}
+
+bool _startsWithCache(String test) => test.startsWith("cache=");
+
+String _extractPropertyValue(String line) =>
+    line.substring(line.indexOf("=") + 1, line.length).trim();
+
+String? _kradleCacheFromEnvironmentPropertyOrNull(String? userHomeOrNull) =>
+    userHomeOrNull == null ? null : "$userHomeOrNull/.kradle/cache".normalize;
+
+/// Returns the kradle cache directory and creates it if it does not exist.
+Directory _kradleCacheDirectory(
+  String? pathToKradleCache,
+  void Function() onNullValue,
+) {
+  if (pathToKradleCache == null) {
+    onNullValue();
+  }
+
+  return Directory(pathToKradleCache!.normalize).normalizeToDirectory
+    ..maybeCreate;
+}
+
+/// Determine the user home directory by checking environment variables.
+///
+/// For linux and macos the value of 'HOME' is returned.
+/// For windows the value of 'USERPROFILE' is returned.
+/// Will return an error message if
+/// the operating systems is unsupported
+/// or if the mentioned variables are not set.
+_UserHomeResult get _userHomeOrError {
+  switch (platform.operatingSystem) {
+    case "linux":
+    case "macos":
+      return _UserHomeResult(platform.environment["HOME"],
+          "environment variable 'HOME' is not defined");
+    case "windows":
+      return _UserHomeResult(platform.environment["USERPROFILE"],
+          "environment variable 'USERPROFILE' is not defined");
+    default:
+      return _UserHomeResult(null,
+          "method 'userHome' is not supported on ${platform.operatingSystem}");
+  }
+}
+
+class _UserHomeResult {
+  const _UserHomeResult(this.userHome, this.error);
+
+  final String? userHome;
+
+  final String error;
 }

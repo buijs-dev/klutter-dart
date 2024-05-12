@@ -26,14 +26,28 @@ import "package:test/test.dart";
 void main() {
   test("Verify verifyExists throws exception if File does not exist", () {
     expect(
-        () => File("BLABLA").verifyExists,
+        () => File("BLABLA").verifyFileExists,
+        throwsA(predicate((e) =>
+            e is KlutterException &&
+            e.cause.startsWith("Path does not exist"))));
+  });
+
+  test(
+      "Verify verifyDirectoryExists throws exception if Directory does not exist",
+      () {
+    expect(
+        () => Directory("BLABLA").verifyDirectoryExists,
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist"))));
   });
 
   test("Verify _substitute correctly normalizes a path", () {
-    expect(File("foo/bar/res/../../pikachu").normalizeToFile.path.endsWith("foo${Platform.pathSeparator}pikachu"), true);
+    expect(
+        File("foo/bar/res/../../pikachu")
+            .normalizeToFile
+            .path
+            .endsWith("foo${Platform.pathSeparator}pikachu"),
+        true);
   });
-
 }

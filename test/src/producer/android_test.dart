@@ -34,7 +34,7 @@ void main() {
   test("Verify exception is thrown if root/android does not exist", () {
     expect(
         () => writeBuildGradleFile(
-          pluginName: pluginName,
+            pluginName: pluginName,
             pluginVersion: pluginVersion,
             packageName: packageName,
             klutterBomVersion: "2023.3.1",
@@ -56,11 +56,11 @@ void main() {
 
     expect(
         () => writeBuildGradleFile(
-          pluginName: pluginName,
+              pluginName: pluginName,
               pluginVersion: pluginVersion,
               packageName: packageName,
               pathToAndroid: android.path,
-          klutterBomVersion: "2023.3.1",
+              klutterBomVersion: "2023.3.1",
             ),
         throwsA(predicate((e) =>
             e is KlutterException &&
@@ -86,7 +86,7 @@ void main() {
       pluginVersion: pluginVersion,
       packageName: packageName,
       pathToAndroid: android.path,
-      klutterBomVersion: "2023.3.1",
+      klutterBomVersion: "2024.1.1.beta",
     );
 
     expect(
@@ -109,10 +109,10 @@ void main() {
             }
         
             dependencies {
-                classpath platform("dev.buijs.klutter:bom:2023.3.1")
+                classpath platform("dev.buijs.klutter:bom:2024.1.1.beta")
                 classpath "dev.buijs.klutter:gradle"
                 classpath 'com.android.tools.build:gradle:8.0.2'
-                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20"
+                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10"
             }
         }
         
@@ -156,8 +156,8 @@ void main() {
         }
         
         dependencies {
-            runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
-            implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.20"
+            runtimeOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+            implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.10"
             implementation project(":klutter:example_plugin")
         }
         
@@ -176,10 +176,10 @@ void main() {
 
   test("Verify exception is thrown if root/android does not exist", () {
     expect(
-        () =>
-            writeAndroidPlugin(
-                pluginName: pluginName,
-                packageName: packageName, pathToAndroid: "fake"),
+        () => writeAndroidPlugin(
+            pluginName: pluginName,
+            packageName: packageName,
+            pathToAndroid: "fake"),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Path does not exist:") &&
@@ -190,10 +190,9 @@ void main() {
     final android = Directory("${Directory.systemTemp.path}${s}wag1")
       ..createSync(recursive: true);
     expect(
-            () =>
-                setGradleWrapperVersion(pathToAndroid: android.absolutePath),
+        () => setGradleWrapperVersion(pathToAndroid: android.absolutePath),
         throwsA(predicate((e) =>
-        e is KlutterException &&
+            e is KlutterException &&
             e.cause.contains("Missing gradle-wrapper.properties file in"))));
   });
 
@@ -209,13 +208,12 @@ void main() {
 
     expect(
         () => writeAndroidPlugin(
-          pluginName: pluginName,
+              pluginName: pluginName,
               packageName: packageName,
               pathToAndroid: android.path,
             ),
         throwsA(predicate((e) =>
-            e is KlutterException &&
-            e.cause.startsWith("Missing src"))));
+            e is KlutterException && e.cause.startsWith("Missing src"))));
 
     root.deleteSync(recursive: true);
   });
@@ -234,7 +232,7 @@ void main() {
 
     expect(
         () => writeAndroidPlugin(
-          pluginName: pluginName,
+              pluginName: pluginName,
               packageName: packageName,
               pathToAndroid: android.path,
             ),
@@ -258,7 +256,7 @@ void main() {
 
     expect(
         () => writeAndroidPlugin(
-          pluginName: pluginName,
+              pluginName: pluginName,
               packageName: packageName,
               pathToAndroid: android.path,
             ),

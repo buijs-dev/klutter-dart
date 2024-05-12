@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2024 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,34 +18,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "../common/project.dart";
-import "../common/utilities.dart";
-import "../consumer/android.dart";
-import "cli.dart";
+import "dart:io";
 
-/// Task to prepare a Flutter project for using Klutter plugins.
-///
-/// {@category consumer}
-class ConsumerInit extends Task {
-  /// Create new Task based of the root folder.
-  ConsumerInit() : super(ScriptName.consumer, TaskName.init);
+import "../common/common.dart";
 
-  @override
-  Future<void> toBeExecuted(String pathToRoot) async {
-    _executeInitAndroid(pathToRoot);
-  }
+/// Create a new flutter project.
+Future<Directory> createFlutterProjectOrThrow({
+  required Executor executor,
+  required String pathToFlutter,
+  required String pathToRoot,
+  required String name,
+  required String group,
+}) async {
+  executor
+    ..executable = pathToFlutter
+    ..workingDirectory = Directory(pathToRoot)
+    ..arguments = [
+      "create",
+      name,
+      "--org",
+      group,
+      "--template=plugin",
+      "--platforms=android,ios",
+    ]
+    ..run();
 
-  @override
-  List<String> exampleCommands() => ["consumer init"];
-}
-
-void _executeInitAndroid(String pathToRoot) {
-  final pathToAndroid = "$pathToRoot/android".normalize;
-  final sdk = findFlutterSDK(pathToAndroid);
-  final app = "$pathToAndroid/app".normalize;
-  writePluginLoaderGradleFile(sdk);
-  createRegistry(pathToRoot);
-  applyPluginLoader(pathToAndroid);
-  setAndroidSdkConstraints(app);
-  setKotlinVersionInBuildGradle(pathToAndroid);
+  return Directory(pathToRoot.normalize).resolveDirectory(name)
+    ..verifyDirectoryExists;
 }

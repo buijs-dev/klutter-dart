@@ -18,10 +18,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// ignore_for_file: avoid_print
+
 import "dart:io";
 
 import "../common/common.dart";
 import "../consumer/android.dart";
+import "../consumer/consumer.dart";
 import "../producer/android.dart";
 import "../producer/gradle.dart";
 import "../producer/ios.dart";
@@ -29,64 +32,134 @@ import "../producer/kradle.dart";
 import "../producer/platform.dart";
 import "../producer/project.dart";
 import "cli.dart";
-import "task_get_flutter.dart";
+import "context.dart";
 
-/// Task to run project initialization (setup).
+const _resourceZipUrl =
+    "https://github.com/buijs-dev/klutter-dart/raw/develop/resources.zip";
+
+const _resourceTarUrl =
+    "https://github.com/buijs-dev/klutter-dart/raw/develop/resources.tar.gz";
+
+/// Task to prepare a flutter project for using klutter plugins.
 ///
+/// {@category consumer}
 /// {@category producer}
-class ProducerInit extends Task {
+/// {@category tasks}
+class ProjectInit extends Task {
   /// Create new Task based of the root folder.
-  ProducerInit() : super(ScriptName.producer, TaskName.init);
+  ProjectInit()
+      : super(TaskName.init, {
+          TaskOption.bom: const KlutterGradleVersionOption(),
+          TaskOption.flutter: FlutterVersionOption(),
+          TaskOption.root: RootDirectoryInput(),
+        });
 
   @override
-  Future<void> toBeExecuted(String pathToRoot) async {
-    final validBomVersionOrNull = options[ScriptOption.bom]?.verifyBomVersion;
-
-    if (validBomVersionOrNull == null) {
-      throw KlutterException(
-          "Invalid BOM version (example of correct version: $klutterGradleVersion): $validBomVersionOrNull");
+  Future<void> toBeExecuted(
+      Context context, Map<TaskOption, dynamic> options) async {
+    final pathToRoot = findPathToRoot(context, options);
+    print("initializing klutter project: $pathToRoot");
+    bool isProducerProject;
+    try {
+      // will throw exception if unable to find
+      // the package name which means this is not
+      // a producer project.
+      findPackageName(pathToRoot);
+      isProducerProject = true;
+    } on KlutterException {
+      isProducerProject = false;
     }
 
-    final flutterVersion =
-        options[ScriptOption.flutter]?.verifyFlutterVersion?.version;
-
-    if (flutterVersion == null) {
-      throw KlutterException(
-          "Invalid Flutter version (supported versions are: $supportedFlutterVersions): $flutterVersion");
+    if (isProducerProject) {
+      print("initializing klutter project as producer");
+      final bom = options[TaskOption.bom];
+      final flutter = options[TaskOption.flutter] as VerifiedFlutterVersion;
+      await _producerInit(pathToRoot, bom, flutter);
+      _consumerInit("$pathToRoot/example".normalize);
+    } else {
+      print("initializing klutter project as consumer");
+      _consumerInit(pathToRoot);
     }
+  }
+}
 
-    final producer = _Producer(
-        pathToRoot: pathToRoot,
-        bomVersion: validBomVersionOrNull,
-        flutterVersion: flutterVersion);
-    await producer.addGradle;
-    await producer.addKradle;
-    producer
-      ..setupRoot
-      ..setupAndroid
-      ..setupIOS
-      ..setupPlatform
-      ..setupExample;
+void _consumerInit(String pathToRoot) {
+  final pathToAndroid = "$pathToRoot/android".normalize;
+  final sdk = findFlutterSDK(pathToAndroid);
+  final app = "$pathToAndroid/app".normalize;
+  writePluginLoaderGradleFile(sdk);
+  createRegistry(pathToRoot);
+  applyPluginLoader(pathToAndroid);
+  setAndroidSdkConstraints(app);
+  setKotlinVersionInBuildGradle(pathToAndroid);
+}
+
+Future<void> _producerInit(
+    String pathToRoot, String bom, VerifiedFlutterVersion flutter) async {
+  final resources = await _downloadResourcesZipOrThrow(pathToRoot);
+  final producer = _Producer(
+      resourcesDirectory: resources,
+      pathToRoot: pathToRoot,
+      bomVersion: bom,
+      flutterVersion: flutter.version.prettyPrint);
+  await producer.addGradle;
+  await producer.addKradle;
+  producer
+    ..setupRoot
+    ..setupAndroid
+    ..setupIOS
+    ..setupPlatform
+    ..setupExample;
+}
+
+/// Download [_resourceZipUrl] or [_resourceTarUrl]
+/// and return the unzipped directory.
+Future<Directory> _downloadResourcesZipOrThrow(String pathToRoot) async {
+  final cache = Directory(pathToRoot.normalize).kradleCache..maybeCreate;
+  final target = cache.resolveDirectory("init.resources");
+  final zip = target.resolveFile("resources.zip")
+    ..maybeDelete
+    ..createSync(recursive: true);
+  final endpoint = platform.isLinux ? _resourceTarUrl : _resourceZipUrl;
+  await downloadOrThrow(endpoint, zip, target);
+
+  if (!target.existsSync()) {
+    throw const KlutterException("Failed to download resources.zip");
   }
 
-  @override
-  List<String> exampleCommands() => [
-        "producer init",
-        "producer init bom=<version> (default is $klutterGradleVersion)",
-        "producer init flutter=<version> (default is $klutterFlutterVersion)",
-        "producer init flutter=<version> bom=<version>",
-      ];
+  if (target.isEmpty) {
+    throw const KlutterException(
+        "Failed to download resources (no content found)");
+  }
 
-  @override
-  List<Task> dependsOn() => [GetFlutterSDK()];
+  return platform.isLinux ? target.resolveDirectory("resources") : target;
+}
+
+/// Download the resources or throw [KlutterException] on failure.
+Future<void> downloadOrThrow(
+    String endpoint, File zip, Directory target) async {
+  print("resources download started: $endpoint");
+  await download(endpoint, zip);
+  if (zip.existsSync()) {
+    await unzip(zip, target..maybeCreate);
+    zip.deleteSync();
+  }
+
+  if (!target.existsSync()) {
+    throw const KlutterException("Failed to download resources");
+  }
+
+  print("resources download finished: ${target.absolutePath}");
 }
 
 class _Producer {
   _Producer(
-      {required this.bomVersion,
+      {required this.resourcesDirectory,
+      required this.bomVersion,
       required this.flutterVersion,
       required this.pathToRoot});
 
+  final Directory resourcesDirectory;
   final String bomVersion;
   final String flutterVersion;
   final String pathToRoot;
@@ -96,7 +169,7 @@ extension on _Producer {
   void get setupRoot {
     Directory("$pathToRoot/lib".normalize)
       // Delete folder and all children if they exist.
-      ..normalizeToFolder.maybeDelete
+      ..normalizeToDirectory.maybeDelete
       // Create a new empty lib folder.
       ..maybeCreate;
 
@@ -179,7 +252,7 @@ extension on _Producer {
   }
 
   Future<void> get addGradle async {
-    final gradle = Gradle(pathToRoot);
+    final gradle = Gradle(pathToRoot, resourcesDirectory);
     await Future.wait([
       gradle.copyToRoot,
       gradle.copyToAndroid,
@@ -187,6 +260,6 @@ extension on _Producer {
   }
 
   Future<void> get addKradle async {
-    await Future.wait([Kradle(pathToRoot).copyToRoot]);
+    await Future.wait([Kradle(pathToRoot, resourcesDirectory).copyToRoot]);
   }
 }

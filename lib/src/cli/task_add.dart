@@ -18,45 +18,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "../common/exception.dart";
 import "../common/project.dart";
 import "../common/utilities.dart";
 import "../consumer/android.dart";
-import "cli.dart";
+import "context.dart";
+import "option.dart";
+import "task.dart";
 
 /// Task to add a Klutter-made Flutter plugin to a Flutter project.
 ///
 /// {@category consumer}
-class ConsumerAdd extends Task {
+/// {@category tasks}
+class AddLibrary extends Task {
   /// Create new Task based of the root folder.
-  ConsumerAdd() : super(ScriptName.consumer, TaskName.add);
+  AddLibrary()
+      : super(TaskName.add, {
+          TaskOption.lib: const LibraryName(),
+          TaskOption.root: RootDirectoryInput(),
+        });
 
   @override
-  Future<void> toBeExecuted(String pathToRoot) async {
-    if (!options.containsKey(ScriptOption.lib)) {
-      throw KlutterException(
-        "Name of Flutter plugin to add not specified. Example: klutter consumer add lib=foo_example",
-      );
-    }
-
+  Future<void> toBeExecuted(
+      Context context, Map<TaskOption, dynamic> options) async {
+    final pathToRoot = findPathToRoot(context, options);
+    final pluginName = options[TaskOption.lib];
     final location = findDependencyPath(
       pathToRoot: pathToRoot,
-      pluginName: options[ScriptOption.lib]!,
-      pathToSDK: findFlutterSDK(
-        "$pathToRoot/android".normalize,
-      ),
+      pluginName: pluginName,
+      pathToSDK: findFlutterSDK("$pathToRoot/android".normalize),
     );
 
+    // ignore: avoid_print
+    print("adding klutter library: $pluginName");
     registerPlugin(
       pathToRoot: pathToRoot,
-      pluginName: ":klutter:${options[ScriptOption.lib]}",
+      pluginName: ":klutter:$pluginName",
       pluginLocation: location,
     );
   }
-
-  @override
-  List<Task> dependsOn() => [ConsumerInit()];
-
-  @override
-  List<String> exampleCommands() => ["consumer add lib=foo_example"];
 }

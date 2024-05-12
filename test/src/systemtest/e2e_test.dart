@@ -22,8 +22,7 @@
 
 import "dart:io";
 
-import "package:klutter/src/cli/cli.dart" as sut;
-import "package:klutter/src/common/common.dart";
+import "package:klutter/klutter.dart";
 import "package:test/test.dart";
 
 const organisation = "dev.buijs.integrationtest.example";
@@ -35,6 +34,7 @@ const appName = "my_flutter_app";
 void main() {
   final pathToRoot = Directory(
       "${Directory.systemTemp.absolute.path}/createklutterpluginit".normalize)
+    ..maybeDelete
     ..createSync();
 
   final producerPlugin =
@@ -45,12 +45,14 @@ void main() {
 
   try {
     test("end-to-end test", () async {
+      final help = await run([
+        "create",
+        "root=${Directory.systemTemp.absolutePath}",
+      ], FakeTaskService());
+      expect(help.contains("Usage: kradlew <command> [option=value]"), true);
+
       /// Run a Klutter task without an existing Flutter project
-      final result = await sut.execute(
-        pathToRoot: producerPlugin.absolutePath,
-        script: sut.ScriptName.consumer,
-        arguments: ["add", "lib=foo"],
-      );
+      final result = await run(["add", "lib=foo"]);
 
       expect(
         result.contains("finished unsuccessfully"),
@@ -58,34 +60,47 @@ void main() {
         reason: "can't run a task without a project",
       );
 
+      final downloadFlutterResult = await run(["get", "flutter=3.10.6"]);
+      expect(
+          downloadFlutterResult
+              .contains("Task 'get flutter=3.10.6' finished successful"),
+          true,
+          reason: downloadFlutterResult);
+
+      final temp = Directory.systemTemp.resolveDirectory("foo")
+        ..maybeDelete
+        ..maybeCreate;
+      final cache = temp.kradleCache;
+      final cachedSdks =
+          cache.listSync().where((fte) => fte.path.contains("3.10.6")).toList();
+
+      expect(cachedSdks.isNotEmpty, true,
+          reason: "there should be a cached flutter SDK");
+      final cachedSdk = Directory(cachedSdks.first.absolutePath);
+      expect(cachedSdk.existsSync(), true,
+          reason: "the cached sdk should exist");
+      expect(cachedSdk.isEmpty, false,
+          reason: "the cached sdk should not be empty");
+
       /// Create Flutter plugin project.
-      await createFlutterPlugin(
+      final createResult = await createFlutterPlugin(
         organisation: organisation,
         pluginName: pluginName,
-        root: Directory(pathToRoot.absolutePath).normalizeToFolder.absolutePath,
+        root: Directory(pathToRoot.absolutePath)
+            .normalizeToDirectory
+            .absolutePath,
       );
 
+      expect(createResult.contains("finished successful"), true,
+          reason: createResult);
       expect(producerPlugin.existsSync(), true,
           reason:
               "Plugin should be created in: '${producerPlugin.absolute.path}'");
 
-      /// Add Klutter as dev_dependency.
-      await addKlutterAsDevDependency(
-        root: producerPlugin.absolutePath,
-      );
-
-      /// Setup Klutter as dev_dependency.
-      await sut.execute(
-        pathToRoot: producerPlugin.absolutePath,
-        script: sut.ScriptName.producer,
-        arguments: ["init"],
-      );
-
       /// Gradle files should be copied to root folder.
-      expect(
-          File("${producerPlugin.absolutePath}/gradlew".normalize).existsSync(),
-          true,
-          reason: "root/gradlew should exist");
+      final gradlew = File("${producerPlugin.absolutePath}/gradlew".normalize);
+      expect(gradlew.existsSync(), true,
+          reason: "${gradlew.absolutePath} should exist");
       expect(
           File("${producerPlugin.absolutePath}/gradlew.bat".normalize)
               .existsSync(),
@@ -173,39 +188,19 @@ void main() {
               "Plugin should be created in: '${producerPlugin.absolute.path}'");
 
       /// Example/lib/main.dart file should be created.
-      final mainDartFile =  File("${producerPlugin.absolutePath}/example/lib/main.dart"
-          .normalize);
-      expect(mainDartFile.existsSync(),
-          true,
+      final mainDartFile = File(
+          "${producerPlugin.absolutePath}/example/lib/main.dart".normalize);
+      expect(mainDartFile.existsSync(), true,
           reason: "example/lib/main.dart file should exist");
 
-      expect(mainDartFile
-          .readAsStringSync()
-          .contains('String _greeting = "There shall be no greeting for now!";'),
+      expect(
+          mainDartFile.readAsStringSync().contains(
+              'String _greeting = "There shall be no greeting for now!";'),
           true,
-      reason: "main.dart content is overwritten");
-
-      /// Add Klutter as dev_dependency.
-      await addKlutterAsDevDependency(
-        root: consumerPlugin.absolutePath,
-      );
-
-      /// Setup Klutter in consumer project.
-      await sut.execute(
-        pathToRoot: consumerPlugin.absolutePath,
-        script: sut.ScriptName.consumer,
-        arguments: ["init"],
-      );
-
-      /// Add plugin to consumer project.
-      await sut.execute(
-        pathToRoot: consumerPlugin.absolutePath,
-        script: sut.ScriptName.consumer,
-        arguments: ["add", "lib=$pluginName"],
-      );
+          reason: "main.dart content is overwritten");
 
       final registry =
-      File("${consumerPlugin.absolutePath}/.klutter-plugins".normalize);
+          File("${consumerPlugin.absolutePath}/.klutter-plugins".normalize);
 
       expect(registry.existsSync(), true,
           reason: "klutter-plugins file should be created");
@@ -215,9 +210,8 @@ void main() {
 
       expect(registryContainsPlugin, true,
           reason:
-              "add task should have added plugin name to the .klutter-plugins file");
+              "add task should have added plugin name to the .klutter-plugins file: ${registry.readAsStringSync()}");
     });
-
   } catch (e, s) {
     print(s);
   }
@@ -226,64 +220,22 @@ void main() {
 }
 
 /// Create Flutter plugin project.
-Future<void> createFlutterPlugin({
+Future<String> createFlutterPlugin({
   required String organisation,
   required String pluginName,
   required String root,
-}) async {
-  await Process.run(
-          "flutter",
-          [
-            "create",
-            "--org",
-            organisation,
-            "--template=plugin",
-            "--platforms=android,ios",
-            pluginName,
-          ],
-          runInShell: true,
-          workingDirectory: root)
-      .then((result) {
-    stdout.write(result.stdout);
-    stderr.write(result.stderr);
-  });
-}
+  String? config,
+}) async =>
+    run([
+      "create",
+      "root=$root",
+      "group=$organisation",
+      "name=$pluginName",
+      "flutter=3.10.6",
+      "klutter=local@${Directory.current.resolveDirectory("./../".normalize).absolutePath}"
+    ]);
 
-Future<void> addKlutterAsDevDependency({
-  required String root,
-}) async {
-  final pubspec = File("$root/pubspec.yaml".normalize);
-
-  if (!pubspec.existsSync()) {
-    throw KlutterException("Pubspec.yaml is not found!");
-  }
-
-  final lines = pubspec.readAsLinesSync();
-
-  pubspec
-    ..deleteSync()
-    ..createSync();
-
-  for (final line in lines) {
-    pubspec.writeAsStringSync("$line\n", mode: FileMode.append);
-
-    if (line.startsWith("dev_dependencies:")) {
-      pubspec
-        ..writeAsStringSync("  klutter:\n", mode: FileMode.append)
-        ..writeAsStringSync("    path: ${Directory.current.absolute.path}\n",
-            mode: FileMode.append);
-    }
-  }
-
-  await Process.run("flutter", ["pub", "get"],
-      runInShell: true, workingDirectory: root)
-      .then((result) {
-    stdout.write(result.stdout);
-    stderr.write(result.stderr);
-  });
-
-  File("$root/kradle.yaml".normalize)
-    ..maybeCreate
-    ..writeAsStringSync("flutter-version: '3.0.5.${Platform.isWindows ? "windows" : "macos"}.x64'")
-  ;
+class FakeTaskService extends TaskService {
+  @override
+  Task? toTask(TaskName taskName) => null;
 }

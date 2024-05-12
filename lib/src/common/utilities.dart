@@ -40,15 +40,25 @@ extension FileUtil on FileSystemEntity {
   /// Create an absolute path to the given file.
   ///
   /// If the path does not exist throw a [KlutterException].
-  File get verifyExists => File(absolutePath)
+  File get verifyFileExists => File(absolutePath)
     ..ifNotExists((file) {
       throw KlutterException("Path does not exist: ${file.absolute.path}");
+    });
+
+  /// Create an absolute path to the given folder.
+  ///
+  /// If the path does not exist throw a [KlutterException].
+  Directory get verifyDirectoryExists => Directory(absolutePath)
+    ..ifNotExists((dir) {
+      throw KlutterException("Path does not exist: ${dir.absolute.path}");
     });
 
   /// Check if the Directory exists and if not create it recursively.
   FileSystemEntity get maybeCreate {
     ifNotExists((fse) {
       if (fse is Directory) {
+        fse.createSync(recursive: true);
+      } else if (fse is File) {
         fse.createSync(recursive: true);
       }
     });
@@ -72,15 +82,15 @@ extension FileUtil on FileSystemEntity {
 
   /// Return absolute path of current File or Directory with all
   /// slashes ('/' or '\') replaced for the platform specific separator.
-  Directory get normalizeToFolder => Directory(_substitute);
+  Directory get normalizeToDirectory => Directory(_substitute);
 
   /// Return a normalized path of this folder to the given filename.
   File resolveFile(String filename) =>
       File("$absolutePath/$filename").normalizeToFile;
 
   /// Return a normalized path of this folder to the given filename.
-  Directory resolveFolder(String folder) =>
-      Directory("$absolutePath/$folder").normalizeToFolder;
+  Directory resolveDirectory(String folder) =>
+      Directory("$absolutePath/$folder").normalizeToDirectory;
 
   /// Convert a path String by removing all '..' and moving up a folder for each.
   String get _substitute {
@@ -108,6 +118,12 @@ extension FileUtil on FileSystemEntity {
 
     return Platform.pathSeparator + path;
   }
+}
+
+/// Utils for easier Directory handling.
+extension DirectoryUtil on Directory {
+  /// Check if directory contains items.
+  bool get isEmpty => listSync().isEmpty;
 }
 
 /// Utils for easier String manipulation.
@@ -161,8 +177,8 @@ extension StringUtil on String {
   /// with forward slashes ('/') replaced for the platform specific separator.
   String get normalize => replaceAll("/", Platform.pathSeparator);
 
-  /// Return current String value with 'Plugin' postfix if not present.
-  String get postfixedWithPlugin {
+  /// Return current String value with 'Plugin' suffix if not present.
+  String get suffixedWithPlugin {
     if (endsWith("Plugin")) {
       return this;
     } else {

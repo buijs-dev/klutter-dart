@@ -1,3 +1,13 @@
+## 3.0.0
+* Use klutter_ui 1.1.0.
+* Use Klutter Gradle v2024.1.1.beta with support for protobuf.
+* Move post-build tasks in root/platform build.gradle.kts to gradle plugin.
+* Add kradle script (which replaces producer and consumer).
+* Add interactive cli mode.
+* Add project create and build tasks.
+* Remove producer and consumer scripts.
+* Refactor library to enable generating a native executable.
+
 ## 2.0.0
 * Uses AGP 8.0.2 in projects.
 * Removed AndroidManifest.xml references.

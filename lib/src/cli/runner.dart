@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2024 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,22 +18,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import "package:klutter/klutter.dart";
-import "package:test/test.dart";
+// ignore_for_file: avoid_print
 
-void main() {
-  test("ProducerInit fails when BOM version is not set", () async {
-    final result = await ProducerInit().execute("");
-    expect(result.isOk, false);
-    expect(result.message, "Invalid BOM version (example of correct version: $klutterGradleVersion): null");
-  });
+import "dart:io";
 
-  test("ProducerInit fails when Flutter SDK is not set", () async {
-    final task = ProducerInit()
-      ..options = { ScriptOption.bom : "2023.3.1.beta" };
+import "cli.dart";
+import "context.dart";
 
-    final result = await task.execute("");
-    expect(result.isOk, false);
-    expect(result.message, "Invalid Flutter version (supported versions are: {3.0.5, 3.3.10, 3.7.12, 3.10.6}): null");
-  });
+/// Run the user command.
+Future<String> run(List<String> args, [TaskService? taskServiceOrNull]) async {
+  final arguments = [...args];
+  final firstArgument = arguments.removeAt(0);
+  final taskName = firstArgument.toTaskNameOrNull;
+  final context = toContextOrNull(Directory.current, arguments);
+  final taskService = taskServiceOrNull ?? TaskService();
+  if (firstArgument.toLowerCase() == "help") {
+    return taskService.displayKradlewHelpText;
+  } else if (taskName == null) {
+    return "received unknown task name: $firstArgument\nuse kradle help for more information";
+  } else if (context == null) {
+    final arguments = args.sublist(1, args.length);
+    return "received invalid task options: $arguments\nuse kradle help for more information";
+  } else {
+    return execute(taskName, context, taskService);
+  }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2021 - 2023 Buijs Software
+// Copyright (c) 2021 - 2024 Buijs Software
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,15 +18,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/// Exception indicating a problem with the Klutter Framework
-/// either internally or by faulty configuration.
-class KlutterException implements Exception {
-  /// Create instance of [KlutterException] with a message [cause].
-  const KlutterException(this.cause);
+import "dart:io";
 
-  /// Message explaining the cause of the exception.
-  final String cause;
+import "package:klutter/klutter.dart";
+import "package:klutter/src/cli/context.dart";
+import "package:test/test.dart";
 
-  @override
-  String toString() => "KlutterException with cause: '$cause'";
+import "../common/executor_test.dart";
+
+void main() {
+  test("Verify build command executes gradlew clean build", () {
+    final pathToRoot =
+        Directory("${Directory.systemTemp.absolute.path}/build_test".normalize)
+          ..createSync();
+
+    final executor = FakeExecutor(
+        expectedPathToWorkingDirectory: pathToRoot.absolutePath,
+        expectedCommand:
+            "${pathToRoot.resolveFile("gradlew").absolutePath} clean build -p platform");
+
+    BuildProject(executor: executor).toBeExecuted(Context(pathToRoot, {}), {});
+
+    expect(executor.run().stdout, "Test OK!");
+  });
 }

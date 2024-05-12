@@ -149,7 +149,6 @@ void main() {
   });
 
   test("Verify findKlutterBomVersion", () {
-
     // Verify klutterBomVersion is null if kradle.yaml File does not exist.
     expect(findKlutterBomVersion(root.path), null);
 

@@ -48,76 +48,63 @@
 /// - Option: <I>android</I>
 library cli;
 
-import "../common/utilities.dart";
-import "command.dart";
-import "input.dart";
+import "../common/common.dart";
+import "context.dart";
 import "task.dart";
-import "task_service.dart" as service;
+import "task_service.dart";
 
-export "command.dart";
-export "input.dart";
+export "flutter.dart";
+export "option.dart";
+export "runner.dart";
 export "task.dart";
-export "task_comparator.dart";
-export "task_consumer_add.dart";
-export "task_consumer_init.dart";
-export "task_producer_init.dart";
+export "task_add.dart";
+export "task_build.dart";
+export "task_clean_cache.dart";
+export "task_get_flutter.dart";
+export "task_project_create.dart";
+export "task_project_init.dart";
 export "task_result.dart";
 export "task_service.dart";
 
 /// Main entrypoint for executing Klutter command line tasks.
-Future<String> execute({
-  required ScriptName script,
-  required String pathToRoot,
-  required List<String> arguments,
-}) async {
-  /// Parse user input to a Command.
-  final command = Command.from(
-    arguments: arguments,
-    script: script,
-  );
+Future<String> execute(TaskName taskName, Context context,
+    [TaskService? taskService]) async {
+  final service = taskService ?? TaskService();
 
   /// Retrieve all tasks for the specified command.
   ///
   /// Set is empty if command is null or task processing failed.
-  final tasks = command == null ? <Task>{} : service.tasksOrEmptyList(command);
+  final task = service.toTask(taskName);
 
   /// When there are no tasks then the user input is incorrect.
   ///
   /// Stop processing and print list of available tasks.
-  if (tasks.isEmpty) {
+  if (task == null) {
     return """
     |KLUTTER: Received invalid command.
     |
-    |${service.printTasksAsCommands}
+    |${service.displayKradlewHelpText}
     """
         .format
         .nok;
   }
 
-  /// Process all the given tasks.
-  else {
-    final s = command!.scriptName.name;
-    final t = command.taskName.name;
-    var o = "";
+  final t = task.taskName.name;
+  var o = "";
 
-    command.options.forEach((key, value) {
-      o += " ${key.name}=$value";
-    });
+  context.taskOptions.forEach((key, value) {
+    o += " ${key.name}=$value";
+  });
 
-    for (final task in tasks) {
-      final result = await task.execute(pathToRoot);
-
-      /// Stop executing tasks when one has failed.
-      if (!result.isOk) {
-        return """
-          |KLUTTER: ${result.message}
-          |KLUTTER: Task '$s $t$o' finished unsuccessfully."""
-            .format
-            .nok;
-      }
-    }
-
-    return "KLUTTER: Task '$s $t$o' finished successful.".format.ok;
+  final result = await task.execute(context);
+  final msgOk = "KLUTTER: Task '$t$o' finished successful.";
+  final msgNok = """
+        |KLUTTER: ${result.message}
+        |KLUTTER: Task '$t$o' finished unsuccessfully.""";
+  if (result.isOk) {
+    return msgOk.format.ok;
+  } else {
+    return msgNok.format.nok;
   }
 }
 
