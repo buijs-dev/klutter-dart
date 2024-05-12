@@ -31,7 +31,7 @@ void main() {
       ..createSync();
 
     expect(
-        () => addFrameworkToPodspec(
+        () => addFrameworkAndSetIosVersionInPodspec(
             pluginName: "some_plugin", pathToIos: folder.absolutePath),
         throwsA(predicate((e) =>
             e is KlutterException &&
@@ -45,7 +45,7 @@ void main() {
     File("${folder.absolutePath}/some_plugin.podspec").createSync();
 
     expect(
-        () => addFrameworkToPodspec(
+        () => addFrameworkAndSetIosVersionInPodspec(
             pluginName: "some_plugin", pathToIos: folder.absolutePath),
         throwsA(predicate((e) =>
             e is KlutterException &&
