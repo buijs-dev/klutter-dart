@@ -211,6 +211,31 @@ void main() {
       expect(registryContainsPlugin, true,
           reason:
               "add task should have added plugin name to the .klutter-plugins file: ${registry.readAsStringSync()}");
+
+      if (platform.isMacos) {
+        /// iOS version should be set to 13.0 in podspec
+        final producerPodspec = File(
+            "${producerPlugin.absolutePath}/ios/$pluginName.podspec".normalize);
+        expect(producerPodspec.existsSync(), true,
+            reason: "${producerPodspec.absolutePath} should exist");
+
+        final producerPodspecContent = producerPodspec.readAsStringSync();
+        expect(
+            producerPodspecContent.contains("s.platform = :ios, '13.0'"), true,
+            reason:
+                "${producerPodspec.absolutePath} should contain ios version 13");
+
+        /// iOS version should be set to 13.0 in podspec
+        final consumerPodfile =
+            File("${consumerPlugin.absolutePath}/ios/Podfile".normalize);
+        expect(consumerPodfile.existsSync(), true,
+            reason: "${consumerPodfile.absolutePath} should exist");
+
+        final consumerPodfileContent = consumerPodfile.readAsStringSync();
+        expect(consumerPodfileContent.contains("platform :ios, '13.0'"), true,
+            reason:
+                "${consumerPodfile.absolutePath} should contain ios version 13");
+      }
     });
   } catch (e, s) {
     print(s);

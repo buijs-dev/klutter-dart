@@ -26,6 +26,9 @@ const androidMinSdk = 24;
 /// The compile SDK version for Android.
 const androidCompileSdk = 33;
 
+/// The minimum iOS version.
+const iosVersion = 13.0;
+
 /// Flutter SDK versions which can be used for a Producer project.
 const supportedFlutterVersions = {
   "3.0.5": Version(major: 3, minor: 0, patch: 5),

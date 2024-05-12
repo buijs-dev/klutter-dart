@@ -21,6 +21,7 @@
 import "dart:io";
 
 import "../common/common.dart";
+import "../consumer/consumer.dart";
 import "cli.dart";
 import "context.dart";
 
@@ -151,6 +152,7 @@ class CreateProject extends Task {
           .resolveDirectory("ios")
         ..verifyDirectoryExists;
 
+      setIosVersionInPodFile(iosWorkingDirectory);
       for (final step in ["install", "update"]) {
         _executor
           ..executable = "pod"

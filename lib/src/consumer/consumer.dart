@@ -25,3 +25,4 @@
 library consumer;
 
 export "android.dart";
+export "ios.dart";

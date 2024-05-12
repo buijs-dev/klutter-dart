@@ -245,7 +245,7 @@ extension on _Producer {
   void get setupIOS {
     final pathToIos = "$pathToRoot/ios";
     createIosKlutterFolder(pathToIos);
-    addFrameworkToPodspec(
+    addFrameworkAndSetIosVersionInPodspec(
       pathToIos: "$pathToRoot/ios",
       pluginName: findPluginName(pathToRoot),
     );
