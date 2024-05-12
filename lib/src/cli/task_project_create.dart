@@ -21,7 +21,6 @@
 import "dart:io";
 
 import "../common/common.dart";
-import "../consumer/consumer.dart";
 import "cli.dart";
 import "context.dart";
 
@@ -140,27 +139,6 @@ class CreateProject extends Task {
     exampleFolder
       ..deleteTestFolder
       ..deleteIntegrationTestFolder;
-
-    if (platform.isMacos) {
-      exampleFolder
-        ..deleteIosPodfileLock
-        ..deleteIosPods
-        ..deleteRunnerXCWorkspace;
-
-      final iosWorkingDirectory = root
-          .resolveDirectory("example")
-          .resolveDirectory("ios")
-        ..verifyDirectoryExists;
-
-      setIosVersionInPodFile(iosWorkingDirectory);
-      for (final step in ["install", "update"]) {
-        _executor
-          ..executable = "pod"
-          ..workingDirectory = iosWorkingDirectory
-          ..arguments = [step]
-          ..run();
-      }
-    }
   }
 }
 
@@ -323,18 +301,6 @@ extension on Directory {
         fse.deleteSync();
       }
     });
-  }
-
-  void get deleteIosPodfileLock {
-    resolveDirectory("ios").resolveFile("Podfile.lock").maybeDelete;
-  }
-
-  void get deleteIosPods {
-    resolveDirectory("ios").resolveDirectory("Pods").maybeDelete;
-  }
-
-  void get deleteRunnerXCWorkspace {
-    resolveDirectory("ios").resolveDirectory("Runner.xcworkspace").maybeDelete;
   }
 
   void overwriteReadmeFile(String pluginName) {

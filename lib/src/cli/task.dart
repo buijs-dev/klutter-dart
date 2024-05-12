@@ -239,6 +239,9 @@ enum TaskOption {
 
   /// The squint pub version in format major.minor.patch.
   squint,
+
+  /// The iOS version to use.
+  ios,
 }
 
 /// Convert a String value to a [TaskName].
@@ -261,6 +264,8 @@ extension TaskOptionParser on String? {
         return TaskOption.flutter;
       case "GROUP":
         return TaskOption.group;
+      case "IOS":
+        return TaskOption.ios;
       case "KLUTTER":
         return TaskOption.klutter;
       case "KLUTTERUI":

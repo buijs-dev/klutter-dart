@@ -32,7 +32,9 @@ void main() {
 
     expect(
         () => addFrameworkAndSetIosVersionInPodspec(
-            pluginName: "some_plugin", pathToIos: folder.absolutePath),
+            pluginName: "some_plugin",
+            pathToIos: folder.absolutePath,
+            iosVersion: 15),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith("Missing podspec file"))));
@@ -46,7 +48,9 @@ void main() {
 
     expect(
         () => addFrameworkAndSetIosVersionInPodspec(
-            pluginName: "some_plugin", pathToIos: folder.absolutePath),
+            pluginName: "some_plugin",
+            pathToIos: folder.absolutePath,
+            iosVersion: 15),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.cause.startsWith(

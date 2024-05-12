@@ -207,6 +207,28 @@ class KlutterGradleVersionOption extends UserInputOrDefault<String> {
       (throw InputException("not a valid bom version: $value"));
 }
 
+/// Option to specify ios version which defaults to [iosVersion].
+class IosVersionOption extends UserInputOrDefault<double> {
+  /// Construct a new [IosVersionOption] instance with default value [iosVersion].
+  const IosVersionOption() : super(iosVersion);
+
+  @override
+  String get description => "ios version";
+
+  @override
+  double convertOrThrow(String value) {
+    final version = double.tryParse(value) ??
+        (throw InputException("not a valid ios version: $value"));
+
+    if (version < iosVersion) {
+      throw InputException(
+          "ios version is too old (min version is $iosVersion): $value");
+    }
+
+    return version;
+  }
+}
+
 /// Option to specify plugin_name which defaults to my_plugin.
 class PluginNameOption extends UserInputOrDefault<String> {
   /// Construct a new [PluginNameOption] instance with default value my_plugin.
