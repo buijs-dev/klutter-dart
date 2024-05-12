@@ -42,18 +42,20 @@ void main() {
 
   test("Verify IosVersionOption throws exception if input is invalid", () {
     expect(
-            () => const IosVersionOption().convertOrThrow("doubleCheeseBurger"),
+        () => const IosVersionOption().convertOrThrow("doubleCheeseBurger"),
         throwsA(predicate((e) =>
-        e is InputException &&
+            e is InputException &&
             e.cause == "not a valid ios version: doubleCheeseBurger")));
   });
 
-  test("Verify IosVersionOption throws exception if ios version is too old", () {
+  test("Verify IosVersionOption throws exception if ios version is too old",
+      () {
     expect(
-            () => const IosVersionOption().convertOrThrow("10"),
+        () => const IosVersionOption().convertOrThrow("10"),
         throwsA(predicate((e) =>
-        e is InputException &&
-            e.cause == "ios version is too old (min version is $iosVersion): 10")));
+            e is InputException &&
+            e.cause ==
+                "ios version is too old (min version is $iosVersion): 10")));
   });
 
   test("KlutterGradleVersionOption throws exception if input is invalid", () {
