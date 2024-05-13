@@ -48,7 +48,7 @@ void main() {
       final help = await run([
         "create",
         "root=${Directory.systemTemp.absolutePath}",
-      ], FakeTaskService());
+      ], taskServiceOrNull: FakeTaskService());
       expect(help.contains("Usage: kradlew <command> [option=value]"), true);
 
       /// Run a Klutter task without an existing Flutter project
@@ -81,6 +81,11 @@ void main() {
           reason: "the cached sdk should exist");
       expect(cachedSdk.isEmpty, false,
           reason: "the cached sdk should not be empty");
+
+      /// Run flutter doctor to check flutter task
+      final flutterDoctor = await run(["flutter", "doctor"]);
+      expect(flutterDoctor.contains("finished executing flutter task"), true,
+          reason: flutterDoctor);
 
       /// Create Flutter plugin project.
       final createResult = await createKlutterPlugin(
@@ -175,6 +180,12 @@ void main() {
               .existsSync(),
           true,
           reason: "android/klutter/build.gradle.kts should exist");
+
+      /// Run gradlew tasks to check gradlew works
+      final gradlewTasks = await run(["gradle", "--help"],
+          workingDirectoryOrNull: producerPlugin);
+      expect(gradlewTasks.contains("finished executing gradle task"), true,
+          reason: gradlewTasks);
 
       /// IOS/Klutter folder should be created.
       expect(

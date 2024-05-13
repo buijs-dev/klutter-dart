@@ -22,15 +22,50 @@
 
 import "dart:io";
 
+import "../common/common.dart";
 import "cli.dart";
 import "context.dart";
 
 /// Run the user command.
-Future<String> run(List<String> args, [TaskService? taskServiceOrNull]) async {
+Future<String> run(
+  List<String> args, {
+  Directory? workingDirectoryOrNull,
+  TaskService? taskServiceOrNull,
+  Executor? executor,
+  GetFlutterSDK? getFlutterSDK,
+}) async {
   final arguments = [...args];
   final firstArgument = arguments.removeAt(0);
   final taskName = firstArgument.toTaskNameOrNull;
-  final context = toContextOrNull(Directory.current, arguments);
+  final workingDirectory = workingDirectoryOrNull ?? Directory.current;
+  if (taskName == TaskName.gradle) {
+    print("executing gradle task...");
+    final gradlew =
+        workingDirectory.resolveFile("gradlew").verifyFileExists.absolutePath;
+    (executor ?? Executor())
+      ..workingDirectory = workingDirectory
+      ..arguments = arguments
+      ..executable = gradlew
+      ..run();
+    return "finished executing gradle task";
+  }
+
+  if (taskName == TaskName.flutter) {
+    print("executing flutter task...");
+    final flutterTask = getFlutterSDK ?? GetFlutterSDK();
+    final flutterResult =
+        await flutterTask.executeOrThrow(Context(workingDirectory, {}));
+    final flutter =
+        flutterResult.resolveFile("flutter/bin/flutter".normalize).absolutePath;
+    (executor ?? Executor())
+      ..workingDirectory = workingDirectory
+      ..arguments = arguments
+      ..executable = flutter
+      ..run();
+    return "finished executing flutter task";
+  }
+
+  final context = toContextOrNull(workingDirectory, arguments);
   final taskService = taskServiceOrNull ?? TaskService();
   if (firstArgument.toLowerCase() == "help") {
     return taskService.displayKradlewHelpText;
