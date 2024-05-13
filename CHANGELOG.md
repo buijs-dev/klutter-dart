@@ -1,3 +1,6 @@
+## 3.0.1
+* Use Klutter Gradle v2024.1.2.beta.
+
 ## 3.0.0
 * Use klutter_ui 1.1.0.
 * Use Klutter Gradle v2024.1.1.beta with support for protobuf.
