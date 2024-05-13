@@ -86,7 +86,7 @@ void main() {
       pluginVersion: pluginVersion,
       packageName: packageName,
       pathToAndroid: android.path,
-      klutterBomVersion: "2024.1.1.beta",
+      klutterBomVersion: "2024.1.2.beta",
     );
 
     expect(
@@ -109,7 +109,7 @@ void main() {
             }
         
             dependencies {
-                classpath platform("dev.buijs.klutter:bom:2024.1.1.beta")
+                classpath platform("dev.buijs.klutter:bom:2024.1.2.beta")
                 classpath "dev.buijs.klutter:gradle"
                 classpath 'com.android.tools.build:gradle:8.0.2'
                 classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10"
