@@ -136,6 +136,12 @@ class CreateProject extends Task {
       TaskOption.lib: name,
     }));
 
+    _executor
+      ..workingDirectory = root
+      ..arguments = ["klutterGetKradle", "-p", "platform"]
+      ..executable = root.resolveFile("gradlew").absolutePath
+      ..run();
+
     exampleFolder
       ..deleteTestFolder
       ..deleteIntegrationTestFolder;
