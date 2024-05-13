@@ -69,7 +69,11 @@ class CreateProject extends Task {
     final dist = toFlutterDistributionOrThrow(
         version: flutterVersion, pathToRoot: pathToRoot);
 
-    final result = await _getFlutterSDK.executeOrThrow(context);
+    final result =
+        await _getFlutterSDK.executeOrThrow(context.copyWith(taskOptions: {
+      TaskOption.flutter: dist.folderNameString.toString(),
+    }));
+
     final flutter =
         result.resolveFile("flutter/bin/flutter".normalize).absolutePath;
     final root = await createFlutterProjectOrThrow(
@@ -135,6 +139,12 @@ class CreateProject extends Task {
       TaskOption.root: exampleFolder.absolutePath,
       TaskOption.lib: name,
     }));
+
+    _executor
+      ..workingDirectory = root
+      ..arguments = ["klutterGetKradle", "-p", "platform"]
+      ..executable = root.resolveFile("gradlew").absolutePath
+      ..run();
 
     exampleFolder
       ..deleteTestFolder

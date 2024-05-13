@@ -61,11 +61,28 @@ void main() {
     expect(result.isOk, false);
     expect(result.message, "BOOM!");
   });
+
+  test("Verify flutter option is used correctly", () async {
+    const version = "3.0.5.macos.arm64";
+    final getFlutterTask = FlutterFixedVersion();
+    final task = CreateProject(getFlutterSDK: getFlutterTask);
+    final result = await task
+        .execute(Context(Directory.systemTemp, {TaskOption.flutter: version}));
+    expect(result.isOk, false);
+    expect(result.message, version);
+  });
 }
 
 class NoFlutterSDK extends GetFlutterSDK {
   @override
   Future<Directory> executeOrThrow(Context context) async {
-    throw KlutterException("BOOM!");
+    throw const KlutterException("BOOM!");
+  }
+}
+
+class FlutterFixedVersion extends GetFlutterSDK {
+  @override
+  Future<Directory> executeOrThrow(Context context) async {
+    throw KlutterException(context.taskOptions[TaskOption.flutter] ?? "--");
   }
 }

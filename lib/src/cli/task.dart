@@ -50,7 +50,7 @@ abstract class Task<T> {
   /// Execute the task and return instance of [T] or throw
   /// [KlutterException] if unsuccessful.
   Future<T> executeOrThrow(Context context) async {
-    return await toBeExecuted(context, _getOptions(context));
+    return toBeExecuted(context, _getOptions(context));
   }
 
   /// The validated options.
