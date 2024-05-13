@@ -128,12 +128,12 @@ class DirectoryStub implements Directory {
 
   @override
   Future<FileSystemEntity> delete({bool recursive = false}) {
-    throw KlutterException("BOOM!");
+    throw const KlutterException("BOOM!");
   }
 
   @override
   void deleteSync({bool recursive = false}) {
-    throw KlutterException("BOOM!");
+    throw const KlutterException("BOOM!");
   }
 
   @override

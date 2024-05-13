@@ -229,7 +229,7 @@ extension on File {
     final endIndex = content.indexOf("pluginClass:");
 
     if (startIndex == -1 || endIndex == -1) {
-      throw KlutterException(
+      throw const KlutterException(
         "Failed to find tag plugin:platforms:android:package in pubspec.yaml",
       );
     }

@@ -238,6 +238,7 @@ void main() {
       }
     });
   } catch (e, s) {
+    // ignore: avoid_print
     print(s);
   }
 

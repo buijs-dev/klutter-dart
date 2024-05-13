@@ -36,7 +36,7 @@ void main() {
     final result =
         await _InvalidTask().execute(Context(Directory.systemTemp, {}));
     expect(result.isOk, false);
-    expect(result.message, "unsupported value: Instance of \'FakeInput\'");
+    expect(result.message, "unsupported value: Instance of 'FakeInput'");
   });
 
   test("An exception is thrown when unsupported options are present", () async {
@@ -48,9 +48,9 @@ void main() {
   });
 
   test("Verify toTaskOptionOrNull for valid options", () async {
-    TaskOption.values.forEach((value) {
+    for (final value in TaskOption.values) {
       expect(value.name.toTaskOptionOrNull, value, reason: "roundtrip $value");
-    });
+    }
   });
 }
 

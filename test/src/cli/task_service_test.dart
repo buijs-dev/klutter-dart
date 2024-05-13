@@ -39,12 +39,12 @@ void main() {
       expect(
         tasks.getTask(TaskName.add).toString(),
         "add\n  lib               (Required) name of the library to add.\n"
-        "  root              (Optional) klutter project root directory. Defaults to \'current working directory\'.\n",
+        "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n",
       );
 
       expect(
         tasks.getTask(TaskName.init).toString(),
-        "init\n  bom               (Optional) klutter gradle version. Defaults to '2024.1.1.beta'.\n  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n  root              (Optional) klutter project root directory. Defaults to \'current working directory\'.\n  ios               (Optional) ios version. Defaults to \'13.0\'.\n",
+        "init\n  bom               (Optional) klutter gradle version. Defaults to '2024.1.1.beta'.\n  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n  ios               (Optional) ios version. Defaults to '13.0'.\n",
       );
     });
 
@@ -78,7 +78,7 @@ void main() {
         "  bom               (Optional) klutter gradle version. Defaults to '2024.1.1.beta'.\n"
         "  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
         "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
-        "  ios               (Optional) ios version. Defaults to \'13.0\'.\n"
+        "  ios               (Optional) ios version. Defaults to '13.0'.\n"
         "\n"
         "get\n"
         "  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"

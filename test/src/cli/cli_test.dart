@@ -32,7 +32,7 @@ void main() {
   });
 
   test("Execute task using main execute entrypoint", () async {
-    final task = TaskName.gradle;
+    const task = TaskName.gradle;
     final context = Context(Directory.systemTemp, {});
     final result = await execute(task, context);
     expect(result.contains("Received invalid command"), true);

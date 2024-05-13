@@ -24,7 +24,7 @@ import "package:test/test.dart";
 void main() {
   test("Verify exception toString returns a readable message", () {
     expect(
-        () => throw KlutterException("BOOM!"),
+        () => throw const KlutterException("BOOM!"),
         throwsA(predicate((e) =>
             e is KlutterException &&
             e.toString() == "KlutterException with cause: 'BOOM!'")));
