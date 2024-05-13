@@ -23,7 +23,7 @@ import "package:test/test.dart";
 
 void main() {
   test("Verify InputException toString", () {
-    expect(InputException("splash!").toString(),
+    expect(const InputException("splash!").toString(),
         "InputException with cause: 'splash!'");
   });
 
@@ -77,7 +77,7 @@ void main() {
   });
 
   group("GroupNameOption throws exception if input is not a bool", () {
-    final option = GroupNameOption();
+    const option = GroupNameOption();
     void testThrowing(String groupName, String message) {
       test("$groupName throws $message", () {
         expect(
