@@ -34,7 +34,7 @@ void main() {
   });
 
   test("Verify invalid arguments are handled", () async {
-    final output = await run(["gradle", "blabla"]);
+    final output = await run(["create", "blabla"]);
     expect(output.contains("received invalid task options: [blabla]"), true,
         reason: output);
   });
