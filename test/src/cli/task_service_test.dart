@@ -44,7 +44,7 @@ void main() {
 
       expect(
         tasks.getTask(TaskName.init).toString(),
-        "init\n  bom               (Optional) klutter gradle version. Defaults to '2024.1.2.beta'.\n  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n  ios               (Optional) ios version. Defaults to '13.0'.\n",
+        "init\n  bom               (Optional) klutter gradle version. Defaults to '$klutterGradleVersion'.\n  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n  ios               (Optional) ios version. Defaults to '13.0'.\n",
       );
     });
 
@@ -75,7 +75,7 @@ void main() {
         "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
         "\n"
         "init\n"
-        "  bom               (Optional) klutter gradle version. Defaults to '2024.1.2.beta'.\n"
+        "  bom               (Optional) klutter gradle version. Defaults to '$klutterGradleVersion'.\n"
         "  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
         "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
         "  ios               (Optional) ios version. Defaults to '13.0'.\n"
@@ -91,9 +91,9 @@ void main() {
         "  group             (Optional) plugin group name. Defaults to 'dev.buijs.klutter.example'.\n"
         "  flutter           (Optional) flutter sdk version in format major.minor.patch. Defaults to '3.10.6'.\n"
         "  root              (Optional) klutter project root directory. Defaults to 'current working directory'.\n"
-        "  klutter           (Optional) klutter pub version. Defaults to '3.0.1'.\n"
+        "  klutter           (Optional) klutter pub version. Defaults to '$klutterPubVersion'.\n"
         "  klutterui         (Optional) klutter_ui pub version. Defaults to '1.1.0'.\n"
-        "  bom               (Optional) klutter gradle version. Defaults to '2024.1.2.beta'.\n"
+        "  bom               (Optional) klutter gradle version. Defaults to '$klutterGradleVersion'.\n"
         "  squint            (Optional) squint_json pub version. Defaults to '0.1.2'.\n"
         "\n"
         "build\n"

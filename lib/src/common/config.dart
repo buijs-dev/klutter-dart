@@ -3,7 +3,7 @@ import "package:meta/meta.dart";
 import "../../klutter.dart";
 
 /// The version of the Klutter Pub Plugin.
-const klutterPubVersion = "3.0.1";
+const klutterPubVersion = "3.0.2";
 
 /// The version of the Klutter UI Pub Plugin.
 const klutterUIPubVersion = "1.1.0";
@@ -12,7 +12,7 @@ const klutterUIPubVersion = "1.1.0";
 const squintPubVersion = "0.1.2";
 
 /// The version of the Klutter Gradle Plugin.
-const klutterGradleVersion = "2024.1.2.beta";
+const klutterGradleVersion = "2024.1.3.beta";
 
 /// The default Flutter version to be used in the Klutter project.
 const klutterFlutterVersion = "3.10.6";
