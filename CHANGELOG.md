@@ -1,3 +1,6 @@
+## 3.0.2
+* Use Klutter Gradle v2024.1.3.beta.
+
 ## 3.0.1
 * Use Klutter Gradle v2024.1.2.beta.
 
